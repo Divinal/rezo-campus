@@ -16,7 +16,7 @@ const Footer: React.FC = () => {
               aux informations sur les programmes, modalités d'inscription et parcours.
             </p>
             <p>
-              Contact WhatsApp : <img src="Images/code.jpg" alt="Lien WhatsApp" className="mr-4 w-16 h-18"/>
+              Notre WhatsApp : <img src="Images/code.PNG" alt="Lien WhatsApp" className="mr-4 w-16 h-18"/>
             </p>
           </div>
           

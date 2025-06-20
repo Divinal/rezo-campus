@@ -92,7 +92,7 @@ const Contact: React.FC = () => {
 
               <div>
                 <h3 className="text-lg font-semibold mb-2">Contact WhatsApp</h3>
-                <img src="Images/code.jpg" alt="QR Code WhatsApp" className="w-32 h-auto mt-2" />
+                <img src="Images/code.PNG" alt="QR Code WhatsApp" className="w-32 h-auto mt-2" />
               </div>
             </div>
 

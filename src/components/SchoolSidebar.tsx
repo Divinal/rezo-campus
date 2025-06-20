@@ -3,7 +3,7 @@ import React from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import { MapPin, Phone, Mail, Globe } from 'lucide-react';
 
-interface School {
+interface School { 
   id: string;
   name: string;
   logo: string;
@@ -100,7 +100,7 @@ const SchoolSidebar: React.FC<SchoolSidebarProps> = ({ school, relatedSchools })
                 <img
                   src={relatedSchool.logo}
                   alt={`Logo de ${relatedSchool.name}`}
-                  className="w-12 h-12 object-contain rounded-lg mr-4 flex-shrink-0"
+                  className="w-16 h-16 object-contain rounded-lg mr-4 flex-shrink-0 bg-white border border-red-500"
                 />
                 <div>
                   <h4 className="font-semibold text-gray-800 group-hover:text-primary transition-colors">
