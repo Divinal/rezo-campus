@@ -43,6 +43,7 @@ export interface Program {
 export const categories = [  
   // "Arts",
   // "Banque-Assurance",
+  "Audiovisuel",
   "Commerce",  
   "Communication",
   "Comptabilité",
@@ -1579,10 +1580,65 @@ export const schools: School[] = [
             }
           }
         },
-        programs: [
-
-
+        programs:[
+          {
+            name: "Audiovisuel",
+            description: "Offre une formation polyvalente aux différentes techniques de l’audiovisuel, accessible dès le niveau bac.",
+            category: "Audiovisuel",
+            parcours: "audiovisuelles",
+            niveau: "Technicien",
+            cycle: "Technicien",
+            duration: "2 ans",
+            diploma: "Diplôme de Technicien Audiovisuel",
+            admissionRequirements: ["Bac toutes séries", "Dossier de candidature", "Entretien de motivation"],
+            objectives: ["Acquérir des compétences techniques en audio, vidéo et image", "Participer à la production de contenus audiovisuels", "Utiliser les équipements de tournage et de montage"],
+            skillsDeveloped: ["Prise de vue", "Prise de son", "Montage de base", "Lumière et cadrage", "Maintenance technique"],
+            opportunities: ["Assistant de production", "Opérateur caméra", "Technicien son", "Technicien plateau"]
+          },
+          {
+            name: "Audiovisuel - Montage",
+            description: "Spécialise les apprenants dans les techniques de montage vidéo et la post-production.",
+            category: "Audiovisuel",
+            parcours: "Audiovisuel - Montage",
+            niveau: "Technicien Spécialisé",
+            cycle: "Technicien Spécialisé",
+            duration: "2 ans",
+            diploma: "Diplôme de Technicien Spécialisé en Audiovisuel - Montage",
+            admissionRequirements: ["Bac toutes séries", "Bonnes bases en informatique", "Dossier + test technique + entretien"],
+            objectives: ["Maîtriser les logiciels de montage professionnels", "Réaliser des montages narratifs et techniques", "Assurer le traitement audio et vidéo des projets"],
+            skillsDeveloped: ["Montage vidéo", "Effets spéciaux de base", "Colorimétrie", "Mixage audio", "Workflow de post-production"],
+            opportunities: ["Monteur vidéo", "Assistant monteur", "Technicien post-production", "Opérateur de post-traitement"]
+          },
+          {
+            name: "Licence Professionnelle en Audiovisuel et Cinéma",
+            description: "Formation complète combinant théorie et pratique pour former des professionnels du secteur audiovisuel et cinématographique.",
+            category: "Audiovisuel et Cinéma",
+            parcours: "Réalisation & Production",
+            niveau: "Licence",
+            cycle: "Bachelor européen",
+            duration: "1 an",
+            diploma: "Licence Professionnelle en Audiovisuel et Cinéma",
+            admissionRequirements: ["Bac +2 (BTS, DUT, ou équivalent)", "Expérience dans le secteur (atout)", "Dossier artistique + entretien"],
+            objectives: ["Concevoir et réaliser des projets audiovisuels", "Gérer les aspects techniques et artistiques d’une production", "Acquérir une culture cinématographique"],
+            skillsDeveloped: ["Scénarisation", "Réalisation", "Montage avancé", "Direction de production", "Analyse de film"],
+            opportunities: ["Assistant réalisateur", "Chargé de production", "Chef monteur", "Cadreur", "Documentariste"]
+          },
+          {
+            name: "Master en Audiovisuel",
+            description: "Permet aux étudiants de se spécialiser dans un domaine précis de l’audiovisuel et d’acquérir une expertise de haut niveau.",
+            category: "Audiovisuel",
+            parcours: "Spécialisation audiovisuelle",
+            niveau: "Master",
+            cycle: "Master",
+            duration: "2 ans",
+            diploma: "Master en Audiovisuel",
+            admissionRequirements: ["Licence en audiovisuel ou équivalent", "Portfolio de projets", "Entretien de motivation"],
+            objectives: ["Approfondir les savoirs techniques et théoriques", "Développer une spécialisation (réalisation, production, écriture…)", "Maîtriser les enjeux contemporains du secteur"],
+            skillsDeveloped: ["Analyse critique", "Création de contenus", "Direction artistique", "Gestion de projet audiovisuel", "Recherche en médias"],
+            opportunities: ["Réalisateur", "Directeur de production", "Scénariste", "Chercheur en audiovisuel", "Consultant média"]
+          }
         ]
+
   },
   {
     id: "IPM",
