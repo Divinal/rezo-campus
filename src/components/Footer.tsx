@@ -56,7 +56,7 @@ const Footer: React.FC = () => {
             <address className="not-italic text-gray-300">
               <p>444 Boulevard Grande Ceinture</p>
               <p>20350 Casablanca, Morocco </p>
-              <p className="mt-2">Email: contact@rezocampus.fr</p>
+              <p className="mt-2">Email: campusrezo@gmail.com</p>
               <p>Tél: +212 617-725867</p>
             </address>
           </div>
