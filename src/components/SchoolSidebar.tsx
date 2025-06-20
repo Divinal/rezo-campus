@@ -1,7 +1,7 @@
 
-import React from 'react';
+import React, { useState } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
-import { MapPin, Phone, Mail, Globe } from 'lucide-react';
+import { MapPin, Phone, Mail, Globe, Building2 } from 'lucide-react';
 
 interface School { 
   id: string;
@@ -24,6 +24,7 @@ interface SchoolSidebarProps {
 
 const SchoolSidebar: React.FC<SchoolSidebarProps> = ({ school, relatedSchools }) => {
   const navigate = useNavigate();
+  const [imageErrors, setImageErrors] = useState<Set<string>>(new Set());
 
   const handleWebsiteClick = (e: React.MouseEvent) => {
     e.preventDefault();
@@ -38,6 +39,14 @@ const SchoolSidebar: React.FC<SchoolSidebarProps> = ({ school, relatedSchools })
       
       navigate(`/formulaire?redirect=${encodeURIComponent(websiteUrl)}&school=${encodeURIComponent(schoolId || 'École')}`);
     }
+  };
+
+  const handleImageError = (schoolId: string) => {
+    setImageErrors(prev => new Set([...prev, schoolId]));
+  };
+
+  const shouldShowFallback = (schoolId: string, logoUrl: string) => {
+    return imageErrors.has(schoolId) || !logoUrl || logoUrl.trim() === '';
   };
 
   return (
@@ -97,11 +106,26 @@ const SchoolSidebar: React.FC<SchoolSidebarProps> = ({ school, relatedSchools })
                 to={`/school/${relatedSchool.id}`}
                 className="flex items-center p-3 rounded-lg border border-gray-200 hover:border-primary hover:bg-primary/5 transition-colors group"
               >
-                <img
-                  src={relatedSchool.logo}
-                  alt={`Logo de ${relatedSchool.name}`}
-                  className="w-16 h-16 object-contain rounded-lg mr-4 flex-shrink-0 bg-white border border-red-500"
-                />
+                <div className="w-16 h-16 rounded-lg mr-4 flex-shrink-0 bg-white border border-gray-300 flex items-center justify-center overflow-hidden">
+                  {shouldShowFallback(relatedSchool.id, relatedSchool.logo) ? (
+                    <Building2 className="w-8 h-8 text-gray-400" />
+                  ) : (
+                    <img
+                      src={relatedSchool.logo}
+                      alt={`Logo de ${relatedSchool.name}`}
+                      className="w-full h-full object-contain"
+                      onError={() => handleImageError(relatedSchool.id)}
+                      onLoad={() => {
+                        // Retirer de la liste des erreurs si l'image se charge finalement
+                        setImageErrors(prev => {
+                          const newSet = new Set(prev);
+                          newSet.delete(relatedSchool.id);
+                          return newSet;
+                        });
+                      }}
+                    />
+                  )}
+                </div>
                 <div>
                   <h4 className="font-semibold text-gray-800 group-hover:text-primary transition-colors">
                     {relatedSchool.name}
