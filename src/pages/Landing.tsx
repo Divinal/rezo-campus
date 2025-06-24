@@ -14,13 +14,13 @@ const Landing: React.FC = () => {
       description: "Trouvez rapidement l'établissement qui correspond à vos critères et aspirations."
     },
     {
-      icon: BookOpen,
+      icon: BookOpen,  
       title: "Programmes Détaillés",
       description: "Consultez tous les détails des formations, diplômes et spécialisations proposés."
     },
     {
       icon: Users,
-      title: "Accompagnement Personnalisé",
+      title: "Accompagnement Personnalisé", 
       description: "Bénéficiez d'un accompagnement sur mesure dans vos démarches d'inscription."
     }
   ];
@@ -41,7 +41,7 @@ const Landing: React.FC = () => {
     },
     {
       name: "Jean-Pierre Martin",
-      role: "Étudiant en Informatique",
+      role: "Étudiant en Informatique", 
       content: "Une plateforme intuitive qui m'a fait gagner un temps précieux dans mes recherches d'école.",
       rating: 5
     },
@@ -162,6 +162,116 @@ const Landing: React.FC = () => {
                 </div>
               </div>
             ))}
+          </div>
+        </div>
+      </section>
+
+      {/* Services Section */}
+      <section className="py-20 bg-gray-50">
+        <div className="container mx-auto px-4">
+          <div className="text-center mb-16">
+            <h2 className="text-3xl md:text-4xl font-bold text-gray-800 mb-4">
+              Nos Formations
+            </h2>
+            <p className="text-xl text-gray-600">
+              Découvrez les différents domaines de formation disponibles
+            </p>
+          </div>
+          
+          <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-8">
+            <div className="bg-white rounded-lg p-6 shadow-lg hover:shadow-xl transition-shadow">
+              <div className="bg-blue-100 w-12 h-12 rounded-lg flex items-center justify-center mb-4">
+                <BookOpen className="w-6 h-6 text-blue-600" />
+              </div>
+              <h3 className="text-xl font-semibold mb-3 text-gray-800">Commerce & Gestion</h3>
+              <p className="text-gray-600">Formations en commerce, marketing, finance et gestion d'entreprise.</p>
+            </div>
+            
+            <div className="bg-white rounded-lg p-6 shadow-lg hover:shadow-xl transition-shadow">
+              <div className="bg-green-100 w-12 h-12 rounded-lg flex items-center justify-center mb-4">
+                <GraduationCap className="w-6 h-6 text-green-600" />
+              </div>
+              <h3 className="text-xl font-semibold mb-3 text-gray-800">Informatique</h3>
+              <p className="text-gray-600">Développement web, mobile, intelligence artificielle et cybersécurité.</p>
+            </div>
+            
+            <div className="bg-white rounded-lg p-6 shadow-lg hover:shadow-xl transition-shadow">
+              <div className="bg-purple-100 w-12 h-12 rounded-lg flex items-center justify-center mb-4">
+                <Users className="w-6 h-6 text-purple-600" />
+              </div>
+              <h3 className="text-xl font-semibold mb-3 text-gray-800">Design & Arts</h3>
+              <p className="text-gray-600">Design graphique, architecture, mode et arts appliqués.</p>
+            </div>
+            
+            <div className="bg-white rounded-lg p-6 shadow-lg hover:shadow-xl transition-shadow">
+              <div className="bg-red-100 w-12 h-12 rounded-lg flex items-center justify-center mb-4">
+                <MapPin className="w-6 h-6 text-red-600" />
+              </div>
+              <h3 className="text-xl font-semibold mb-3 text-gray-800">Ingénierie</h3>
+              <p className="text-gray-600">Génie civil, mécanique, électrique et industriel.</p>
+            </div>
+            
+            <div className="bg-white rounded-lg p-6 shadow-lg hover:shadow-xl transition-shadow">
+              <div className="bg-yellow-100 w-12 h-12 rounded-lg flex items-center justify-center mb-4">
+                <Phone className="w-6 h-6 text-yellow-600" />
+              </div>
+              <h3 className="text-xl font-semibold mb-3 text-gray-800">Communication</h3>
+              <p className="text-gray-600">Journalisme, relations publiques et communication digitale.</p>
+            </div>
+            
+            <div className="bg-white rounded-lg p-6 shadow-lg hover:shadow-xl transition-shadow">
+              <div className="bg-indigo-100 w-12 h-12 rounded-lg flex items-center justify-center mb-4">
+                <Star className="w-6 h-6 text-indigo-600" />
+              </div>
+              <h3 className="text-xl font-semibold mb-3 text-gray-800">Santé</h3>
+              <p className="text-gray-600">Médecine, pharmacie, soins infirmiers et paramédical.</p>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      {/* Visa Information Section */}
+      <section className="py-20 bg-primary text-white">
+        <div className="container mx-auto px-4">
+          <div className="text-center mb-16">
+            <h2 className="text-3xl md:text-4xl font-bold mb-4">
+              Tous ce qui a savoir sur les Démarches administratives pour voyager en toute sérénité.
+            </h2>
+            <p className="text-xl">
+              Nous vous accompagnons dans toutes vos démarches administratives
+            </p>
+          </div>
+          
+          <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-8">
+            <div className="bg-white bg-opacity-10 rounded-lg p-6">
+              <h3 className="text-xl font-semibold mb-4">Visa Étudiant</h3>
+              <p className="mb-4">Assistance complète pour l'obtention de votre visa étudiant.</p>
+              <ul className="list-disc list-inside space-y-2 text-sm">
+                <li>Préparation du dossier</li>
+                <li>Prise de rendez-vous</li>
+                <li>Accompagnement personnalisé</li>
+              </ul>
+            </div>
+            
+            <div className="bg-white bg-opacity-10 rounded-lg p-6">
+              <h3 className="text-xl font-semibold mb-4">Logement</h3>
+              <p className="mb-4">Trouvez le logement idéal pour vos études.</p>
+              <ul className="list-disc list-inside space-y-2 text-sm">
+                <li>Résidences universitaires</li>
+                <li>Appartements privés</li>
+                <li>Familles d'accueil</li>
+              </ul>
+            </div>
+            
+            <div className="bg-white bg-opacity-10 rounded-lg p-6">
+              <h3 className="text-xl font-semibold mb-4">Carte de Séjour</h3>
+              <p className="mb-4">Obtenez votre titre de séjour rapidement.</p>
+              <ul className="list-disc list-inside space-y-2 text-sm">
+                <li>Constitution du dossier</li>
+                <li>Suivi de la demande</li>
+                <li>Renouvellement</li>
+              </ul>
+            </div>
           </div>
         </div>
       </section>
