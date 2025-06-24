@@ -5,6 +5,15 @@ import { Search, BookOpen, Users, Star, ArrowRight, GraduationCap, MapPin, Phone
 import Header from '../components/Header';
 import Footer from '../components/Footer';
 import AvisGoogle from '../components/AvisGoogle';
+import {
+  Carousel,
+  CarouselContent,
+  CarouselItem,
+  CarouselNext,
+  CarouselPrevious,
+} from "@/components/ui/carousel";
+import { Card, CardContent } from "@/components/ui/card";
+import { schools } from '../data/schools';
 
 const Landing: React.FC = () => {
   const features = [
@@ -22,34 +31,6 @@ const Landing: React.FC = () => {
       icon: Users,
       title: "Accompagnement Personnalisé", 
       description: "Bénéficiez d'un accompagnement sur mesure dans vos démarches d'inscription."
-    }
-  ];
-
-  const stats = [
-    { number: "100+", label: "Établissements Partenaires" },
-    { number: "50+", label: "Programmes de Formation" },
-    { number: "1000+", label: "Étudiants Accompagnés" },
-    { number: "95%", label: "Taux de Satisfaction" }
-  ];
-
-  const testimonials = [
-    {
-      name: "Marie Dubois",
-      role: "Étudiante en Commerce",
-      content: "Grâce à RézoCampus, j'ai trouvé l'école parfaite pour mes études. L'accompagnement a été exceptionnel !",
-      rating: 5
-    },
-    {
-      name: "Jean-Pierre Martin",
-      role: "Étudiant en Informatique", 
-      content: "Une plateforme intuitive qui m'a fait gagner un temps précieux dans mes recherches d'école.",
-      rating: 5
-    },
-    {
-      name: "Fatima El-Amrani",
-      role: "Étudiante en Design",
-      content: "L'équipe de RézoCampus m'a aidée à naviguer dans toutes les démarches administratives.",
-      rating: 5
     }
   ];
 
@@ -113,56 +94,66 @@ const Landing: React.FC = () => {
         </div>
       </section>
 
-      {/* Stats Section */}
-      <section className="py-20 bg-primary text-white">
-        <div className="container mx-auto px-4">
-          <div className="text-center mb-16">
-            <h2 className="text-3xl md:text-4xl font-bold mb-4">
-              Nos Chiffres Parlent d'Eux-Mêmes
-            </h2>
-          </div>
-          
-          <div className="grid grid-cols-2 md:grid-cols-4 gap-8">
-            {stats.map((stat, index) => (
-              <div key={index} className="text-center">
-                <div className="text-4xl md:text-5xl font-bold mb-2 text-secondary">
-                  {stat.number}
-                </div>
-                <div className="text-lg">{stat.label}</div>
-              </div>
-            ))}
-          </div>
-        </div>
-      </section>
-
-      {/* Testimonials Section */}
+      {/* Schools Carousel Section */}
       <section className="py-20 bg-white">
         <div className="container mx-auto px-4">
           <div className="text-center mb-16">
             <h2 className="text-3xl md:text-4xl font-bold text-gray-800 mb-4">
-              Ce Que Disent Nos Étudiants
+              Nos Écoles Partenaires
             </h2>
             <p className="text-xl text-gray-600">
-              Découvrez les témoignages de ceux qui ont fait confiance à RézoCampus
+              Découvrez les établissements d'excellence qui font confiance à RézoCampus
             </p>
           </div>
           
-          <div className="grid md:grid-cols-3 gap-8">
-            {testimonials.map((testimonial, index) => (
-              <div key={index} className="bg-gray-50 rounded-lg p-8">
-                <div className="flex mb-4">
-                  {[...Array(testimonial.rating)].map((_, i) => (
-                    <Star key={i} className="w-5 h-5 text-yellow-400 fill-current" />
-                  ))}
-                </div>
-                <p className="text-gray-600 mb-6 italic">"{testimonial.content}"</p>
-                <div>
-                  <h4 className="font-semibold text-gray-800">{testimonial.name}</h4>
-                  <p className="text-gray-500">{testimonial.role}</p>
-                </div>
-              </div>
-            ))}
-          </div>
+          <Carousel
+            opts={{
+              align: "start",
+              loop: true,
+            }}
+            autoplay={{ delay: 3000 }}
+            className="w-full max-w-7xl mx-auto"
+          >
+            <CarouselContent className="-ml-2 md:-ml-4">
+              {schools.map((school) => (
+                <CarouselItem key={school.id} className="pl-2 md:pl-4 md:basis-1/2 lg:basis-1/3">
+                  <Card className="h-full">
+                    <CardContent className="p-6 flex flex-col h-full">
+                      <div className="flex-shrink-0 mb-4">
+                        <img
+                          src={school.logo}
+                          alt={`Logo de ${school.name}`}
+                          className="w-full h-32 object-contain bg-gray-50 rounded-lg"
+                        />
+                      </div>
+                      <h3 className="text-xl font-bold text-primary mb-3">{school.name}</h3>
+                      <p className="text-gray-600 mb-4 flex-grow line-clamp-3">
+                        {school.description}
+                      </p>
+                      <div className="flex flex-wrap gap-2 mb-4">
+                        {[...new Set(school.programs.map(program => program.niveau))].slice(0, 2).map(niveau => (
+                          <span 
+                            key={niveau}
+                            className="text-xs bg-primary/10 text-primary px-2 py-1 rounded-full"
+                          >
+                            {niveau}
+                          </span>
+                        ))}
+                      </div>
+                      <Link
+                        to={`/school/${school.id}`}
+                        className="bg-primary hover:bg-primary/90 text-white py-2 px-4 rounded-md transition-colors text-center font-semibold"
+                      >
+                        Voir les Formations
+                      </Link>
+                    </CardContent>
+                  </Card>
+                </CarouselItem>
+              ))}
+            </CarouselContent>
+            <CarouselPrevious />
+            <CarouselNext />
+          </Carousel>
         </div>
       </section>
 
