@@ -1,349 +1,193 @@
-import React, { useState, useEffect } from 'react';
-import { Link, useNavigate } from 'react-router-dom';
-import { 
-  Carousel, 
-  CarouselContent, 
-  CarouselItem, 
-  CarouselPrevious, 
-  CarouselNext 
-} from '@/components/ui/carousel';
-import { Button } from '@/components/ui/button';
-import { Input } from "@/components/ui/input";
-import { Search } from "lucide-react";
+
+import React from 'react';
+import { Link } from 'react-router-dom';
+import { Search, BookOpen, Users, Star, ArrowRight, GraduationCap, MapPin, Phone } from 'lucide-react';
 import Header from '../components/Header';
 import Footer from '../components/Footer';
-import { Tabs, TabsList, TabsTrigger, TabsContent } from "@/components/ui/tabs";
-import { Card, CardHeader, CardTitle, CardContent } from "@/components/ui/card";
-import AvisGoogle from "../components/AvisGoogle";
-import { schools, categories } from '../data/schools';
+import AvisGoogle from '../components/AvisGoogle';
 
 const Landing: React.FC = () => {
-  const navigate = useNavigate();
-  const [searchQuery, setSearchQuery] = useState<string>("");
-  const [autoplay, setAutoplay] = useState(true);
-  
-  const images = [
-    { url: 'https://images.unsplash.com/photo-1649972904349-6e44c42644a7', alt: 'Étudiante travaillant sur un ordinateur portable' },
-    { url: 'https://images.unsplash.com/photo-1488590528505-98d2b5aba04b', alt: 'Ordinateur portable' },
-    { url: 'https://images.unsplash.com/photo-1461749280684-dccba630e2f6', alt: 'Code informatique sur écran' },
-    { url: 'https://images.unsplash.com/photo-1519389950473-47ba0277781c', alt: 'Groupe d\'étudiants travaillant ensemble' },
-    { url: 'https://images.unsplash.com/photo-1605810230434-7631ac76ec81', alt: 'Salle de classe numérique' }
-  ];
-  
-  // Handle search submission
-  const handleSearch = (e: React.FormEvent) => {
-    e.preventDefault();
-    if (searchQuery.trim()) {
-      navigate('/index', { state: { searchQuery } });
+  const features = [
+    {
+      icon: Search,
+      title: "Recherche Facile",
+      description: "Trouvez rapidement l'établissement qui correspond à vos critères et aspirations."
+    },
+    {
+      icon: BookOpen,
+      title: "Programmes Détaillés",
+      description: "Consultez tous les détails des formations, diplômes et spécialisations proposés."
+    },
+    {
+      icon: Users,
+      title: "Accompagnement Personnalisé",
+      description: "Bénéficiez d'un accompagnement sur mesure dans vos démarches d'inscription."
     }
-  };
+  ];
 
-  useEffect(() => {
-    // Set up autoplay for the carousel
-    const interval = setInterval(() => {
-      if (autoplay) {
-        // The carousel component from shadcn has its own autoplay capability
-        // This is handled in the Carousel component options
-      }
-    }, 5000);
-    
-    return () => clearInterval(interval);
-  }, [autoplay]);
+  const stats = [
+    { number: "100+", label: "Établissements Partenaires" },
+    { number: "50+", label: "Programmes de Formation" },
+    { number: "1000+", label: "Étudiants Accompagnés" },
+    { number: "95%", label: "Taux de Satisfaction" }
+  ];
+
+  const testimonials = [
+    {
+      name: "Marie Dubois",
+      role: "Étudiante en Commerce",
+      content: "Grâce à RézoCampus, j'ai trouvé l'école parfaite pour mes études. L'accompagnement a été exceptionnel !",
+      rating: 5
+    },
+    {
+      name: "Jean-Pierre Martin",
+      role: "Étudiant en Informatique",
+      content: "Une plateforme intuitive qui m'a fait gagner un temps précieux dans mes recherches d'école.",
+      rating: 5
+    },
+    {
+      name: "Fatima El-Amrani",
+      role: "Étudiante en Design",
+      content: "L'équipe de RézoCampus m'a aidée à naviguer dans toutes les démarches administratives.",
+      rating: 5
+    }
+  ];
 
   return (
-    <div className="min-h-screen flex flex-col">
+    <div className="min-h-screen bg-white">
       <Header />
       
-      <main className="flex-grow">
-        <section className="bg-gradient-to-b from-primary to-primary/80 py-12 md:py-16">
-          <div className="container mx-auto px-4 text-center">
-            <h1 className="text-4xl md:text-5xl font-bold mb-6 text-white">
-              Trouvez votre formation idéale
-            </h1>
-            <p className="text-xl md:text-2xl max-w-3xl mx-auto text-white/90 mb-8">
-              Explorez notre sélection d'établissements d'excellence et trouvez la formation qui vous correspond.
-            </p>
-            
-            {/* Global search bar */}
-            <form onSubmit={handleSearch} className="max-w-2xl mx-auto mb-6">
-              <div className="relative flex">
-                <div className="relative w-full">
-                  <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400 h-5 w-5" />
-                  <Input
-                    type="text"
-                    placeholder="Rechercher une école, formation, catégorie ou domaine..."
-                    className="pl-10 py-6 pr-24 text-lg rounded-l-lg rounded-r-none shadow-md"
-                    value={searchQuery}
-                    onChange={(e) => setSearchQuery(e.target.value)}
-                  />
-                </div>
-                <Button type="submit" className="bg-secondary hover:bg-secondary/90 text-white text-lg py-6 px-6 rounded-r-lg rounded-l-none">
-                  Rechercher
-                </Button>
-              </div>
-            </form>
+      {/* Hero Section */}
+      <section className="bg-gradient-to-br from-primary to-blue-800 text-white py-20">
+        <div className="container mx-auto px-4 text-center">
+          <h1 className="text-4xl md:text-6xl font-bold mb-6">
+            Trouvez Votre École Idéale
+          </h1>
+          <p className="text-xl md:text-2xl mb-8 max-w-3xl mx-auto">
+            Découvrez les meilleures écoles et universités, explorez leurs programmes 
+            et simplifiez vos démarches d'inscription.
+          </p>
+          <div className="flex flex-col sm:flex-row gap-4 justify-center">
+            <Link
+              to="/index"
+              className="bg-secondary text-primary px-8 py-4 rounded-lg font-semibold hover:bg-opacity-90 transition-colors flex items-center justify-center gap-2"
+            >
+              Explorer les Écoles <ArrowRight className="w-5 h-5" />
+            </Link>
+            <Link
+              to="/about"
+              className="border-2 border-white text-white px-8 py-4 rounded-lg font-semibold hover:bg-white hover:text-primary transition-colors"
+            >
+              En Savoir Plus
+            </Link>
           </div>
-        </section>
-        
-        <section className="py-12 md:py-16 bg-white">
-          <div className="container mx-auto px-4">
-            <h1 className="text-3xl font-bold text-center mb-12 text-primary">
-              Trouvez une Formation dans l'un des Etablissements réconnus et agréés par l'Etat
-              <p className="text-ms text-center mb-4 text-primary">Les formations sont choisies sur mesure et ce, à des prix abordable</p>
-            </h1>            
-            <div className="max-w-4xl mx-auto mb-16">
-              <Carousel className="relative" opts={{ loop: true, align: "start" }} autoplay={{ delay: 5000 }}>
-                <CarouselContent>
-                  {images.map((image, index) => (
-                    <CarouselItem key={index}>
-                      <div className="p-2">
-                        <div className="overflow-hidden rounded-xl shadow-lg aspect-video">
-                          <img 
-                            src={image.url} 
-                            alt={image.alt}
-                            className="w-full h-full object-cover transition-transform duration-500 hover:scale-110"
-                          />
-                        </div>
-                      </div>
-                    </CarouselItem>
-                  ))}
-                </CarouselContent>
-                <CarouselPrevious />
-                <CarouselNext />
-              </Carousel>
-            </div>
-            
-            <div className="text-center">
-              <Link to="/index">
-                <Button className="text-xl py-6 px-8 rounded-lg bg-secondary hover:bg-secondary/90 text-white transition-transform hover:scale-105">
-                 <strong><em> Acceder à toutes les formations et Etablissements</em></strong>
-                </Button>
-              </Link>
-            </div>
-          </div>
-        </section>
-
-        <section className="py-12 md:py-16 bg-gray-50">
-          <div className="container mx-auto px-4">
-            <h2 className="text-3xl font-bold text-center mb-10 text-primary">
-             Tous ce qui a savoir sur les Démarches administratives pour voyager en toute sérénité.
-            </h2>
-            
-            <Tabs defaultValue="visa" className="max-w-4xl mx-auto">
-              <TabsList className="grid w-full grid-cols-3">
-                <TabsTrigger value="visa">Pays avec visa ou AEVM</TabsTrigger>
-                <TabsTrigger value="logement">Trouver un Logement</TabsTrigger>
-                <TabsTrigger value="sejour">Faire sa Carte de séjour</TabsTrigger>
-              </TabsList>
-              
-              <TabsContent value="visa" className="mt-6">
-                <Card>
-                  <CardHeader>
-                    <CardTitle>Les pays dont le visa est obligatoire :</CardTitle>
-                  </CardHeader>
-                  <CardContent className="space-y-4">
-                    <p>Voici la liste des pays qui ont besoin d'un visa pour voyager au Maroc :</p>
-                    <p className="mt-4 text-gray-700">
-                      <a href="/documents/visa/pays-avec-visa.txt" download="pays-avec-visa.txt">
-                     <strong> 📄 Télécharger la liste des pays nécessitant un visa</strong>
-                    </a>
-                    </p>
-                    <p>Voici la liste des pays qui ont besoin d'un AEVM pour voyager au Maroc :</p>
-                      <p className="mt-4 text-gray-700">
-                      <a href="/documents/visa/aevm.txt" download="aevm.txt">
-                     <strong> 📄 Télécharger la liste des pays nécessitant un AEVM (Autorisation Electroonique de Voyage au Maroc)</strong>
-                    </a>
-                    </p>
-                    <p>Pour plus d'information contactez nos services pour un accompagnement gratuit au : <em><strong>+212 617-725867</strong></em> ou par mail : <em><strong>divinmister@hotmail.com</strong></em></p>
-                    <p></p>
-                    <p className="mt-4 text-gray-600">
-                     <strong> Assurez-vous de déposer votre demande de visa au moins 3 mois avant le début prévu de vos études.</strong>
-                    </p>
-                  </CardContent>
-                </Card>
-              </TabsContent>
-              
-              <TabsContent value="logement" className="mt-6">
-                <Card>
-                  <CardHeader>
-                    <CardTitle>Trouver un logement</CardTitle>
-                  </CardHeader>
-                  <CardContent className="space-y-4">
-                    <p><strong><em>Une fois prêt à voyager nous vous aidons à trouver un logement.</em></strong></p>
-                    <p>Différentes options de logement s'offrent à vous en tant qu'étudiant :</p>
-                    <ul className="list-disc list-inside space-y-2 ml-4">
-                      <li>Résider chez un parent</li>
-                      <li>Résidences étudiantes privées</li>
-                      <li>Colocation</li>
-                      <li>Location individuelle</li>
-                      <li>Logement chez l'habitant</li>
-                    </ul>
-                    <p className="mt-4 text-gray-600">
-                      N'oubliez pas de constituer votre dossier de location (garant, attestation de bourse, etc.)
-                    </p>
-                    <div className="bg-blue-50 p-4 rounded-lg mt-4">
-                      <p className="font-medium">Documents généralement requis :</p>
-                      <ul className="list-disc list-inside mt-2">
-                        <li>Pièce d'identité</li>
-                        <li>Justificatif de ressources</li>
-                        <li>Attestation de garant</li>
-                      </ul>
-                    </div>
-                  </CardContent>
-                </Card>
-              </TabsContent>
-              
-              <TabsContent value="sejour" className="mt-6">
-                <Card>
-                  <CardHeader>
-                    <CardTitle>Procédure de la Carte de séjour</CardTitle>
-                  </CardHeader>
-                  <CardContent className="space-y-4">
-                    <p> Une fois arrivé au Maroc, vous avez 3 mois pour réunir tous les documents nécessaires à la demande de votre titre de séjour.</p>
-                      <p className="mt-4 text-gray-600">
-                       <a href="https://www.divin-service-ei.tech/services#h.9woz7s1sgci" target="_blank" rel="noopener noreferrer">
-                        <strong>🌐 Accéder à la liste complète des documents</strong>
-                      </a>
-                    </p>
-                    <ol className="list-decimal list-inside space-y-2 ml-4">
-                      <li>Passeport en cours de validité (avec copies des pages d'identité et de visa ou du cachet d'entrée)</li>
-                      <li>8 Photos d'identité récentes (aux normes )</li>
-                      <li>Justificatif de résidence (contrat de location ou attestation d'hébergement,  facture de paiement d'eau et électricité.)</li>
-                     
-                    </ol>
-                    <p className="mt-4 text-gray-600">
-                     <strong> Pour le renouvellement de votre titre de séjour, la demande doit être effectuée 15 jours avant la date d'expiration.</strong>
-                    </p>
-                    <div className="bg-amber-50 p-4 rounded-lg mt-4">
-                      <p className="font-medium">Documents nécessaires :</p>
-                      <ul className="list-disc list-inside mt-2">
-                        <li>Passeport Valide</li>
-                        <li>Justificatif de domicile</li>
-                        <li>Photos d'identité</li>
-                        <li>Certificat d'inscription dans un établissement d'enseignement</li>
-                        <li>Même documents que la première fois</li>
-                      </ul>
-                    </div>
-                  </CardContent>
-                </Card>
-              </TabsContent>
-            </Tabs>
-          </div>
-        </section>
-         <AvisGoogle />
-        <section className="py-12 md:py-16 bg-gray-50">
-          <div className="container mx-auto px-4">
-            <h2 className="text-3xl font-bold text-center mb-12 text-primary">
-              Domaines de formation
-            </h2>
-            
-            <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6 max-w-6xl mx-auto">
-              <div className="bg-white rounded-lg shadow-md p-6 text-center hover:shadow-xl transition-shadow">
-                <div className="text-4xl mb-4">💻</div>
-                <h3 className="text-xl font-semibold mb-3">Informatique</h3>
-                <p className="text-gray-600 mb-4">Développement, IA, cybersécurité et réseaux</p>
-                <Link to="/index" className="text-secondary hover:underline">Découvrir toutes les formations</Link>
-              </div>
-              
-              <div className="bg-white rounded-lg shadow-md p-6 text-center hover:shadow-xl transition-shadow">
-                <div className="text-4xl mb-4">🏢</div>
-                <h3 className="text-xl font-semibold mb-3">Commerce</h3>
-                <p className="text-gray-600 mb-4">Management, marketing, finance et vente</p>
-                <Link to="/index" className="text-secondary hover:underline">Découvrir toutes les formations</Link>
-              </div>
-              
-              <div className="bg-white rounded-lg shadow-md p-6 text-center hover:shadow-xl transition-shadow">
-                <div className="text-4xl mb-4">🎨</div>
-                <h3 className="text-xl font-semibold mb-3">Arts</h3>
-                <p className="text-gray-600 mb-4">Design, animation, photographie et création</p>
-                <Link to="/index" className="text-secondary hover:underline">Découvrir toutes les formations</Link>
-              </div>
-              
-              <div className="bg-white rounded-lg shadow-md p-6 text-center hover:shadow-xl transition-shadow">
-                <div className="text-4xl mb-4">🔬</div>
-                <h3 className="text-xl font-semibold mb-3">Sciences</h3>
-                <p className="text-gray-600 mb-4">Biologie, environnement, physique et recherche</p>
-                <Link to="/index" className="text-secondary hover:underline">Découvrir toutes les formations</Link>
-              </div>
-              
-              <div className="bg-white rounded-lg shadow-md p-6 text-center hover:shadow-xl transition-shadow">
-                <div className="text-4xl mb-4">⚙️</div>
-                <h3 className="text-xl font-semibold mb-3">Ingénierie</h3>
-                <p className="text-gray-600 mb-4">Systèmes embarqués, électronique et mécanique</p>
-                <Link to="/index" className="text-secondary hover:underline">Découvrir toutes les formations</Link>
-              </div>
-              
-              <div className="bg-white rounded-lg shadow-md p-6 text-center hover:shadow-xl transition-shadow">
-                <div className="text-4xl mb-4">🏥</div>
-                <h3 className="text-xl font-semibold mb-3">Santé</h3>
-                <p className="text-gray-600 mb-4">Médecine, paramédical et recherche médicale</p>
-                <Link to="/index" className="text-secondary hover:underline">Découvrir toutes les formations</Link>
-              </div>
-              
-              <div className="bg-white rounded-lg shadow-md p-6 text-center hover:shadow-xl transition-shadow">
-                <div className="text-4xl mb-4">🗣️</div>
-                <h3 className="text-xl font-semibold mb-3">Langues</h3>
-                <p className="text-gray-600 mb-4">Traduction, interprétation et communication</p>
-                <Link to="/index" className="text-secondary hover:underline">Découvrir toutes les formations</Link>
-              </div>
-              
-              <div className="bg-white rounded-lg shadow-md p-6 text-center hover:shadow-xl transition-shadow">
-                <div className="text-4xl mb-4">⚖️</div>
-                <h3 className="text-xl font-semibold mb-3">Droit</h3>
-                <p className="text-gray-600 mb-4">Juridique, notariat et administration</p>
-                <Link to="/index" className="text-secondary hover:underline">Découvrir toutes les formations</Link>
-              </div>
-            </div>
-          </div>
-        </section>
-        
-        <section className="py-12 md:py-16 bg-white">
-          <div className="container mx-auto px-4 text-center">
-            <h2 className="text-3xl font-bold mb-8 text-primary">
-              Pourquoi nous choisir ?
-            </h2>
-            
-            <div className="grid grid-cols-1 md:grid-cols-3 gap-8 max-w-5xl mx-auto">
-              <div className="p-6 rounded-lg border border-gray-200 shadow-sm">
-                <div className="text-4xl mb-4 text-secondary">🔍</div>
-                <h3 className="text-xl font-semibold mb-3">Information complète</h3>
-                <p className="text-gray-600">
-                  Toutes les informations nécessaires pour faire un choix éclairé.
-                </p>
-              </div>
-              
-              <div className="p-6 rounded-lg border border-gray-200 shadow-sm">
-                <div className="text-4xl mb-4 text-secondary">🎓</div>
-                <h3 className="text-xl font-semibold mb-3">Programmes variés</h3>
-                <p className="text-gray-600">
-                  Des formations dans tous les domaines pour tous les profils.
-                </p>
-              </div>
-              
-              <div className="p-6 rounded-lg border border-gray-200 shadow-sm">
-                <div className="text-4xl mb-4 text-secondary">🚀</div>
-                <h3 className="text-xl font-semibold mb-3">Accompagnement</h3>
-                <p className="text-gray-600">
-                  Un suivi personnalisé pour vous guider dans vos choix.
-                </p>
-              </div>
-            </div>
-          </div>
-        </section>
-        {/* === VIDEO EMBED === */}
-      <div className="w-full max-w-5xl mx-auto p-4">
-        <div className="aspect-w-16 aspect-h-9 rounded-2xl overflow-hidden shadow-lg">
-          <iframe
-            src="https://www.youtube.com/embed/hwcRRzL39dQ"
-            title="Présentation vidéo"
-            allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
-            allowFullScreen
-            className="w-full h-full"
-          ></iframe>
         </div>
-      </div>
-      </main>
-      
+      </section>
+
+      {/* Features Section */}
+      <section className="py-20 bg-gray-50">
+        <div className="container mx-auto px-4">
+          <div className="text-center mb-16">
+            <h2 className="text-3xl md:text-4xl font-bold text-gray-800 mb-4">
+              Pourquoi Choisir RézoCampus ?
+            </h2>
+            <p className="text-xl text-gray-600 max-w-2xl mx-auto">
+              Nous facilitons votre parcours éducatif avec des outils innovants et un accompagnement personnalisé.
+            </p>
+          </div>
+          
+          <div className="grid md:grid-cols-3 gap-8">
+            {features.map((feature, index) => {
+              const IconComponent = feature.icon;
+              return (
+                <div key={index} className="bg-white rounded-lg p-8 shadow-lg hover:shadow-xl transition-shadow">
+                  <div className="bg-primary bg-opacity-10 w-16 h-16 rounded-lg flex items-center justify-center mb-6">
+                    <IconComponent className="w-8 h-8 text-primary" />
+                  </div>
+                  <h3 className="text-xl font-semibold mb-4 text-gray-800">{feature.title}</h3>
+                  <p className="text-gray-600">{feature.description}</p>
+                </div>
+              );
+            })}
+          </div>
+        </div>
+      </section>
+
+      {/* Stats Section */}
+      <section className="py-20 bg-primary text-white">
+        <div className="container mx-auto px-4">
+          <div className="text-center mb-16">
+            <h2 className="text-3xl md:text-4xl font-bold mb-4">
+              Nos Chiffres Parlent d'Eux-Mêmes
+            </h2>
+          </div>
+          
+          <div className="grid grid-cols-2 md:grid-cols-4 gap-8">
+            {stats.map((stat, index) => (
+              <div key={index} className="text-center">
+                <div className="text-4xl md:text-5xl font-bold mb-2 text-secondary">
+                  {stat.number}
+                </div>
+                <div className="text-lg">{stat.label}</div>
+              </div>
+            ))}
+          </div>
+        </div>
+      </section>
+
+      {/* Testimonials Section */}
+      <section className="py-20 bg-white">
+        <div className="container mx-auto px-4">
+          <div className="text-center mb-16">
+            <h2 className="text-3xl md:text-4xl font-bold text-gray-800 mb-4">
+              Ce Que Disent Nos Étudiants
+            </h2>
+            <p className="text-xl text-gray-600">
+              Découvrez les témoignages de ceux qui ont fait confiance à RézoCampus
+            </p>
+          </div>
+          
+          <div className="grid md:grid-cols-3 gap-8">
+            {testimonials.map((testimonial, index) => (
+              <div key={index} className="bg-gray-50 rounded-lg p-8">
+                <div className="flex mb-4">
+                  {[...Array(testimonial.rating)].map((_, i) => (
+                    <Star key={i} className="w-5 h-5 text-yellow-400 fill-current" />
+                  ))}
+                </div>
+                <p className="text-gray-600 mb-6 italic">"{testimonial.content}"</p>
+                <div>
+                  <h4 className="font-semibold text-gray-800">{testimonial.name}</h4>
+                  <p className="text-gray-500">{testimonial.role}</p>
+                </div>
+              </div>
+            ))}
+          </div>
+        </div>
+      </section>
+
+      {/* CTA Section */}
+      <section className="py-20 bg-secondary">
+        <div className="container mx-auto px-4 text-center">
+          <h2 className="text-3xl md:text-4xl font-bold text-primary mb-6">
+            Prêt à Commencer Votre Parcours ?
+          </h2>
+          <p className="text-xl text-gray-700 mb-8 max-w-2xl mx-auto">
+            Rejoignez des milliers d'étudiants qui ont trouvé leur voie grâce à RézoCampus
+          </p>
+          <Link
+            to="/index"
+            className="bg-primary text-white px-8 py-4 rounded-lg font-semibold hover:bg-opacity-90 transition-colors inline-flex items-center gap-2"
+          >
+            <GraduationCap className="w-6 h-6" />
+            Commencer Maintenant
+          </Link>
+        </div>
+      </section>
+
+      {/* Avis Google Section */}
+      <AvisGoogle />
+
       <Footer />
     </div>
   );
