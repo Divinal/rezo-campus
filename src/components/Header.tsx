@@ -75,9 +75,9 @@ const Header: React.FC = () => {
             
             {/* Menu déroulant Visa */}
             <DropdownMenu>
-              <DropdownMenuTrigger className="text-white hover:text-secondary transition-colors flex items-center gap-1">
+              {/* <DropdownMenuTrigger className="text-white hover:text-secondary transition-colors flex items-center gap-1">
                 Visa <ChevronDown className="w-4 h-4" />
-              </DropdownMenuTrigger>
+              </DropdownMenuTrigger> */}
               <DropdownMenuContent className="bg-white border border-gray-200 shadow-lg z-50">
                 <DropdownMenuItem 
                   onClick={() => handleVisaOptionClick('pays-visa')}
