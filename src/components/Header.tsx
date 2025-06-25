@@ -1,7 +1,6 @@
-
 import React, { useState } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
-import { LogIn, Menu, X, ChevronDown, Search } from 'lucide-react';
+import { LogIn, Menu, X, ChevronDown, Search, Facebook, Instagram, Linkedin, Youtube } from 'lucide-react';
 import {
   DropdownMenu,
   DropdownMenuContent,
@@ -111,7 +110,7 @@ const Header: React.FC = () => {
             </Link>
           </nav>
 
-          {/* Recherche et Login (à droite) */}
+          {/* Recherche, Réseaux sociaux et Login (à droite) */}
           <div className="hidden lg:flex items-center gap-4">
             {/* Bouton de recherche */}
             <Button
@@ -123,6 +122,46 @@ const Header: React.FC = () => {
               <Search className="w-4 h-4 mr-2" />
               Rechercher...
             </Button>
+
+            {/* Réseaux sociaux */}
+            <div className="flex items-center gap-2">
+              <a
+                href="https://facebook.com"
+                target="_blank"
+                rel="noopener noreferrer"
+                className="text-white hover:text-secondary transition-colors p-1"
+                aria-label="Facebook"
+              >
+                <Facebook className="w-5 h-5" />
+              </a>
+              <a
+                href="https://instagram.com"
+                target="_blank"
+                rel="noopener noreferrer"
+                className="text-white hover:text-secondary transition-colors p-1"
+                aria-label="Instagram"
+              >
+                <Instagram className="w-5 h-5" />
+              </a>
+              <a
+                href="https://linkedin.com"
+                target="_blank"
+                rel="noopener noreferrer"
+                className="text-white hover:text-secondary transition-colors p-1"
+                aria-label="LinkedIn"
+              >
+                <Linkedin className="w-5 h-5" />
+              </a>
+              <a
+                href="https://youtube.com"
+                target="_blank"
+                rel="noopener noreferrer"
+                className="text-white hover:text-secondary transition-colors p-1"
+                aria-label="YouTube"
+              >
+                <Youtube className="w-5 h-5" />
+              </a>
+            </div>
 
             {/* Login */}
             <Link to="/login" className="text-white hover:text-secondary transition-colors flex items-center gap-2">
@@ -226,18 +265,48 @@ const Header: React.FC = () => {
                 Contact
               </Link>
 
-              {/* Recherche mobile */}
-              <button
-                onClick={() => {
-                  setIsSearchOpen(true);
-                  setIsMobileMenuOpen(false);
-                }}
-                className="text-white hover:text-secondary transition-colors flex items-center gap-2 px-3 py-2"
-              >
-                <Search className="w-4 h-4" />
-                Rechercher
-              </button>
+              {/* Réseaux sociaux mobile */}
+              <div className="flex items-center gap-4 px-3 py-2">
+                <span className="text-white text-sm">Suivez-nous :</span>
+                <a
+                  href="https://facebook.com"
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="text-white hover:text-secondary transition-colors"
+                  aria-label="Facebook"
+                >
+                  <Facebook className="w-5 h-5" />
+                </a>
+                <a
+                  href="https://instagram.com"
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="text-white hover:text-secondary transition-colors"
+                  aria-label="Instagram"
+                >
+                  <Instagram className="w-5 h-5" />
+                </a>
+                <a
+                  href="https://linkedin.com"
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="text-white hover:text-secondary transition-colors"
+                  aria-label="LinkedIn"
+                >
+                  <Linkedin className="w-5 h-5" />
+                </a>
+                <a
+                  href="https://youtube.com"
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="text-white hover:text-secondary transition-colors"
+                  aria-label="YouTube"
+                >
+                  <Youtube className="w-5 h-5" />
+                </a>
+              </div>
 
+              {/* Login mobile */}
               <Link 
                 to="/login" 
                 className="text-white hover:text-secondary transition-colors flex items-center gap-2 px-3 py-2"

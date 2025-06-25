@@ -1,6 +1,7 @@
 
 import React from 'react';
 import { Link } from 'react-router-dom';
+import { Facebook, Instagram, Linkedin, Youtube } from 'lucide-react';
 
 const Footer: React.FC = () => {
   const currentYear = new Date().getFullYear();
@@ -8,7 +9,7 @@ const Footer: React.FC = () => {
   return (
     <footer className="bg-primary text-white py-8">
       <div className="container mx-auto px-4">
-        <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
+        <div className="grid grid-cols-1 md:grid-cols-4 gap-8">
           <div>
            <img src="/faviconn.png" alt="Logo" className="mr-4 w-12 h-12" /> RézoCampus
             <p className="text-sm text-gray-300">
@@ -50,15 +51,73 @@ const Footer: React.FC = () => {
               </li>
             </ul>
           </div>
+
+          <div>
+            <h3 className="text-xl font-semibold mb-4 bg-blue-600 px-2 py-1">Légal</h3>
+            <ul className="space-y-2">
+              <li>
+                <Link to="/privacy-policy" className="text-gray-300 hover:text-secondary transition-colors">
+                  Politique de confidentialité
+                </Link>
+              </li>
+              <li>
+                <Link to="/terms-of-service" className="text-gray-300 hover:text-secondary transition-colors">
+                  Conditions d'utilisation
+                </Link>
+              </li>
+            </ul>
+          </div>
           
           <div>
             <h3 className="text-xl font-semibold mb-4 bg-blue-600 px-2 py-1">Contact</h3>
-            <address className="not-italic text-gray-300">
+            <address className="not-italic text-gray-300 mb-4">
               <p>444 Boulevard Grande Ceinture</p>
               <p>20350 Casablanca, Morocco </p>
               <p className="mt-2">Email: campusrezo@gmail.com</p>
               <p>Tél: +212 617-725867</p>
             </address>
+
+            <div>
+              <h4 className="font-semibold mb-2">Suivez-nous</h4>
+              <div className="flex gap-3">
+                <a
+                  href="https://facebook.com"
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="text-gray-300 hover:text-secondary transition-colors"
+                  aria-label="Facebook"
+                >
+                  <Facebook className="w-6 h-6" />
+                </a>
+                <a
+                  href="https://instagram.com"
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="text-gray-300 hover:text-secondary transition-colors"
+                  aria-label="Instagram"
+                >
+                  <Instagram className="w-6 h-6" />
+                </a>
+                <a
+                  href="https://linkedin.com"
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="text-gray-300 hover:text-secondary transition-colors"
+                  aria-label="LinkedIn"
+                >
+                  <Linkedin className="w-6 h-6" />
+                </a>
+                <a
+                  href="https://youtube.com"
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="text-gray-300 hover:text-secondary transition-colors"
+                  aria-label="YouTube"
+                >
+                  <Youtube className="w-6 h-6" />
+                </a>
+              </div>
+            </div>
           </div>
         </div>
         
