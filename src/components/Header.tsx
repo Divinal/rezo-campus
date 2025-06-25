@@ -1,39 +1,67 @@
 
 import React, { useState } from 'react';
 import { Link } from 'react-router-dom';
-import { LogIn, Menu, X, ChevronDown } from 'lucide-react';
-import {
-  NavigationMenu,
-  NavigationMenuContent,
-  NavigationMenuItem,
-  NavigationMenuList,
-  NavigationMenuTrigger,
-} from "@/components/ui/navigation-menu";
+import { LogIn, Menu, X, ChevronDown, Search } from 'lucide-react';
 import {
   DropdownMenu,
   DropdownMenuContent,
   DropdownMenuItem,
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
+import {
+  Command,
+  CommandDialog,
+  CommandEmpty,
+  CommandGroup,
+  CommandInput,
+  CommandItem,
+  CommandList,
+} from "@/components/ui/command";
+import { Button } from "@/components/ui/button";
+import { schools } from '../data/schools';
 
 const Header: React.FC = () => {
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
+  const [isSearchOpen, setIsSearchOpen] = useState(false);
 
   const toggleMobileMenu = () => {
     setIsMobileMenuOpen(!isMobileMenuOpen);
   };
 
   const handleVisaOptionClick = (option: string) => {
-    // Pour l'instant, on peut juste faire un console.log ou rediriger vers une page
     console.log(`Visa option selected: ${option}`);
-    // Vous pourrez plus tard créer des pages spécifiques pour chaque option
   };
 
+  const handleSearchSelect = (value: string) => {
+    console.log(`Search selected: ${value}`);
+    setIsSearchOpen(false);
+    // Ici vous pourrez ajouter la logique de navigation vers l'école ou formation sélectionnée
+  };
+
+  // Préparer les données de recherche
+  const searchData = [
+    ...schools.map(school => ({
+      id: school.id,
+      name: school.name,
+      type: 'école' as const,
+      url: `/school/${school.id}`
+    })),
+    ...schools.flatMap(school => 
+      school.programs.map(program => ({
+        id: `${school.id}-${program.nom}`,
+        name: `${program.nom} - ${school.name}`,
+        type: 'formation' as const,
+        url: `/school/${school.id}`
+      }))
+    )
+  ];
+
   return (
-    <header className="bg-primary py-4 shadow-md">
-      <div className="container mx-auto px-4">
+    <header className="bg-primary shadow-md">
+      {/* Navigation principale en haut */}
+      <div className="container mx-auto px-4 py-2">
         <div className="flex justify-between items-center">
-          {/* Navigation principale (à gauche du logo sur desktop) */}
+          {/* Navigation principale (à gauche) */}
           <nav className="hidden lg:flex space-x-6">
             <Link to="/" className="text-white hover:text-secondary transition-colors">
               Home
@@ -80,15 +108,20 @@ const Header: React.FC = () => {
             </Link>
           </nav>
 
-          {/* Logo (centré) */}
-          <Link to="/" className="text-white text-xl lg:text-2xl font-bold flex items-center px-3 py-2">
-            <img src="/faviconn.png" alt="Logo" className="mr-2 lg:mr-4 w-16 lg:w-28 h-16 lg:h-30" />
-            <span className="hidden sm:inline">Rézo Campus – L'éducation à portée de clic.</span>
-            <span className="sm:hidden">Rézo Campus</span>
-          </Link>
-          
-          {/* Login (à droite) */}
-          <div className="hidden lg:flex">
+          {/* Recherche et Login (à droite) */}
+          <div className="hidden lg:flex items-center gap-4">
+            {/* Bouton de recherche */}
+            <Button
+              variant="outline"
+              size="sm"
+              onClick={() => setIsSearchOpen(true)}
+              className="bg-white/10 border-white/20 text-white hover:bg-white/20"
+            >
+              <Search className="w-4 h-4 mr-2" />
+              Rechercher...
+            </Button>
+
+            {/* Login */}
             <Link to="/login" className="text-white hover:text-secondary transition-colors flex items-center gap-2">
               <LogIn className="w-4 h-4" />
               Login
@@ -189,6 +222,19 @@ const Header: React.FC = () => {
               >
                 Contact
               </Link>
+
+              {/* Recherche mobile */}
+              <button
+                onClick={() => {
+                  setIsSearchOpen(true);
+                  setIsMobileMenuOpen(false);
+                }}
+                className="text-white hover:text-secondary transition-colors flex items-center gap-2 px-3 py-2"
+              >
+                <Search className="w-4 h-4" />
+                Rechercher
+              </button>
+
               <Link 
                 to="/login" 
                 className="text-white hover:text-secondary transition-colors flex items-center gap-2 px-3 py-2"
@@ -201,6 +247,52 @@ const Header: React.FC = () => {
           </nav>
         )}
       </div>
+
+      {/* Logo et slogan - maintenant en dessous */}
+      <div className="container mx-auto px-4 py-6">
+        <div className="text-center">
+          <Link to="/" className="text-white inline-flex flex-col items-center">
+            <img src="/faviconn.png" alt="Logo" className="mb-4 w-20 lg:w-32 h-20 lg:h-32" />
+            <div className="text-xl lg:text-2xl font-bold">
+              <span className="block sm:inline">Rézo Campus – L'éducation à portée de clic.</span>
+            </div>
+          </Link>
+        </div>
+      </div>
+
+      {/* Dialog de recherche */}
+      <CommandDialog open={isSearchOpen} onOpenChange={setIsSearchOpen}>
+        <CommandInput placeholder="Rechercher une école ou une formation..." />
+        <CommandList>
+          <CommandEmpty>Aucun résultat trouvé.</CommandEmpty>
+          <CommandGroup heading="Écoles">
+            {searchData
+              .filter(item => item.type === 'école')
+              .map((item) => (
+                <CommandItem
+                  key={item.id}
+                  value={item.name}
+                  onSelect={() => handleSearchSelect(item.url)}
+                >
+                  {item.name}
+                </CommandItem>
+              ))}
+          </CommandGroup>
+          <CommandGroup heading="Formations">
+            {searchData
+              .filter(item => item.type === 'formation')
+              .map((item) => (
+                <CommandItem
+                  key={item.id}
+                  value={item.name}
+                  onSelect={() => handleSearchSelect(item.url)}
+                >
+                  {item.name}
+                </CommandItem>
+              ))}
+          </CommandGroup>
+        </CommandList>
+      </CommandDialog>
     </header>
   );
 };
