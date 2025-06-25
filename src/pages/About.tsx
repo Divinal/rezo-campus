@@ -8,30 +8,30 @@ const About: React.FC = () => {
   const teamMembers = [
     {
       id: 1,
-      name: "Sarah Dubois",
-      role: "Directrice Générale",
-      description: "Diplômée en commerce international avec 8 ans d'expérience dans le secteur éducatif. Passionnée par l'innovation pédagogique et l'accompagnement des étudiants.",
-      image: "https://images.unsplash.com/photo-1494790108755-2616b612b786?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=687&q=80",
-      email: "sarah.dubois@rezocampus.com",
-      phone: "+33 1 23 45 67 89"
+      name: "Sokhna Maty NDIAYE",
+      role: "Consultante Communication & Marketing",
+      description: "Je mets ma passion pour les mots, les marques et l’impact au service des entreprises et projets qui souhaitent se démarquer, fédérer et croître. Forte d’une approche à la fois stratégique et créative.",
+      image: "/Images/Profil3.jpg",
+      email: "ndiayematy4633@gmail.com",
+      phone: "+212 779-367718"
     },
     {
       id: 2,
-      name: "Marc Thompson",
-      role: "Responsable Partenariats",
-      description: "Expert en développement commercial et relations institutionnelles. Il gère les partenariats avec nos écoles et universités partenaires depuis 5 ans.",
-      image: "https://images.unsplash.com/photo-1472099645785-5658abf4ff4e?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=1170&q=80",
-      email: "marc.thompson@rezocampus.com",
-      phone: "+33 1 23 45 67 90"
+      name: "Abderrahmen ELOUAFI",
+      role: "Consultant IT & Responsable Partenariats",
+      description: "Passionné par la transmission de savoirs, la veille technologique, et l’optimisation de la visibilité numérique. Fort d’une solide expertise dans le secteur de la technologie et du digital, j'accompagne institutions et professionnels dans la montée en compétences, l’amélioration de leur présence en ligne, et la création de partenariats à valeur ajoutée.",
+      image: "/Images/Profil2.png",
+      email: "elouafiabderrahmen@gmail.com",
+      phone: "+212 767-187983"
     },
     {
       id: 3,
-      name: "Amina Benali",
-      role: "Conseillère Orientation",
-      description: "Psychologue de l'éducation spécialisée dans l'orientation scolaire et professionnelle. Elle accompagne les étudiants dans leurs choix de formation depuis 6 ans.",
-      image: "https://images.unsplash.com/photo-1438761681033-6461ffad8d80?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=1170&q=80",
-      email: "amina.benali@rezocampus.com",
-      phone: "+33 1 23 45 67 91"
+      name: "MVOUAMA Divin Aldriche",
+      role: "Fondateur Rézo Campus - RT&D ",
+      description: "Développeur freelance Full-Stack, passionné par les technologies, l’innovation numérique et le développement logiciel. Fondateur de la plateforme éducative Rézo Campus, j’œuvre à rendre l’orientation scolaire et universitaire plus accessible grâce à des outils digitaux performants. Mon parcours est marqué par l'entrepreneuriat, la curiosité intellectuelle et la persévérance",
+      image: "/Images/Profil1.jpeg",
+      email: "mvouamad@gmail.com",
+      phone: "+212 617-725867"
     }
   ];
 
