@@ -48,8 +48,8 @@ const Header: React.FC = () => {
     })),
     ...schools.flatMap(school => 
       school.programs.map(program => ({
-        id: `${school.id}-${program.nom}`,
-        name: `${program.nom} - ${school.name}`,
+        id: `${school.id}-${program.name}`,
+        name: `${program.name} - ${school.name}`,
         type: 'formation' as const,
         url: `/school/${school.id}`
       }))
@@ -248,13 +248,13 @@ const Header: React.FC = () => {
         )}
       </div>
 
-      {/* Logo et slogan - maintenant en dessous */}
+      {/* Logo et slogan - sur la même ligne sous la navigation */}
       <div className="container mx-auto px-4 py-6">
-        <div className="text-center">
-          <Link to="/" className="text-white inline-flex flex-col items-center">
-            <img src="/faviconn.png" alt="Logo" className="mb-4 w-20 lg:w-32 h-20 lg:h-32" />
-            <div className="text-xl lg:text-2xl font-bold">
-              <span className="block sm:inline">Rézo Campus – L'éducation à portée de clic.</span>
+        <div className="flex items-center justify-center gap-4">
+          <Link to="/" className="text-white flex items-center gap-4">
+            <img src="/faviconn.png" alt="Logo" className="w-16 h-16 lg:w-20 lg:h-20" />
+            <div className="text-lg lg:text-2xl font-bold">
+              Rézo Campus – L'éducation à portée de clic.
             </div>
           </Link>
         </div>
