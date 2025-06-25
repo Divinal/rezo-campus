@@ -1,6 +1,6 @@
 
 import React, { useState } from 'react';
-import { Link } from 'react-router-dom';
+import { Link, useNavigate } from 'react-router-dom';
 import { LogIn, Menu, X, ChevronDown, Search } from 'lucide-react';
 import {
   DropdownMenu,
@@ -23,6 +23,7 @@ import { schools } from '../data/schools';
 const Header: React.FC = () => {
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
   const [isSearchOpen, setIsSearchOpen] = useState(false);
+  const navigate = useNavigate();
 
   const toggleMobileMenu = () => {
     setIsMobileMenuOpen(!isMobileMenuOpen);
@@ -35,7 +36,12 @@ const Header: React.FC = () => {
   const handleSearchSelect = (value: string) => {
     console.log(`Search selected: ${value}`);
     setIsSearchOpen(false);
-    // Ici vous pourrez ajouter la logique de navigation vers l'école ou formation sélectionnée
+    
+    // Naviguer vers la page de l'école
+    const schoolId = value.split('/school/')[1];
+    if (schoolId) {
+      navigate(`/school/${schoolId}`);
+    }
   };
 
   // Préparer les données de recherche
@@ -75,9 +81,6 @@ const Header: React.FC = () => {
             
             {/* Menu déroulant Visa */}
             <DropdownMenu>
-              {/* <DropdownMenuTrigger className="text-white hover:text-secondary transition-colors flex items-center gap-1">
-                Visa <ChevronDown className="w-4 h-4" />
-              </DropdownMenuTrigger> */}
               <DropdownMenuContent className="bg-white border border-gray-200 shadow-lg z-50">
                 <DropdownMenuItem 
                   onClick={() => handleVisaOptionClick('pays-visa')}
