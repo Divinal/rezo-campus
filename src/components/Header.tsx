@@ -112,6 +112,46 @@ const Header: React.FC = () => {
 
           {/* Recherche, Réseaux sociaux et Login (à droite) */}
           <div className="hidden lg:flex items-center gap-4">
+            
+            {/* Réseaux sociaux */}
+            <div className="flex items-center gap-2">
+              <a
+                href="https://web.facebook.com/profile.php?id=61577756490219"
+                target="_blank"
+                rel="noopener noreferrer"
+                className="text-white hover:text-secondary transition-colors p-1"
+                aria-label="Facebook"
+              >
+                <Facebook className="w-5 h-5" />
+              </a>
+              <a
+                href="https://www.instagram.com/rezocampus"
+                target="_blank"
+                rel="noopener noreferrer"
+                className="text-white hover:text-secondary transition-colors p-1"
+                aria-label="Instagram"
+              >
+                <Instagram className="w-5 h-5" />
+              </a>
+              <a
+                href="https://www.linkedin.com/company/104015534/"
+                target="_blank"
+                rel="noopener noreferrer"
+                className="text-white hover:text-secondary transition-colors p-1"
+                aria-label="LinkedIn"
+              >
+                <Linkedin className="w-5 h-5" />
+              </a>
+              <a
+                href="https://www.youtube.com/@RezoCAMPUS"
+                target="_blank"
+                rel="noopener noreferrer"
+                className="text-white hover:text-secondary transition-colors p-1"
+                aria-label="YouTube"
+              >
+                <Youtube className="w-5 h-5" />
+              </a>
+            </div>
             {/* Bouton de recherche */}
             <Button
               variant="outline"
@@ -122,46 +162,6 @@ const Header: React.FC = () => {
               <Search className="w-4 h-4 mr-2" />
               Rechercher...
             </Button>
-
-            {/* Réseaux sociaux */}
-            <div className="flex items-center gap-2">
-              <a
-                href="https://facebook.com"
-                target="_blank"
-                rel="noopener noreferrer"
-                className="text-white hover:text-secondary transition-colors p-1"
-                aria-label="Facebook"
-              >
-                <Facebook className="w-5 h-5" />
-              </a>
-              <a
-                href="https://instagram.com"
-                target="_blank"
-                rel="noopener noreferrer"
-                className="text-white hover:text-secondary transition-colors p-1"
-                aria-label="Instagram"
-              >
-                <Instagram className="w-5 h-5" />
-              </a>
-              <a
-                href="https://linkedin.com"
-                target="_blank"
-                rel="noopener noreferrer"
-                className="text-white hover:text-secondary transition-colors p-1"
-                aria-label="LinkedIn"
-              >
-                <Linkedin className="w-5 h-5" />
-              </a>
-              <a
-                href="https://youtube.com"
-                target="_blank"
-                rel="noopener noreferrer"
-                className="text-white hover:text-secondary transition-colors p-1"
-                aria-label="YouTube"
-              >
-                <Youtube className="w-5 h-5" />
-              </a>
-            </div>
 
             {/* Login */}
             <Link to="/login" className="text-white hover:text-secondary transition-colors flex items-center gap-2">

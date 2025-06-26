@@ -81,8 +81,8 @@ const Footer: React.FC = () => {
               <h4 className="font-semibold mb-2">Suivez-nous</h4>
               <div className="flex gap-3">
                 <a
-                  href="https://facebook.com"
-                  target="_blank"
+                href="https://web.facebook.com/profile.php?id=61577756490219"
+                target="_blank"
                   rel="noopener noreferrer"
                   className="text-gray-300 hover:text-secondary transition-colors"
                   aria-label="Facebook"
@@ -90,8 +90,8 @@ const Footer: React.FC = () => {
                   <Facebook className="w-6 h-6" />
                 </a>
                 <a
-                  href="https://instagram.com"
-                  target="_blank"
+                href="https://www.instagram.com/rezocampus"
+                target="_blank"
                   rel="noopener noreferrer"
                   className="text-gray-300 hover:text-secondary transition-colors"
                   aria-label="Instagram"
@@ -99,8 +99,8 @@ const Footer: React.FC = () => {
                   <Instagram className="w-6 h-6" />
                 </a>
                 <a
-                  href="https://linkedin.com"
-                  target="_blank"
+                href="https://www.linkedin.com/company/104015534/"
+                target="_blank"
                   rel="noopener noreferrer"
                   className="text-gray-300 hover:text-secondary transition-colors"
                   aria-label="LinkedIn"
@@ -108,8 +108,8 @@ const Footer: React.FC = () => {
                   <Linkedin className="w-6 h-6" />
                 </a>
                 <a
-                  href="https://youtube.com"
-                  target="_blank"
+                href="https://www.youtube.com/@RezoCAMPUS"
+                target="_blank"
                   rel="noopener noreferrer"
                   className="text-gray-300 hover:text-secondary transition-colors"
                   aria-label="YouTube"
