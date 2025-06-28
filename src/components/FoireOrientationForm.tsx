@@ -62,14 +62,15 @@ const FoireOrientationForm: React.FC = () => {
 
       // Préparer les données pour l'insertion
       const insertData = {
-        Nom: formData.Nom.trim(),
-        Prenom: formData.Prenom.trim(),
-        AdresseMail: formData.AdresseMail.trim(),
-        WhatsApp: formData.WhatsApp.trim(),
-        Der_Dip: formData.Der_Dip,
-        Formation: formationFinale || formData.Formation,
-        Pays: formData.Pays.trim(),
-      };
+       nom: formData.Nom.trim(),
+        prenom: formData.Prenom.trim(),
+        adressemail: formData.AdresseMail.trim(),
+        whatsapp: formData.WhatsApp.trim(),
+        der_dip: formData.Der_Dip,
+        formation: formationFinale || formData.Formation,
+        pays: formData.Pays.trim(),
+
+        };
 
       console.log("Données à insérer:", insertData);
 
@@ -99,7 +100,7 @@ const FoireOrientationForm: React.FC = () => {
             AdresseMail: formData.AdresseMail,
             formation: formationFinale,
           },
-          "xgYkC3rP4oY01KUy-"
+            "xgYkC3rP4oY01KUy-"
         );
         console.log("Email envoyé avec succès");
       } catch (emailError) {
