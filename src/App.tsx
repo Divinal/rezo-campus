@@ -20,6 +20,7 @@ import Login from './pages/Login';
 import Dashboard from './pages/Dashboard';
 import TermsOfService from './pages/TermsOfService';
 import PrivacyPolicy from './pages/PrivacyPolicy';
+import FoireOrientationForm from './components/FoireOrientationForm';
 
 
 const queryClient = new QueryClient();
@@ -45,6 +46,7 @@ const App = () => (
           <Route path="/login" element={<Login />} />
           <Route path="/dashboard" element={<Dashboard />} />
           <Route path="/terms-of-service" element={<TermsOfService />} />
+          <Route path="/FoireOrientationForm" element={<FoireOrientationForm />} />
           <Route path="/privacy-policy" element={<PrivacyPolicy />} />
 
           {/* ADD ALL CUSTOM ROUTES ABOVE THE CATCH-ALL "*" ROUTE */}
