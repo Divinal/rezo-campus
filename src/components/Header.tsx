@@ -75,7 +75,7 @@ const Header: React.FC = () => {
               Schools
             </Link>
             <Link to="/blog" className="text-white hover:text-secondary transition-colors">
-              Actu
+              Actualités
             </Link>
             
             {/* Menu déroulant Visa */}
