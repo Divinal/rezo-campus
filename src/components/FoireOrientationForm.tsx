@@ -1,3 +1,4 @@
+
 import React, { useState, useEffect, useRef } from "react";
 import { supabase } from "../lib/supabaseClient";
 import emailjs from "@emailjs/browser";
@@ -31,6 +32,7 @@ const FoireOrientationForm: React.FC = () => {
   });
 
   const [recaptchaToken, setRecaptchaToken] = useState<string | null>(null);
+  const [isSubmitting, setIsSubmitting] = useState(false);
   const recaptchaRef = useRef<ReCAPTCHA>(null);
   const navigate = useNavigate();
 
@@ -52,46 +54,82 @@ const FoireOrientationForm: React.FC = () => {
       return;
     }
 
-    const formationFinale =
-      formData.Formation === "Autre" ? formData.FormationAutre : formData.Formation;
+    setIsSubmitting(true);
 
-    const { error } = await supabase.from("foire_inscriptions").insert([
-      {
-        Nom: formData.Nom,
-        Prenom: formData.Prenom,
-        AdresseMail: formData.AdresseMail,
-        WhatsApp: formData.WhatsApp,
+    try {
+      const formationFinale =
+        formData.Formation === "Autre" ? formData.FormationAutre : formData.Formation;
+
+      // Préparer les données pour l'insertion
+      const insertData = {
+        Nom: formData.Nom.trim(),
+        Prenom: formData.Prenom.trim(),
+        AdresseMail: formData.AdresseMail.trim(),
+        WhatsApp: formData.WhatsApp.trim(),
         Der_Dip: formData.Der_Dip,
-        Formation: formationFinale,
-        Pays: formData.Pays,
-      },
-    ]);
+        Formation: formationFinale || formData.Formation,
+        Pays: formData.Pays.trim(),
+      };
 
-    if (error) {
-      alert("Erreur lors de l'enregistrement !");
-      console.error(error);
-    } else {
+      console.log("Données à insérer:", insertData);
+
+      // Insertion dans Supabase
+      const { data, error } = await supabase
+        .from("foire_inscriptions")
+        .insert([insertData])
+        .select();
+
+      if (error) {
+        console.error("Erreur Supabase:", error);
+        alert(`Erreur lors de l'enregistrement : ${error.message}`);
+        setIsSubmitting(false);
+        return;
+      }
+
+      console.log("Données insérées avec succès:", data);
+
+      // Envoi de l'email
       try {
         await emailjs.send(
-          "service_7l7iiir", // Remplace si nécessaire
-          "template_rdi66jm", // Ton modèle EmailJS
+          "service_7l7iiir",
+          "template_rdi66jm",
           {
             Nom: formData.Nom,
             Prenom: formData.Prenom,
             AdresseMail: formData.AdresseMail,
             formation: formationFinale,
           },
-          "xgYkC3rP4oY01KUy-" // Ta clé publique
+          "xgYkC3rP4oY01KUy-"
         );
-        console.log("Email envoyé");
+        console.log("Email envoyé avec succès");
       } catch (emailError) {
         console.error("Erreur emailJS :", emailError);
+        // Continue même si l'email échoue
       }
 
       alert("Inscription réussie !");
+      
+      // Reset du formulaire
+      setFormData({
+        Nom: "",
+        Prenom: "",
+        AdresseMail: "",
+        WhatsApp: "",
+        Der_Dip: "",
+        Formation: "",
+        FormationAutre: "",
+        Pays: "",
+      });
+      
       setRecaptchaToken(null);
       recaptchaRef.current?.reset();
       navigate("/merci");
+
+    } catch (error) {
+      console.error("Erreur générale:", error);
+      alert("Une erreur inattendue s'est produite. Veuillez réessayer.");
+    } finally {
+      setIsSubmitting(false);
     }
   };
 
@@ -101,16 +139,59 @@ const FoireOrientationForm: React.FC = () => {
       <div className="container mx-auto px-4">
         <div className="max-w-lg mx-auto bg-white rounded-lg shadow-md p-6">
           <h2 className="text-2xl font-bold text-center mb-6">
-            Inscription à la Foire d’Orientation
+            Inscription à la Foire d'Orientation
           </h2>
 
           <form onSubmit={handleSubmit} className="space-y-4">
-            <input name="Nom" placeholder="Nom" value={formData.Nom} onChange={handleChange} required className="w-full p-3 border rounded-md" />
-            <input name="Prenom" placeholder="Prénom" value={formData.Prenom} onChange={handleChange} required className="w-full p-3 border rounded-md" />
-            <input type="email" name="AdresseMail" placeholder="Email" value={formData.AdresseMail} onChange={handleChange} required className="w-full p-3 border rounded-md" />
-            <input name="WhatsApp" placeholder="Numéro WhatsApp" value={formData.WhatsApp} onChange={handleChange} required className="w-full p-3 border rounded-md" />
+            <input 
+              name="Nom" 
+              placeholder="Nom" 
+              value={formData.Nom} 
+              onChange={handleChange} 
+              required 
+              className="w-full p-3 border rounded-md"
+              disabled={isSubmitting}
+            />
+            
+            <input 
+              name="Prenom" 
+              placeholder="Prénom" 
+              value={formData.Prenom} 
+              onChange={handleChange} 
+              required 
+              className="w-full p-3 border rounded-md"
+              disabled={isSubmitting}
+            />
+            
+            <input 
+              type="email" 
+              name="AdresseMail" 
+              placeholder="Email" 
+              value={formData.AdresseMail} 
+              onChange={handleChange} 
+              required 
+              className="w-full p-3 border rounded-md"
+              disabled={isSubmitting}
+            />
+            
+            <input 
+              name="WhatsApp" 
+              placeholder="Numéro WhatsApp" 
+              value={formData.WhatsApp} 
+              onChange={handleChange} 
+              required 
+              className="w-full p-3 border rounded-md"
+              disabled={isSubmitting}
+            />
 
-            <select name="Der_Dip" value={formData.Der_Dip} onChange={handleChange} required className="w-full p-3 border rounded-md">
+            <select 
+              name="Der_Dip" 
+              value={formData.Der_Dip} 
+              onChange={handleChange} 
+              required 
+              className="w-full p-3 border rounded-md"
+              disabled={isSubmitting}
+            >
               <option value="">-- Dernier diplôme --</option>
               <option value="Baccalauréat">Baccalauréat</option>
               <option value="Licence">Licence</option>
@@ -119,7 +200,14 @@ const FoireOrientationForm: React.FC = () => {
               <option value="Autre">Autre</option>
             </select>
 
-            <select name="Formation" value={formData.Formation} onChange={handleChange} required className="w-full p-3 border rounded-md">
+            <select 
+              name="Formation" 
+              value={formData.Formation} 
+              onChange={handleChange} 
+              required 
+              className="w-full p-3 border rounded-md"
+              disabled={isSubmitting}
+            >
               <option value="">-- Formation souhaitée --</option>
               <option value="Informatique">Informatique</option>
               <option value="Marketing">Marketing</option>
@@ -130,15 +218,35 @@ const FoireOrientationForm: React.FC = () => {
             </select>
 
             {formData.Formation === "Autre" && (
-              <input name="FormationAutre" placeholder="Précisez la formation" value={formData.FormationAutre} onChange={handleChange} className="w-full p-3 border rounded-md" required />
+              <input 
+                name="FormationAutre" 
+                placeholder="Précisez la formation" 
+                value={formData.FormationAutre} 
+                onChange={handleChange} 
+                className="w-full p-3 border rounded-md" 
+                required
+                disabled={isSubmitting}
+              />
             )}
 
-            <input name="Pays" placeholder="Pays d’origine" value={formData.Pays} onChange={handleChange} required className="w-full p-3 border rounded-md" />
+            <input 
+              name="Pays" 
+              placeholder="Pays d'origine" 
+              value={formData.Pays} 
+              onChange={handleChange} 
+              required 
+              className="w-full p-3 border rounded-md"
+              disabled={isSubmitting}
+            />
 
             <RecaptchaComponent onVerify={handleRecaptchaChange} recaptchaRef={recaptchaRef} />
 
-            <button type="submit" disabled={!recaptchaToken} className="w-full bg-blue-600 hover:bg-blue-700 text-white py-3 rounded-md">
-              M’inscrire à la Foire
+            <button 
+              type="submit" 
+              disabled={!recaptchaToken || isSubmitting} 
+              className="w-full bg-blue-600 hover:bg-blue-700 disabled:bg-gray-400 text-white py-3 rounded-md transition-colors"
+            >
+              {isSubmitting ? "Inscription en cours..." : "M'inscrire à la Foire"}
             </button>
           </form>
         </div>
