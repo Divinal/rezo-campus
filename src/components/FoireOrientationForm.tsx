@@ -73,7 +73,7 @@ const FoireOrientationForm: React.FC = () => {
     } else {
       try {
         await emailjs.send(
-          "service_mznxo75", // Remplace si nécessaire
+          "service_7l7iiir", // Remplace si nécessaire
           "template_rdi66jm", // Ton modèle EmailJS
           {
             Nom: formData.Nom,
