@@ -1,9 +1,12 @@
 
 import React, { useState, useEffect } from 'react';
+import { Link } from 'react-router-dom';
 import Header from '../components/Header';
 import Footer from '../components/Footer';
 import BlogArticle from '../components/BlogArticle';
+import AdvertisementCard from '../components/AdvertisementCard';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
+import { Button } from '@/components/ui/button';
 import { supabase } from '@/lib/supabaseClient';
 
 interface Article {
@@ -12,13 +15,43 @@ interface Article {
   content: string;
   created_at: string;
   comment_count?: number;
-   logo_url?: string;
+  logo_url?: string;
+}
+
+interface Advertisement {
+  id: number;
+  title: string;
+  description: string;
+  image_url?: string;
+  link_url?: string;
 }
 
 const Blog: React.FC = () => {
   const [selectedArticle, setSelectedArticle] = useState<Article | null>(null);
   const [articles, setArticles] = useState<Article[]>([]);
+  const [advertisements, setAdvertisements] = useState<Advertisement[]>([]);
   const [loading, setLoading] = useState(true);
+
+  // Charger les publicités (données statiques pour l'exemple)
+  useEffect(() => {
+    const staticAds: Advertisement[] = [
+      {
+        id: 1,
+        title: "Formation en Marketing Digital",
+        description: "Devenez expert en marketing digital avec notre formation certifiante. Apprenez les dernières techniques SEO, publicité en ligne et analytics.",
+        image_url: "/Images/images.jpeg",
+        link_url: "/formulaire"
+      },
+      {
+        id: 2,
+        title: "École de Commerce International",
+        description: "Intégrez notre école de commerce reconnue. Programme Bachelor et Master avec stages à l'international et garantie d'emploi.",
+        image_url: "/Images/Cesa.jpg", 
+        link_url: "/contact"
+      }
+    ];
+    setAdvertisements(staticAds);
+  }, []);
 
   // Charger les articles depuis Supabase
   const loadArticles = async () => {
@@ -69,14 +102,23 @@ const Blog: React.FC = () => {
     loadArticles(); // Recharger les articles pour mettre à jour les compteurs
   };
 
+  // Fonction pour grouper les articles par 3
+  const groupArticlesByThree = (articles: Article[]) => {
+    const groups = [];
+    for (let i = 0; i < articles.length; i += 3) {
+      groups.push(articles.slice(i, i + 3));
+    }
+    return groups;
+  };
+
   if (loading) {
     return (
       <div className="min-h-screen flex flex-col">
         <Header />
         <main className="flex-grow bg-gray-50 py-8">
           <div className="container mx-auto px-4">
-            <div className="max-w-4xl mx-auto text-center">
-              <p>Chargement des articles...</p>
+            <div className="max-w-6xl mx-auto text-center">
+              <p>Chargement des contenus...</p>
             </div>
           </div>
         </main>
@@ -91,10 +133,7 @@ const Blog: React.FC = () => {
       
       <main className="flex-grow bg-gray-50 py-8">
         <div className="container mx-auto px-4">
-          <div className="max-w-4xl mx-auto">
-            <h1 className="text-3xl font-bold text-center mb-8">
-              Actualité - Avis sur nos établissements
-            </h1>
+          <div className="max-w-6xl mx-auto">
             
             {selectedArticle ? (
               <div>
@@ -102,7 +141,7 @@ const Blog: React.FC = () => {
                   onClick={() => setSelectedArticle(null)}
                   className="mb-6 bg-gray-500 hover:bg-gray-600 text-white px-4 py-2 rounded-md"
                 >
-                  ← Retour aux articles
+                  ← Retour aux actualités
                 </button>
                 <BlogArticle 
                   article={selectedArticle} 
@@ -110,51 +149,95 @@ const Blog: React.FC = () => {
                 />
               </div>
             ) : (
-             <div className="grid grid-cols-1 md:grid-cols-1 gap-6">
-                {articles.map((article) => (
-                  <Card key={article.article_id} className="hover:shadow-lg transition-shadow">
-                    <CardHeader>
-                      <div className="flex items-start gap-4">
-                        <div className="w-16 h-16 rounded-lg overflow-hidden flex-shrink-0">
-                         <img 
-                          src={article.logo_url || '/Images/images.jpeg'}
-                          alt="Logo école"
-                          className="w-12 h-12 object-contain rounded"
-                          onError={(e) => {
-                            e.currentTarget.style.display = 'none';
-                            const sibling = e.currentTarget.nextElementSibling as HTMLElement;
-                            if (sibling) sibling.style.display = 'flex';
-                          }}
-                        />
-                        </div>
-                        <div className="flex-1">
-                          <CardTitle className="text-xl">{article.title}</CardTitle>
-                          <CardDescription>
-                            Publié le {new Date(article.created_at).toLocaleDateString('fr-FR')}
-                          </CardDescription>
-                        </div>
+              <div className="space-y-12">
+                {/* Section Publicités */}
+                <section>
+                  <h2 className="text-2xl font-bold text-center mb-8 text-primary">
+                    🎯 Opportunités à ne pas manquer
+                  </h2>
+                  <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                    {advertisements.map((ad) => (
+                      <AdvertisementCard key={ad.id} advertisement={ad} />
+                    ))}
+                  </div>
+                </section>
+
+                {/* Section Actualités */}
+                <section>
+                  <h1 className="text-3xl font-bold text-center mb-8">
+                    Actualités - Avis sur nos établissements
+                  </h1>
+                  
+                  {/* Affichage des articles par groupes de 3 */}
+                  <div className="space-y-8">
+                    {groupArticlesByThree(articles).map((group, groupIndex) => (
+                      <div key={groupIndex} className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+                        {group.map((article) => (
+                          <Card key={article.article_id} className="hover:shadow-lg transition-shadow h-full flex flex-col">
+                            <CardHeader className="flex-grow">
+                              <div className="flex items-start gap-4 mb-4">
+                                <div className="w-12 h-12 rounded-lg overflow-hidden flex-shrink-0">
+                                  <img 
+                                    src={article.logo_url || '/Images/images.jpeg'}
+                                    alt="Logo école"
+                                    className="w-full h-full object-contain rounded"
+                                    onError={(e) => {
+                                      e.currentTarget.style.display = 'none';
+                                    }}
+                                  />
+                                </div>
+                                <div className="flex-1">
+                                  <CardTitle className="text-lg line-clamp-2">{article.title}</CardTitle>
+                                  <CardDescription className="text-sm">
+                                    {new Date(article.created_at).toLocaleDateString('fr-FR')}
+                                  </CardDescription>
+                                </div>
+                              </div>
+                            </CardHeader>
+                            <CardContent className="pt-0">
+                              <p className="text-gray-700 mb-4 text-sm line-clamp-3">
+                                {article.content.substring(0, 150)}...
+                              </p>
+                              <div className="flex items-center justify-between">
+                                <span className="text-sm text-gray-500 flex items-center gap-2">
+                                  <span className="bg-blue-100 text-blue-600 px-2 py-1 rounded text-xs font-semibold">
+                                    {article.comment_count || 0} avis
+                                  </span>
+                                </span>
+                                <button
+                                  onClick={() => setSelectedArticle(article)}
+                                  className="bg-blue-600 hover:bg-blue-700 text-white px-3 py-1 rounded-md text-sm"
+                                >
+                                  Lire et commenter
+                                </button>
+                              </div>
+                            </CardContent>
+                          </Card>
+                        ))}
                       </div>
-                    </CardHeader>
-                    <CardContent>
-                      <p className="text-gray-700 mb-4 line-clamp-3">
-                        {article.content.substring(0, 200)}...
-                      </p>
-                      <div className="flex items-center justify-between">
-                        <span className="text-sm text-gray-500 flex items-center gap-2">
-                          <span className="bg-blue-100 text-blue-600 px-2 py-1 rounded text-xs font-semibold">
-                            {article.comment_count || 0} avis
-                          </span>
-                        </span>
-                        <button
-                          onClick={() => setSelectedArticle(article)}
-                          className="bg-blue-600 hover:bg-blue-700 text-white px-4 py-2 rounded-md"
-                        >
-                          Lire et laisser un avis
-                        </button>
-                      </div>
-                    </CardContent>
-                  </Card>
-                ))}
+                    ))}
+                  </div>
+                </section>
+
+                {/* Lien vers la foire d'orientation */}
+                <section className="text-center py-8">
+                  <div className="bg-gradient-to-r from-red-500 to-red-600 rounded-lg p-8 text-white">
+                    <h3 className="text-2xl font-bold mb-4">
+                      🎓 Ne manquez pas la Foire d'Orientation Scolaire !
+                    </h3>
+                    <p className="text-lg mb-6">
+                      Découvrez les meilleures formations et rencontrez directement les établissements partenaires
+                    </p>
+                    <Link to="/FoireOrientationForm">
+                      <Button 
+                        size="lg" 
+                        className="bg-white text-red-600 hover:bg-gray-100 font-semibold px-8 py-3"
+                      >
+                        S'inscrire à la Foire d'Orientation →
+                      </Button>
+                    </Link>
+                  </div>
+                </section>
               </div>
             )}
           </div>
