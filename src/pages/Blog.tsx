@@ -37,16 +37,29 @@ const Blog: React.FC = () => {
     const staticAds: Advertisement[] = [
       {
         id: 1,
-        title: "Formation en Marketing Digital",
-        description: "Devenez expert en marketing digital avec notre formation certifiante. Apprenez les dernières techniques SEO, publicité en ligne et analytics.",
-        image_url: "/Images/images.jpeg",
-        link_url: "/formulaire"
+        title: "🎓 ÉVÉNEMENT SPÉCIAL POUR TOUS LES ÉTUDIANTS AU MAROC !",
+        description: "📢 Rézo Campus organise une grande Journée d’Orientation Scolaire \n\
+        📍 Dans l’enceinte de ISGA Campus – Casablanca\n\
+        📍 Adresse : 393 Route d'El Jadida, Casablanca 20250 \n\
+         🗓 Date : Jeudi 10 Juillet 2025 \n\
+         🕚 Heure : 11h00 précise \n\
+         🤝 En partenariat avec l’ISGA, l’une des plus grandes universités privées d’Afrique, reconnue pour la qualité de ses formations en management, ingénierie et technologies.Viens rencontrer leurs représentants et poser toutes vos questions sur les programmes, les admissions et les débouchés.",
+        image_url: "/Images/Foire.png",
+        link_url: "/FoireOrientationForm"
       },
       {
         id: 2,
-        title: "École de Commerce International",
-        description: "Intégrez notre école de commerce reconnue. Programme Bachelor et Master avec stages à l'international et garantie d'emploi.",
-        image_url: "/Images/Cesa.jpg", 
+        title: "🚀 Offre des stage pour renforcer les compétences en informatique ?",
+        description: "Rézo Campus te donne l’opportunité de faire un stage pratique de 2 à 3 mois dans un cadre réel et formateur ! 💻🛠️\n\
+                      📌 Parcours disponibles :\n\
+                      ✔️ Technicien informatique\n\
+                      ✔️ T.M Bureautique\n\
+                      ✔️ Technicien de support\n\
+                      ✔️ Technicien Réseau informatique\n\
+                      🎯 Durée du stage : 2 à 3 mois\n\
+                      📍 Lieu : Casablanca (Maroc)\n\
+                      💼 Stage encadré par des professionnels du domaine",
+        image_url: "/Images/Stage.jpg", 
         link_url: "/contact"
       }
     ];
