@@ -109,19 +109,19 @@ const Header: React.FC = () => {
               Contact
             </Link>             
           </nav>
-      {/* <Link
+      <Link
           to="/FoireOrientationForm"
           className="group relative inline-flex items-center bg-red-600 text-white border border-red-600 px-4 py-2 rounded-md transition-all duration-300 hover:bg-transparent hover:text-red-600"
         >
           <span className="transition-all duration-300 group-hover:mr-2">
-           𝐈𝐧𝐬𝐜𝐫𝐢𝐩𝐭𝐢𝐨𝐧 𝐚̀ 𝐥𝐚 𝐟𝐨𝐢𝐫𝐞 𝐝’𝐨𝐫𝐢𝐞𝐧𝐭𝐚𝐭𝐢𝐨𝐧
+           𝐈𝐧𝐬𝐜𝐫𝐢𝐩𝐭𝐢𝐨𝐧 Master Class
           </span>
           <span
             className="opacity-0 translate-x-[-8px] group-hover:opacity-100 group-hover:translate-x-0 transition-all duration-300 text-red-600"
           >
             →
           </span>
-        </Link> */}
+        </Link>
 
           {/* Recherche, Réseaux sociaux et Login (à droite) */}
           <div className="hidden lg:flex items-center gap-4">

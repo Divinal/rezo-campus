@@ -39,31 +39,36 @@ const Landing: React.FC = () => {
       <Header />
       
       {/* Hero Section */}
-      <section className="bg-gradient-to-br from-primary to-blue-800 text-white py-20">
-        <div className="container mx-auto px-4 text-center">
-          <h1 className="text-4xl md:text-6xl font-bold mb-6">
-            Trouvez Votre École Idéale
-          </h1>
-          <p className="text-xl md:text-2xl mb-8 max-w-3xl mx-auto">
-            Découvrez les meilleures écoles et universités, explorez leurs programmes 
-            et simplifiez vos démarches d'inscription.
-          </p>
-          <div className="flex flex-col sm:flex-row gap-4 justify-center">
-            <Link
-              to="/index"
-              className="bg-secondary text-primary px-8 py-4 rounded-lg font-semibold hover:bg-opacity-90 transition-colors flex items-center justify-center gap-2"
-            >
-              Explorer les Écoles <ArrowRight className="w-5 h-5" />
-            </Link>
-            <Link
-              to="/about"
-              className="border-2 border-white text-white px-8 py-4 rounded-lg font-semibold hover:bg-white hover:text-primary transition-colors"
-            >
-              En Savoir Plus
-            </Link>
-          </div>
+        <section className="relative bg-[url('/Images/Master.png')] bg-cover bg-center bg-no-repeat text-white py-20">
+      {/* Superposition sombre semi-transparente */}
+      <div className="absolute inset-0 bg-black bg-opacity-60 z-0"></div>
+
+      {/* Contenu principal, au-dessus de l'overlay */}
+      <div className="relative z-10 container mx-auto px-4 text-center">
+        <h1 className="text-4xl md:text-6xl font-bold mb-6">
+          Trouvez Votre École Idéale
+        </h1>
+        <p className="text-xl md:text-2xl mb-8 max-w-3xl mx-auto">
+          Découvrez les meilleures écoles et universités, explorez leurs programmes 
+          et simplifiez vos démarches d'inscription.
+        </p>
+        <div className="flex flex-col sm:flex-row gap-4 justify-center">
+          <Link
+            to="/index"
+            className="bg-secondary text-primary px-8 py-4 rounded-lg font-semibold hover:bg-opacity-90 transition-colors flex items-center justify-center gap-2"
+          >
+            Explorer les Écoles <ArrowRight className="w-5 h-5" />
+          </Link>
+          <Link
+            to="/about"
+            className="border-2 border-white text-white px-8 py-4 rounded-lg font-semibold hover:bg-white hover:text-primary transition-colors"
+          >
+            En Savoir Plus
+          </Link>
         </div>
-      </section>
+      </div>
+    </section>
+
 
       {/* Features Section */}
       <section className="py-20 bg-gray-50">
