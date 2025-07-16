@@ -140,7 +140,7 @@ const FoireOrientationForm: React.FC = () => {
       <div className="container mx-auto px-4">
         <div className="max-w-lg mx-auto bg-white rounded-lg shadow-md p-6">
           <h2 className="text-2xl font-bold text-center mb-6">
-            Inscription à la Foire d'Orientation
+            Inscription au Master Class du 27 Juillet 2025 100% en Ligne à 15h
           </h2>
 
           <form onSubmit={handleSubmit} className="space-y-4">
@@ -177,7 +177,7 @@ const FoireOrientationForm: React.FC = () => {
             
             <input 
               name="WhatsApp" 
-              placeholder="Numéro WhatsApp" 
+              placeholder="Numéro WhatsApp avec l'indice du pays (Ex : +212)" 
               value={formData.WhatsApp} 
               onChange={handleChange} 
               required 
@@ -193,8 +193,10 @@ const FoireOrientationForm: React.FC = () => {
               className="w-full p-3 border rounded-md"
               disabled={isSubmitting}
             >
-              <option value="">-- Dernier diplôme --</option>
+              <option value="">-- Niveau d'étude --</option>
+              <option value="Terminale">Terminale</option>
               <option value="Baccalauréat">Baccalauréat</option>
+               <option value="DTS/BTS">BTS/DTS</option>
               <option value="Licence">Licence</option>
               <option value="Master">Master</option>
               <option value="Doctorat">Doctorat</option>
@@ -210,12 +212,32 @@ const FoireOrientationForm: React.FC = () => {
               disabled={isSubmitting}
             >
               <option value="">-- Formation souhaitée --</option>
-              <option value="Informatique">Informatique</option>
-              <option value="Marketing">Marketing</option>
-              <option value="Finance">Finance</option>
+              <option value="Agronomie">Agronomie</option>
+              <option value="Architecture">Architecture</option>
+              <option value="Audiovisuel">Audiovisuel</option>
+              <option value="Biotechnologie">Biotechnologie</option>
+              <option value="Commerce International">Commerce International</option>
+              <option value="Communication">Communication</option>
+              <option value="Cybersécurité">Cybersécurité</option>
+              <option value="Développement Web">Développement Web</option>
+              <option value="Design Graphique">Design Graphique</option>
               <option value="Droit">Droit</option>
+              <option value="Économie">Économie</option>
+              <option value="Finance">Finance</option>
+              <option value="Gestion des Ressources Humaines">Gestion des Ressources Humaines</option>
+              <option value="Informatique">Informatique</option>
+              <option value="Ingénierie">Ingénierie</option>
+              <option value="Intelligence Artificielle">Intelligence Artificielle</option>
+              <option value="Journalisme">Journalisme</option>
+              <option value="Langues Étrangères">Langues Étrangères</option>
+              <option value="Marketing">Marketing</option>
               <option value="Médecine">Médecine</option>
-              <option value="Autre">Autre</option>
+              <option value="Paramédical">Paramédical</option>
+              <option value="Psychologie">Psychologie</option>
+              <option value="Sciences de l'Éducation">Sciences de l'Éducation</option>
+              <option value="Sciences Politiques">Sciences Politiques</option>
+              <option value="Tourisme et Hôtellerie">Tourisme et Hôtellerie</option>
+            <option value="Autre">Autre</option>
             </select>
 
             {formData.Formation === "Autre" && (
@@ -247,7 +269,7 @@ const FoireOrientationForm: React.FC = () => {
               disabled={!recaptchaToken || isSubmitting} 
               className="w-full bg-blue-600 hover:bg-blue-700 disabled:bg-gray-400 text-white py-3 rounded-md transition-colors"
             >
-              {isSubmitting ? "Inscription en cours..." : "M'inscrire à la Foire"}
+              {isSubmitting ? "Inscription en cours..." : "Je m'inscrire au Master Class"}
             </button>
           </form>
         </div>
