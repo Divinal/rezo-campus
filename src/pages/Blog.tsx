@@ -37,31 +37,29 @@ const Blog: React.FC = () => {
     const staticAds: Advertisement[] = [
       {
         id: 1,
-        title: "🎓 ÉVÉNEMENT SPÉCIAL POUR TOUS LES ÉTUDIANTS AU MAROC !",
-        description: "📢 Rézo Campus organise une grande Journée d’Orientation Scolaire \n\
-        📍 Dans l’enceinte de ISGA Campus – Casablanca\n\
-        📍 Adresse : 393 Route d'El Jadida, Casablanca 20250 \n\
-         🗓 Date : Jeudi 10 Juillet 2025 \n\
-         🕚 Heure : 11h00 précise \n\
-         🤝 En partenariat avec l’ISGA, l’une des plus grandes universités privées d’Afrique, reconnue pour la qualité de ses formations en management, ingénierie et technologies.Viens rencontrer leurs représentants et poser toutes vos questions sur les programmes, les admissions et les débouchés.",
-        image_url: "/Images/Foire.png",
+        title: "🎓 MASTERCLASS EXCEPTIONNELLE – ÉTUDIER À L'ÉTRANGER 🎓",
+        description: "📢 Rézo Campus organise une masterclass spéciale pour accompagner les étudiants, bacheliers, parents d’élèves et jeunes ambitieux qui souhaitent obtenir des informations fiables et utiles sur les études à l’étranger. Ne rate pas cette opportunité unique pour recevoir des conseils concrets, poser tes questions en direct et découvrir les clés d’une orientation réussie à l’international ! \n\
+         🗓 Date : Dimanche 27 Juillet 2025 \n\
+         🕚 Heure : 15h00 \n\
+         🤝 100% en Ligne",
+        image_url: "/Images/Master1.png",
         link_url: "/FoireOrientationForm"
-      },
-      {
-        id: 2,
-        title: "🚀 Offre des stage pour renforcer les compétences en informatique ?",
-        description: "Rézo Campus te donne l’opportunité de faire un stage pratique de 2 à 3 mois dans un cadre réel et formateur ! 💻🛠️\n\
-                      📌 Parcours disponibles :\n\
-                      ✔️ Technicien informatique\n\
-                      ✔️ T.M Bureautique\n\
-                      ✔️ Technicien de support\n\
-                      ✔️ Technicien Réseau informatique\n\
-                      🎯 Durée du stage : 2 à 3 mois\n\
-                      📍 Lieu : Casablanca (Maroc)\n\
-                      💼 Stage encadré par des professionnels du domaine",
-        image_url: "/Images/Stage.jpg", 
-        link_url: "/contact"
       }
+      // {
+      //   id: 2,
+      //   title: "🚀 Offre des stage pour renforcer les compétences en informatique ?",
+      //   description: "Rézo Campus te donne l’opportunité de faire un stage pratique de 2 à 3 mois dans un cadre réel et formateur ! 💻🛠️\n\
+      //                 📌 Parcours disponibles :\n\
+      //                 ✔️ Technicien informatique\n\
+      //                 ✔️ T.M Bureautique\n\
+      //                 ✔️ Technicien de support\n\
+      //                 ✔️ Technicien Réseau informatique\n\
+      //                 🎯 Durée du stage : 2 à 3 mois\n\
+      //                 📍 Lieu : Casablanca (Maroc)\n\
+      //                 💼 Stage encadré par des professionnels du domaine",
+      //   image_url: "/Images/Stage.jpg", 
+      //   link_url: "/contact"
+      // }
     ];
     setAdvertisements(staticAds);
   }, []);

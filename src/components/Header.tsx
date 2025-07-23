@@ -344,7 +344,7 @@ const Header: React.FC = () => {
           </Link>
         </div>
       </div>
-
+      
       {/* Dialog de recherche */}
       <CommandDialog open={isSearchOpen} onOpenChange={setIsSearchOpen}>
         <CommandInput placeholder="Rechercher une école ou une formation..." />
