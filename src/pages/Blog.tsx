@@ -233,19 +233,19 @@ const Blog: React.FC = () => {
                 <section className="text-center py-8">
                   <div className="bg-gradient-to-r from-red-500 to-red-600 rounded-lg p-8 text-white">
                     <h3 className="text-2xl font-bold mb-4">
-                      🎓 Ne manquez pas la Foire d'Orientation Scolaire !
+                      🎓 1ère ÉDITION – FORMATION SPÉCIALE VACANCES !
                     </h3>
                     <p className="text-lg mb-6">
-                      Découvrez les meilleures formations et rencontrez directement les établissements partenaires
+                      Tu es au Maroc pendant les vacances ? Profite-en pour obtenir une certification professionnelle reconnue, 100% en dialecte marocain (Darija) ! 🧠 Informatique, communication, outils modernes… Tout ça, gratuitement 😲 📆 Date du début: le 05 Aout 2025 📍 Ecole Miage Casa
                     </p>
-                    <Link to="/FoireOrientationForm">
+                   <a href="mailto:campusrezo@gmail.com">
                       <Button 
                         size="lg" 
                         className="bg-white text-red-600 hover:bg-gray-100 font-semibold px-8 py-3"
                       >
-                        S'inscrire à la Foire d'Orientation →
+                        Reserve ta place →
                       </Button>
-                    </Link>
+                    </a>
                   </div>
                 </section>
               </div>
