@@ -37,13 +37,12 @@ const Blog: React.FC = () => {
     const staticAds: Advertisement[] = [
       {
         id: 1,
-        title: "🎓 MASTERCLASS EXCEPTIONNELLE – ÉTUDIER À L'ÉTRANGER 🎓",
-        description: "📢 Rézo Campus organise une masterclass spéciale pour accompagner les étudiants, bacheliers, parents d’élèves et jeunes ambitieux qui souhaitent obtenir des informations fiables et utiles sur les études à l’étranger. Ne rate pas cette opportunité unique pour recevoir des conseils concrets, poser tes questions en direct et découvrir les clés d’une orientation réussie à l’international ! \n\
-         🗓 Date : Dimanche 27 Juillet 2025 \n\
-         🕚 Heure : 15h00 \n\
-         🤝 100% en Ligne",
-        image_url: "/Images/Master1.png",
-        link_url: "/FoireOrientationForm"
+        title: "1ère ÉDITION – FORMATION SPÉCIALE VACANCES",
+        description: "Tu es au Maroc pendant les vacances ? Profite-en pour obtenir une certification professionnelle reconnue, 100% en dialecte marocain (Darija) ! 🧠 Informatique, communication, outils modernes… Tout ça, gratuitement 😲 \n\
+         📆 Date du début: le 05 Aout 2025 \n\
+         📍 Ecole Miage Casa",
+        image_url: "/Images/Formation.png",
+        link_url: "/index"
       }
       // {
       //   id: 2,

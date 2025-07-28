@@ -39,7 +39,7 @@ const Landing: React.FC = () => {
       <Header />
       
       {/* Hero Section */}
-        <section className="relative bg-[url('/Images/Master.png')] bg-cover bg-center bg-no-repeat text-white py-20">
+        <section className="relative bg-[url('/Images/Formation.png')] bg-cover bg-center bg-no-repeat text-white py-20">
       {/* Superposition sombre semi-transparente */}
       <div className="absolute inset-0 bg-black bg-opacity-60 z-0"></div>
 

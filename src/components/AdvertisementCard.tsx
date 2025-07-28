@@ -133,7 +133,7 @@ const AdvertisementCard: React.FC<AdvertisementCardProps> = ({ advertisement }) 
             className="w-full"
             onClick={() => setShowComments(!showComments)}
           >
-            {showComments ? 'Masquer les commentaires' : `Voir les commentaires (${comments.length})`}
+            {showComments ? 'Masquer les commentaires' : `Voir et laisse les commentaires (${comments.length})`}
           </Button>
 
           {showComments && (
