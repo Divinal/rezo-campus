@@ -243,7 +243,7 @@ const Blog: React.FC = () => {
                         size="lg" 
                         className="bg-white text-red-600 hover:bg-gray-100 font-semibold px-8 py-3"
                       >
-                        Reserve ta place →
+                        Reserve ta place sur → campusrezo@gmail.com
                       </Button>
                     </a>
                   </div>
