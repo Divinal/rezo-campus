@@ -6,19 +6,19 @@ import { Users, Mail, Phone } from 'lucide-react';
 
 const About: React.FC = () => {
   const teamMembers = [
-    {
-      id: 1,
-      name: "Sokhna Maty NDIAYE",
-      role: "Consultante Communication & Marketing",
-      description: "Je mets ma passion pour les mots, les marques et l’impact au service des entreprises et projets qui souhaitent se démarquer, fédérer et croître. Forte d’une approche à la fois stratégique et créative.",
-      image: "/Images/Profil3.jpg",
-      email: "ndiayematy4633@gmail.com",
-      phone: "+212 779-367718"
-    },
+    // {
+    //   id: 1,
+    //   name: "Sokhna Maty NDIAYE",
+    //   role: "Consultante Communication & Marketing",
+    //   description: "Je mets ma passion pour les mots, les marques et l’impact au service des entreprises et projets qui souhaitent se démarquer, fédérer et croître. Forte d’une approche à la fois stratégique et créative.",
+    //   image: "/Images/Profil3.jpg",
+    //   email: "ndiayematy4633@gmail.com",
+    //   phone: "+212 779-367718"
+    // },
     {
       id: 2,
       name: "Abderrahmen ELOUAFI",
-      role: "Consultant IT & Responsable Partenariats",
+      role: "Responsable IT & Partenariats",
       description: "Passionné par la transmission de savoirs, la veille technologique, et l’optimisation de la visibilité numérique. Fort d’une solide expertise dans le secteur de la technologie et du digital, j'accompagne institutions et professionnels dans la montée en compétences, l’amélioration de leur présence en ligne, et la création de partenariats à valeur ajoutée.",
       image: "/Images/Profil2.png",
       email: "elouafiabderrahmen@gmail.com",
@@ -29,7 +29,7 @@ const About: React.FC = () => {
       name: "MVOUAMA Divin Aldriche",
       role: "Fondateur Rézo Campus - RT&D ",
       description: "Développeur freelance Full-Stack, passionné par les technologies, l’innovation numérique et le développement logiciel. Fondateur de la plateforme éducative Rézo Campus, j’œuvre à rendre l’orientation scolaire et universitaire plus accessible grâce à des outils digitaux performants. Mon parcours est marqué par l'entrepreneuriat, la curiosité intellectuelle et la persévérance",
-      image: "/Images/Profil1.jpeg",
+      image: "/Images/Photo.png",
       email: "mvouamad@gmail.com",
       phone: "+212 617-725867"
     }

@@ -41,7 +41,7 @@ const Blog: React.FC = () => {
         description: "Tu es au Maroc pendant les vacances ? Profite-en pour obtenir une certification professionnelle reconnue, 100% en dialecte marocain (Darija) ! 🧠 Informatique, communication, outils modernes… Tout ça, gratuitement 😲 \n\
          📆 Date du début: le 05 Aout 2025 \n\
          📍 Ecole Miage Casa",
-        image_url: "/Images/Formation.png",
+        image_url: "/Images/Formation.jpg",
         link_url: "/index"
       }
       // {
@@ -163,7 +163,7 @@ const Blog: React.FC = () => {
                 {/* Section Publicités */}
                 <section>
                   <h2 className="text-2xl font-bold text-center mb-8 text-primary">
-                    🎯 Opportunités à ne pas manquer
+                    Opportunités à ne pas manquer
                   </h2>
                   <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                     {advertisements.map((ad) => (
@@ -230,7 +230,7 @@ const Blog: React.FC = () => {
                 </section>
 
                 {/* Lien vers la foire d'orientation */}
-                <section className="text-center py-8">
+                {/* <section className="text-center py-8">
                   <div className="bg-gradient-to-r from-red-500 to-red-600 rounded-lg p-8 text-white">
                     <h3 className="text-2xl font-bold mb-4">
                       🎓 1ère ÉDITION – FORMATION SPÉCIALE VACANCES !
@@ -247,7 +247,7 @@ const Blog: React.FC = () => {
                       </Button>
                     </a>
                   </div>
-                </section>
+                </section> */}
               </div>
             )}
           </div>

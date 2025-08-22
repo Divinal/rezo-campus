@@ -3,7 +3,7 @@ import React from "react";
 const AvisGoogle = () => {
   return (
     <div className="w-full text-center mt-8">
-      <h2 className="text-xl font-semibold mb-4">✨ Vous appréciez RezoCampus ?  ⭐ Laissez un avis pour l'amélioration de nos contenus</h2>
+      <h2 className="text-xl font-semibold mb-4">Vous appréciez RezoCampus ?  Laissez un avis pour l'amélioration de nos contenus</h2>
       <a
         href="https://g.page/r/CQTCfoLwaBQ-EAE/review"
         target="_blank"
