@@ -42,23 +42,15 @@ const Blog: React.FC = () => {
          📆 Date du début: le 05 Aout 2025 \n\
          📍 Ecole Miage Casa",
         image_url: "/Images/Formation.jpg",
-        link_url: "/index"
+        link_url: "/contact"
+      },
+      {
+        id: 2,
+        title: "Bourse d’Études en Russie 2026 | Programme Open Doors – Étudier gratuitement !",
+        description: "Vous rêvez étudier à l'étranger ? la Russie met à votre disposition une bourse d'étude 100% financier, alors ne cherchez plus ! Le Programme Open Doors (Russian Scholarship Project) offre aux étudiants internationaux la possibilité de rejoindre des cycles Licence, Master, Doctorat, voire Post‑Doctorat dans des universités russes prestigieuses—le tout entièrement gratuit et à distance.",
+        image_url: "/Images/Bourse.png", 
+        link_url: "https://youtu.be/i02klmIgH94"
       }
-      // {
-      //   id: 2,
-      //   title: "🚀 Offre des stage pour renforcer les compétences en informatique ?",
-      //   description: "Rézo Campus te donne l’opportunité de faire un stage pratique de 2 à 3 mois dans un cadre réel et formateur ! 💻🛠️\n\
-      //                 📌 Parcours disponibles :\n\
-      //                 ✔️ Technicien informatique\n\
-      //                 ✔️ T.M Bureautique\n\
-      //                 ✔️ Technicien de support\n\
-      //                 ✔️ Technicien Réseau informatique\n\
-      //                 🎯 Durée du stage : 2 à 3 mois\n\
-      //                 📍 Lieu : Casablanca (Maroc)\n\
-      //                 💼 Stage encadré par des professionnels du domaine",
-      //   image_url: "/Images/Stage.jpg", 
-      //   link_url: "/contact"
-      // }
     ];
     setAdvertisements(staticAds);
   }, []);
