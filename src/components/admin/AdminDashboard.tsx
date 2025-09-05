@@ -9,6 +9,8 @@ import ContactMessagesTable from './ContactMessagesTable';
 import InscriptionsTable from './InscriptionsTable';
 import MessagesTable from './MessagesTable';
 import UserProfilesTable from './UserProfilesTable';
+import PropertiesManagement from './PropertiesManagement';
+import PropertyCommentsTable from './PropertyCommentsTable';
 
 const AdminDashboard: React.FC = () => {
   return (
@@ -23,8 +25,10 @@ const AdminDashboard: React.FC = () => {
       </div>
 
       <Tabs defaultValue="schools" className="w-full">
-        <TabsList className="grid w-full grid-cols-7">
+        <TabsList className="grid w-full grid-cols-9">
           <TabsTrigger value="schools">Établissements</TabsTrigger>
+          <TabsTrigger value="properties">Immobilier</TabsTrigger>
+          <TabsTrigger value="property-comments">Commentaires Immo</TabsTrigger>
           <TabsTrigger value="inscriptions">Inscriptions</TabsTrigger>
           <TabsTrigger value="messages">Messages</TabsTrigger>
           <TabsTrigger value="contact">Contact</TabsTrigger>
@@ -40,6 +44,28 @@ const AdminDashboard: React.FC = () => {
             </CardHeader>
             <CardContent>
               <SchoolsManagement />
+            </CardContent>
+          </Card>
+        </TabsContent>
+
+        <TabsContent value="properties">
+          <Card>
+            <CardHeader>
+              <CardTitle>Gestion des propriétés immobilières</CardTitle>
+            </CardHeader>
+            <CardContent>
+              <PropertiesManagement />
+            </CardContent>
+          </Card>
+        </TabsContent>
+
+        <TabsContent value="property-comments">
+          <Card>
+            <CardHeader>
+              <CardTitle>Commentaires sur les propriétés</CardTitle>
+            </CardHeader>
+            <CardContent>
+              <PropertyCommentsTable />
             </CardContent>
           </Card>
         </TabsContent>
