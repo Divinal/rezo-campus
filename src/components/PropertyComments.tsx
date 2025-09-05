@@ -9,12 +9,12 @@ import { MessageCircle, User, Clock } from 'lucide-react';
 import { toast } from '@/hooks/use-toast';
 
 interface Comment {
-  id: string;
-  property_id: string;
-  author_name: string;
-  author_email: string;
-  content: string;
-  created_at: string;
+ id: string;
+  propriete_id: string;
+  nom_auteur: string;
+  email_auteur: string | null;
+  contenu: string;
+  cree_le: string;
 }
 
 interface PropertyCommentsProps {
@@ -216,15 +216,15 @@ const PropertyComments: React.FC<PropertyCommentsProps> = ({ propertyId }) => {
                 <div className="flex items-center gap-2 mb-2">
                   <User className="w-4 h-4 text-gray-500" />
                   <span className="font-medium text-gray-800">
-                    {comment.author_name}
+                    {comment.nom_auteur}
                   </span>
                   <div className="flex items-center gap-1 text-sm text-gray-500 ml-auto">
                     <Clock className="w-3 h-3" />
-                    {formatDate(comment.created_at)}
+                    {formatDate(comment.cree_le)}
                   </div>
                 </div>
                 <p className="text-gray-700 leading-relaxed">
-                  {comment.content}
+                  {comment.contenu}
                 </p>
               </div>
             ))

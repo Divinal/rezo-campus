@@ -12,24 +12,24 @@ import PropertyCard from '@/components/PropertyCard';
 import PropertyComments from '@/components/PropertyComments';
 
 interface Property {
-  id: string;
-  title: string;
+   id: string;
+  titre: string;
   description: string;
-  type: 'vente' | 'location';
-  price: number;
+  type_offre: "vente" | "location";
+  prix: number;
   surface: number;
-  bedrooms: number;
-  bathrooms: number;
-  property_type: 'appartement' | 'studio' | 'maison' | 'villa';
+  chambres: number;
+  salles_bain: number;
+  type_propriete: "appartement" | "studio" | "maison" | "villa";
   quartier: string;
   ville: string;
-  address: string;
-  features: string[];
+  adresse: string;
+  equipements: string[];
   images: string[];
-  contact_phone: string;
-  contact_email: string;
-  created_at: string;
-  views: number;
+  telephone: string;
+  email: string;
+  cree_le: string;
+  vues: number;
 }
 
 const Immo: React.FC = () => {
@@ -77,12 +77,12 @@ const Immo: React.FC = () => {
     try {
       const { error } = await supabase
         .from('properties')
-        .update({ views: properties.find(p => p.id === propertyId)?.views + 1 || 1 })
+        .update({ vues: properties.find(p => p.id === propertyId)?.vues + 1 || 1 })
         .eq('id', propertyId);
 
       if (!error) {
         setProperties(prev => 
-          prev.map(p => p.id === propertyId ? { ...p, views: (p.views || 0) + 1 } : p)
+          prev.map(p => p.id === propertyId ? { ...p, vues: (p.vues || 0) + 1 } : p)
         );
       }
     } catch (error) {
@@ -95,7 +95,7 @@ const Immo: React.FC = () => {
     incrementViews(property.id);
   };
 
-  const filteredProperties = properties.filter(property => property.type === activeTab);
+  const filteredProperties = properties.filter(property => property.type_offre === activeTab);
 
   if (loading) {
     return (
@@ -159,7 +159,7 @@ const Immo: React.FC = () => {
                     {filteredProperties.map((property) => (
                       <PropertyCard
                         key={property.id}
-                        property={property}
+                        type_propriete={property}
                         onViewDetails={handleViewDetails}
                       />
                     ))}
@@ -192,7 +192,7 @@ const Immo: React.FC = () => {
                     {filteredProperties.map((property) => (
                       <PropertyCard
                         key={property.id}
-                        property={property}
+                        type_propriete={property}
                         onViewDetails={handleViewDetails}
                       />
                     ))}
@@ -221,15 +221,15 @@ const Immo: React.FC = () => {
                 <div className="flex justify-between items-start mb-6">
                   <div>
                     <h2 className="text-2xl font-bold text-primary mb-2">
-                      {selectedProperty.title}
+                      {selectedProperty.titre}
                     </h2>
                     <div className="flex items-center text-gray-600 mb-2">
                       <MapPin className="w-4 h-4 mr-1" />
                       {selectedProperty.quartier}, {selectedProperty.ville}
                     </div>
                     <div className="text-2xl font-bold text-green-600">
-                      {selectedProperty.price.toLocaleString()} DH
-                      {selectedProperty.type === 'location' && '/mois'}
+                      {selectedProperty.prix.toLocaleString()} DH
+                      {selectedProperty.type_offre === 'location' && '/mois'}
                     </div>
                   </div>
                   <Button
@@ -256,26 +256,26 @@ const Immo: React.FC = () => {
                           </div>
                           <div className="flex items-center gap-1">
                             <Bed className="w-4 h-4 text-green-500" />
-                            <span>{selectedProperty.bedrooms} ch.</span>
+                            <span>{selectedProperty.chambres} ch.</span>
                           </div>
                           <div className="flex items-center gap-1">
                             <Bath className="w-4 h-4 text-purple-500" />
-                            <span>{selectedProperty.bathrooms} sdb</span>
+                            <span>{selectedProperty.salles_bain} sdb</span>
                           </div>
                         </div>
                         <div>
                           <Badge variant="secondary">
-                            {selectedProperty.property_type}
+                            {selectedProperty. type_propriete}
                           </Badge>
                         </div>
                         <div>
-                          <strong>Adresse:</strong> {selectedProperty.address}
+                          <strong>Adresse:</strong> {selectedProperty.adresse}
                         </div>
-                        {selectedProperty.features.length > 0 && (
+                        {selectedProperty.equipements.length > 0 && (
                           <div>
                             <strong>Équipements:</strong>
                             <div className="flex flex-wrap gap-1 mt-1">
-                              {selectedProperty.features.map((feature, index) => (
+                              {selectedProperty.equipements.map((feature, index) => (
                                 <Badge key={index} variant="outline" className="text-xs">
                                   {feature}
                                 </Badge>
@@ -303,10 +303,10 @@ const Immo: React.FC = () => {
                       </CardHeader>
                       <CardContent className="space-y-2">
                         <div>
-                          <strong>Téléphone:</strong> {selectedProperty.contact_phone}
+                          <strong>Téléphone:</strong> {selectedProperty.telephone}
                         </div>
                         <div>
-                          <strong>Email:</strong> {selectedProperty.contact_email}
+                          <strong>Email:</strong> {selectedProperty.email}
                         </div>
                       </CardContent>
                     </Card>
