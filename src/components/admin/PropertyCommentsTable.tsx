@@ -5,8 +5,11 @@ import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
 import { toast } from 'sonner';
-import { Trash2, Eye } from 'lucide-react';
+import { Trash2, Eye, Plus } from 'lucide-react';
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from '@/components/ui/dialog';
+import { Input } from '@/components/ui/input';
+import { Textarea } from '@/components/ui/textarea';
+import { Label } from '@/components/ui/label';
 
 interface PropertyComment {
   id: string;
@@ -16,6 +19,7 @@ interface PropertyComment {
   contenu: string;
   cree_le: string;
   proprietes?: {
+    id?: string;
     titre: string;
     type_offre: string;
     ville: string;
@@ -26,6 +30,15 @@ const PropertyCommentsTable: React.FC = () => {
   const [comments, setComments] = useState<PropertyComment[]>([]);
   const [isLoading, setIsLoading] = useState(true);
   const [selectedComment, setSelectedComment] = useState<PropertyComment | null>(null);
+  const [showAddDialog, setShowAddDialog] = useState(false);
+
+  // Formulaire d'ajout
+  const [newComment, setNewComment] = useState({
+    propriete_id: '',
+    auteur_nom: '',
+    auteur_email: '',
+    contenu: ''
+  });
 
   useEffect(() => {
     fetchComments();
@@ -37,7 +50,7 @@ const PropertyCommentsTable: React.FC = () => {
         .from('commentaires_proprietes')
         .select(`
           *,
-          proprietes(titre, type_offre, ville)
+          proprietes(id, titre, type_offre, ville)
         `)
         .order('cree_le', { ascending: false });
 
@@ -69,6 +82,36 @@ const PropertyCommentsTable: React.FC = () => {
     }
   };
 
+  const handleAdd = async (e: React.FormEvent) => {
+    e.preventDefault();
+
+    if (!newComment.propriete_id || !newComment.auteur_nom || !newComment.contenu) {
+      toast.error("Merci de remplir tous les champs obligatoires");
+      return;
+    }
+
+    try {
+      const { error } = await supabase
+        .from('commentaires_proprietes')
+        .insert([{
+          propriete_id: newComment.propriete_id,
+          auteur_nom: newComment.auteur_nom,
+          auteur_email: newComment.auteur_email || null,
+          contenu: newComment.contenu
+        }]);
+
+      if (error) throw error;
+
+      toast.success("Commentaire ajouté !");
+      setShowAddDialog(false);
+      setNewComment({ propriete_id: '', auteur_nom: '', auteur_email: '', contenu: '' });
+      fetchComments();
+    } catch (error) {
+      console.error("Erreur lors de l'ajout:", error);
+      toast.error("Impossible d'ajouter le commentaire");
+    }
+  };
+
   const formatDate = (dateString: string) => {
     return new Date(dateString).toLocaleDateString('fr-FR', {
       year: 'numeric',
@@ -80,15 +123,74 @@ const PropertyCommentsTable: React.FC = () => {
   };
 
   if (isLoading) {
-    return <div className="text-center py-8">Chargement des commentaires...</div>;
+    return <div className="text-center">
+            <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-primary mx-auto mb-4"></div>
+            <p className="text-gray-600">Chargement des commentaires...</p>
+          </div>;
   }
 
   return (
     <div className="space-y-6">
       <Card>
-        <CardHeader>
+        <CardHeader className="flex justify-between items-center">
           <CardTitle>Commentaires sur les propriétés ({comments.length})</CardTitle>
+          <Dialog open={showAddDialog} onOpenChange={setShowAddDialog}>
+            <DialogTrigger asChild>
+              <Button>
+                <Plus className="h-4 w-4 mr-2" /> Ajouter un commentaire
+              </Button>
+            </DialogTrigger>
+            <DialogContent className="max-w-lg">
+              <DialogHeader>
+                <DialogTitle>Ajouter un commentaire</DialogTitle>
+              </DialogHeader>
+              <form onSubmit={handleAdd} className="space-y-4">
+                <div>
+                  <Label>Propriété ID *</Label>
+                  <Input
+                    value={newComment.propriete_id}
+                    onChange={(e) => setNewComment(prev => ({ ...prev, propriete_id: e.target.value }))}
+                    placeholder="ID de la propriété liée"
+                    required
+                  />
+                </div>
+                <div>
+                  <Label>Nom *</Label>
+                  <Input
+                    value={newComment.auteur_nom}
+                    onChange={(e) => setNewComment(prev => ({ ...prev, auteur_nom: e.target.value }))}
+                    placeholder="Nom de l'auteur"
+                    required
+                  />
+                </div>
+                <div>
+                  <Label>Email</Label>
+                  <Input
+                    type="email"
+                    value={newComment.auteur_email}
+                    onChange={(e) => setNewComment(prev => ({ ...prev, auteur_email: e.target.value }))}
+                    placeholder="Email de l'auteur (optionnel)"
+                  />
+                </div>
+                <div>
+                  <Label>Commentaire *</Label>
+                  <Textarea
+                    value={newComment.contenu}
+                    onChange={(e) => setNewComment(prev => ({ ...prev, contenu: e.target.value }))}
+                    placeholder="Votre commentaire"
+                    rows={3}
+                    required
+                  />
+                </div>
+                <div className="flex justify-end gap-2">
+                  <Button type="button" variant="outline" onClick={() => setShowAddDialog(false)}>Annuler</Button>
+                  <Button type="submit">Enregistrer</Button>
+                </div>
+              </form>
+            </DialogContent>
+          </Dialog>
         </CardHeader>
+
         <CardContent>
           {comments.length === 0 ? (
             <p className="text-center text-gray-500 py-8">Aucun commentaire trouvé</p>

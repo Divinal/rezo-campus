@@ -74,21 +74,19 @@ const Immo: React.FC = () => {
   };
 
   const incrementViews = async (propertyId: string) => {
-    try {
-      const { error } = await supabase
-        .from('proprietes')
-        .update({ vues: properties.find(p => p.id === propertyId)?.vues + 1 || 1 })
-        .eq('id', propertyId);
+  const { error } = await supabase.rpc('increment_views', { property_id: propertyId });
 
-      if (!error) {
-        setProperties(prev => 
-          prev.map(p => p.id === propertyId ? { ...p, vues: (p.vues || 0) + 1 } : p)
-        );
-      }
-    } catch (error) {
-      console.error('Erreur lors de l\'incrémentation des vues:', error);
-    }
-  };
+  if (error) {
+    console.error("Erreur lors de l'incrémentation des vues:", error);
+  } else {
+    // Mise à jour locale pour voir l'effet directement sans rechargement
+    setProperties(prev =>
+      prev.map(p =>
+        p.id === propertyId ? { ...p, vues: (p.vues || 0) + 1 } : p
+      )
+    );
+  }
+};
 
   const handleViewDetails = (property: Property) => {
     setSelectedProperty(property);
