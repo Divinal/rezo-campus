@@ -22,8 +22,13 @@ interface Property {
   adresse: string;
   ville: string;
   quartier: string;
+  type_propriete: string;
+  equipements: string[];
   images: string[];
+  telephone_contact: string;
+  email_contact: string;
   cree_le: string;
+  vues: number;
 }
 
 const PropertiesManagement: React.FC = () => {
@@ -42,7 +47,11 @@ const PropertiesManagement: React.FC = () => {
     address: '',
     city: '',
     district: '',
-    images: ''
+    propertyType: '',
+    equipments: '',
+    images: '',
+    contactPhone: '',
+    contactEmail: ''
   });
 
   useEffect(() => {
@@ -82,7 +91,12 @@ const PropertiesManagement: React.FC = () => {
         adresse: formData.address,
         ville: formData.city,
         quartier: formData.district,
-        images: formData.images ? formData.images.split(',').map(img => img.trim()) : []
+        type_propriete: formData.propertyType,
+        equipements: formData.equipments ? formData.equipments.split(',').map(eq => eq.trim()) : [],
+        images: formData.images ? formData.images.split(',').map(img => img.trim()) : [],
+        telephone_contact: formData.contactPhone,
+        email_contact: formData.contactEmail,
+        vues: 0
       };
 
       if (editingProperty) {
@@ -125,7 +139,11 @@ const PropertiesManagement: React.FC = () => {
       address: property.adresse,
       city: property.ville,
       district: property.quartier,
-      images: property.images.join(', ')
+      propertyType: property.type_propriete || '',
+      equipments: property.equipements ? property.equipements.join(', ') : '',
+      images: property.images ? property.images.join(', ') : '',
+      contactPhone: property.telephone_contact || '',
+      contactEmail: property.email_contact || ''
     });
   };
 
@@ -160,7 +178,11 @@ const PropertiesManagement: React.FC = () => {
       address: '',
       city: '',
       district: '',
-      images: ''
+      propertyType: '',
+      equipments: '',
+      images: '',
+      contactPhone: '',
+      contactEmail: ''
     });
   };
 
@@ -249,10 +271,43 @@ const PropertiesManagement: React.FC = () => {
               required
             />
 
+            <Select value={formData.propertyType} onValueChange={(value) => setFormData({...formData, propertyType: value})}>
+              <SelectTrigger>
+                <SelectValue placeholder="Type de propriété" />
+              </SelectTrigger>
+              <SelectContent>
+                <SelectItem value="appartement">Appartement</SelectItem>
+                <SelectItem value="studio">Studio</SelectItem>
+                <SelectItem value="maison">Maison</SelectItem>
+                <SelectItem value="villa">Villa</SelectItem>
+              </SelectContent>
+            </Select>
+
+            <Input
+              placeholder="Équipements (séparés par des virgules)"
+              value={formData.equipments}
+              onChange={(e) => setFormData({...formData, equipments: e.target.value})}
+            />
+
             <Input
               placeholder="URLs des images (séparées par des virgules)"
               value={formData.images}
               onChange={(e) => setFormData({...formData, images: e.target.value})}
+            />
+
+            <Input
+              placeholder="Téléphone de contact"
+              value={formData.contactPhone}
+              onChange={(e) => setFormData({...formData, contactPhone: e.target.value})}
+              required
+            />
+
+            <Input
+              placeholder="Email de contact"
+              type="email"
+              value={formData.contactEmail}
+              onChange={(e) => setFormData({...formData, contactEmail: e.target.value})}
+              required
             />
 
             <div className="md:col-span-2">

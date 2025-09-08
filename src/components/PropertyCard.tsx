@@ -17,10 +17,10 @@ interface Property {
   quartier: string;
   ville: string;
   adresse: string;
-  equipements: string[];
-  images: string[];
-  telephone: string;
-  email: string;
+  equipements?: string[];
+  images?: string[];
+  telephone_contact: string;
+  email_contact: string;
   cree_le: string;
   vues: number;
 }

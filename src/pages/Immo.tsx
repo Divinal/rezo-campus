@@ -24,10 +24,10 @@ interface Property {
   quartier: string;
   ville: string;
   adresse: string;
-  equipements: string[];
-  images: string[];
-  telephone: string;
-  email: string;
+  equipements?: string[];
+  images?: string[];
+  telephone_contact: string;
+  email_contact: string;
   cree_le: string;
   vues: number;
 }
@@ -271,7 +271,7 @@ const Immo: React.FC = () => {
                         <div>
                           <strong>Adresse:</strong> {selectedProperty.adresse}
                         </div>
-                        {selectedProperty.equipements.length > 0 && (
+                        {selectedProperty.equipements && selectedProperty.equipements.length > 0 && (
                           <div>
                             <strong>Équipements:</strong>
                             <div className="flex flex-wrap gap-1 mt-1">
@@ -303,10 +303,10 @@ const Immo: React.FC = () => {
                       </CardHeader>
                       <CardContent className="space-y-2">
                         <div>
-                          <strong>Téléphone:</strong> {selectedProperty.telephone}
+                          <strong>Téléphone:</strong> {selectedProperty.telephone_contact}
                         </div>
                         <div>
-                          <strong>Email:</strong> {selectedProperty.email}
+                          <strong>Email:</strong> {selectedProperty.email_contact}
                         </div>
                       </CardContent>
                     </Card>
