@@ -9,10 +9,10 @@ import { MessageCircle, User, Clock } from 'lucide-react';
 import { toast } from '@/hooks/use-toast';
 
 interface Comment {
- id: string;
+  id: string;
   propriete_id: string;
-  nom_auteur: string;
-  email_auteur: string | null;
+  auteur_nom: string;
+  auteur_email: string | null;
   contenu: string;
   cree_le: string;
 }
@@ -40,10 +40,10 @@ const PropertyComments: React.FC<PropertyCommentsProps> = ({ propertyId }) => {
     try {
       setLoading(true);
       const { data, error } = await supabase
-        .from('property_comments')
+        .from('commentaires_proprietes')
         .select('*')
-        .eq('property_id', propertyId)
-        .order('created_at', { ascending: false });
+        .eq('propriete_id', propertyId)
+        .order('cree_le', { ascending: false });
 
       if (error) {
         console.error('Erreur lors du chargement des commentaires:', error);
@@ -74,13 +74,13 @@ const PropertyComments: React.FC<PropertyCommentsProps> = ({ propertyId }) => {
       setSubmitting(true);
       
       const { error } = await supabase
-        .from('property_comments')
+        .from('commentaires_proprietes')
         .insert([
           {
-            property_id: propertyId,
-            author_name: formData.author_name.trim(),
-            author_email: formData.author_email.trim() || null,
-            content: formData.content.trim()
+            propriete_id: propertyId,
+            auteur_nom: formData.author_name.trim(),
+            auteur_email: formData.author_email.trim() || null,
+            contenu: formData.content.trim()
           }
         ]);
 
@@ -216,7 +216,7 @@ const PropertyComments: React.FC<PropertyCommentsProps> = ({ propertyId }) => {
                 <div className="flex items-center gap-2 mb-2">
                   <User className="w-4 h-4 text-gray-500" />
                   <span className="font-medium text-gray-800">
-                    {comment.nom_auteur}
+                    {comment.auteur_nom}
                   </span>
                   <div className="flex items-center gap-1 text-sm text-gray-500 ml-auto">
                     <Clock className="w-3 h-3" />

@@ -12,18 +12,18 @@ import { Trash2, Edit } from 'lucide-react';
 
 interface Property {
   id: string;
-  title: string;
-  type: 'vente' | 'location';
-  price: number;
+  titre: string;
+  type_offre: 'vente' | 'location';
+  prix: number;
   description: string;
-  bedrooms: number;
-  bathrooms: number;
-  area: number;
-  address: string;
-  city: string;
-  district: string;
+  chambres: number;
+  salles_bain: number;
+  surface: number;
+  adresse: string;
+  ville: string;
+  quartier: string;
   images: string[];
-  created_at: string;
+  cree_le: string;
 }
 
 const PropertiesManagement: React.FC = () => {
@@ -52,9 +52,9 @@ const PropertiesManagement: React.FC = () => {
   const fetchProperties = async () => {
     try {
       const { data, error } = await supabase
-        .from('properties')
+        .from('proprietes')
         .select('*')
-        .order('created_at', { ascending: false });
+        .order('cree_le', { ascending: false });
 
       if (error) throw error;
       setProperties(data || []);
@@ -72,22 +72,22 @@ const PropertiesManagement: React.FC = () => {
 
     try {
       const propertyData = {
-        title: formData.title,
-        type: formData.type,
-        price: parseFloat(formData.price),
+        titre: formData.title,
+        type_offre: formData.type,
+        prix: parseFloat(formData.price),
         description: formData.description,
-        bedrooms: parseInt(formData.bedrooms),
-        bathrooms: parseInt(formData.bathrooms),
-        area: parseFloat(formData.area),
-        address: formData.address,
-        city: formData.city,
-        district: formData.district,
+        chambres: parseInt(formData.bedrooms),
+        salles_bain: parseInt(formData.bathrooms),
+        surface: parseFloat(formData.area),
+        adresse: formData.address,
+        ville: formData.city,
+        quartier: formData.district,
         images: formData.images ? formData.images.split(',').map(img => img.trim()) : []
       };
 
       if (editingProperty) {
         const { error } = await supabase
-          .from('properties')
+          .from('proprietes')
           .update(propertyData)
           .eq('id', editingProperty.id);
 
@@ -95,7 +95,7 @@ const PropertiesManagement: React.FC = () => {
         toast.success('Propriété modifiée avec succès');
       } else {
         const { error } = await supabase
-          .from('properties')
+          .from('proprietes')
           .insert([propertyData]);
 
         if (error) throw error;
@@ -115,16 +115,16 @@ const PropertiesManagement: React.FC = () => {
   const handleEdit = (property: Property) => {
     setEditingProperty(property);
     setFormData({
-      title: property.title,
-      type: property.type,
-      price: property.price.toString(),
+      title: property.titre,
+      type: property.type_offre,
+      price: property.prix.toString(),
       description: property.description,
-      bedrooms: property.bedrooms.toString(),
-      bathrooms: property.bathrooms.toString(),
-      area: property.area.toString(),
-      address: property.address,
-      city: property.city,
-      district: property.district,
+      bedrooms: property.chambres.toString(),
+      bathrooms: property.salles_bain.toString(),
+      area: property.surface.toString(),
+      address: property.adresse,
+      city: property.ville,
+      district: property.quartier,
       images: property.images.join(', ')
     });
   };
@@ -134,7 +134,7 @@ const PropertiesManagement: React.FC = () => {
 
     try {
       const { error } = await supabase
-        .from('properties')
+        .from('proprietes')
         .delete()
         .eq('id', id);
 
@@ -299,16 +299,16 @@ const PropertiesManagement: React.FC = () => {
             <TableBody>
               {properties.map((property) => (
                 <TableRow key={property.id}>
-                  <TableCell className="font-medium">{property.title}</TableCell>
+                  <TableCell className="font-medium">{property.titre}</TableCell>
                   <TableCell>
-                    <Badge variant={property.type === 'vente' ? 'default' : 'secondary'}>
-                      {property.type}
+                    <Badge variant={property.type_offre === 'vente' ? 'default' : 'secondary'}>
+                      {property.type_offre}
                     </Badge>
                   </TableCell>
-                  <TableCell>{property.price.toLocaleString()} €</TableCell>
-                  <TableCell>{property.city}</TableCell>
-                  <TableCell>{property.bedrooms}</TableCell>
-                  <TableCell>{property.area} m²</TableCell>
+                  <TableCell>{property.prix.toLocaleString()} €</TableCell>
+                  <TableCell>{property.ville}</TableCell>
+                  <TableCell>{property.chambres}</TableCell>
+                  <TableCell>{property.surface} m²</TableCell>
                   <TableCell>
                     <div className="flex gap-2">
                       <Button

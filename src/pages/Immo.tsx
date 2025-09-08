@@ -12,7 +12,7 @@ import PropertyCard from '@/components/PropertyCard';
 import PropertyComments from '@/components/PropertyComments';
 
 interface Property {
-   id: string;
+  id: string;
   titre: string;
   description: string;
   type_offre: "vente" | "location";
@@ -46,9 +46,9 @@ const Immo: React.FC = () => {
     try {
       setLoading(true);
       const { data, error } = await supabase
-        .from('properties')
+        .from('proprietes')
         .select('*')
-        .order('created_at', { ascending: false });
+        .order('cree_le', { ascending: false });
 
       if (error) {
         console.error('Erreur lors du chargement des propriétés:', error);
@@ -76,7 +76,7 @@ const Immo: React.FC = () => {
   const incrementViews = async (propertyId: string) => {
     try {
       const { error } = await supabase
-        .from('properties')
+        .from('proprietes')
         .update({ vues: properties.find(p => p.id === propertyId)?.vues + 1 || 1 })
         .eq('id', propertyId);
 
@@ -265,7 +265,7 @@ const Immo: React.FC = () => {
                         </div>
                         <div>
                           <Badge variant="secondary">
-                            {selectedProperty. type_propriete}
+                            {selectedProperty.type_propriete}
                           </Badge>
                         </div>
                         <div>

@@ -6,47 +6,47 @@ import { MapPin, Bed, Bath, Square, Eye } from 'lucide-react';
 
 interface Property {
   id: string;
-  title: string;
+  titre: string;
   description: string;
-  type: 'vente' | 'location';
-  price: number;
+  type_offre: 'vente' | 'location';
+  prix: number;
   surface: number;
-  bedrooms: number;
-  bathrooms: number;
-  property_type: 'appartement' | 'studio' | 'maison' | 'villa';
+  chambres: number;
+  salles_bain: number;
+  type_propriete: 'appartement' | 'studio' | 'maison' | 'villa';
   quartier: string;
   ville: string;
-  address: string;
-  features: string[];
+  adresse: string;
+  equipements: string[];
   images: string[];
-  contact_phone: string;
-  contact_email: string;
-  created_at: string;
-  views: number;
+  telephone: string;
+  email: string;
+  cree_le: string;
+  vues: number;
 }
 
 interface PropertyCardProps {
-  property: Property;
+  type_propriete: Property;
   onViewDetails: (property: Property) => void;
 }
 
-const PropertyCard: React.FC<PropertyCardProps> = ({ property, onViewDetails }) => {
+const PropertyCard: React.FC<PropertyCardProps> = ({ type_propriete: property, onViewDetails }) => {
   return (
     <Card className="hover:shadow-lg transition-shadow duration-300 cursor-pointer group">
       <CardHeader className="pb-3">
         <div className="flex justify-between items-start mb-2">
           <Badge 
-            variant={property.type === 'vente' ? 'default' : 'secondary'}
+            variant={property.type_offre === 'vente' ? 'default' : 'secondary'}
             className="text-xs"
           >
-            {property.type === 'vente' ? '🏠 VENTE' : '🔑 LOCATION'}
+            {property.type_offre === 'vente' ? '🏠 VENTE' : '🔑 LOCATION'}
           </Badge>
           <Badge variant="outline" className="text-xs">
-            {property.property_type}
+            {property.type_propriete}
           </Badge>
         </div>
         <CardTitle className="text-lg line-clamp-2 group-hover:text-primary transition-colors">
-          {property.title}
+          {property.titre}
         </CardTitle>
         <div className="flex items-center text-gray-600 text-sm">
           <MapPin className="w-4 h-4 mr-1" />
@@ -56,8 +56,8 @@ const PropertyCard: React.FC<PropertyCardProps> = ({ property, onViewDetails }) 
       
       <CardContent className="space-y-4">
         <div className="text-2xl font-bold text-green-600">
-          {property.price.toLocaleString()} DH
-          {property.type === 'location' && (
+          {property.prix.toLocaleString()} DH
+          {property.type_offre === 'location' && (
             <span className="text-sm text-gray-500">/mois</span>
           )}
         </div>
@@ -70,16 +70,16 @@ const PropertyCard: React.FC<PropertyCardProps> = ({ property, onViewDetails }) 
             </div>
             <div className="flex items-center gap-1">
               <Bed className="w-4 h-4 text-green-500" />
-              <span>{property.bedrooms}</span>
+              <span>{property.chambres}</span>
             </div>
             <div className="flex items-center gap-1">
               <Bath className="w-4 h-4 text-purple-500" />
-              <span>{property.bathrooms}</span>
+              <span>{property.salles_bain}</span>
             </div>
           </div>
           <div className="flex items-center gap-1 text-gray-400">
             <Eye className="w-4 h-4" />
-            <span>{property.views || 0}</span>
+            <span>{property.vues || 0}</span>
           </div>
         </div>
 

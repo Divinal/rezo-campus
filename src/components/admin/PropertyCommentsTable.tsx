@@ -10,15 +10,15 @@ import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from 
 
 interface PropertyComment {
   id: string;
-  property_id: string;
-  author_name: string;
-  author_email: string;
-  comment: string;
-  created_at: string;
-  property?: {
-    title: string;
-    type: string;
-    city: string;
+  propriete_id: string;
+  auteur_nom: string;
+  auteur_email: string;
+  contenu: string;
+  cree_le: string;
+  proprietes?: {
+    titre: string;
+    type_offre: string;
+    ville: string;
   };
 }
 
@@ -34,12 +34,12 @@ const PropertyCommentsTable: React.FC = () => {
   const fetchComments = async () => {
     try {
       const { data, error } = await supabase
-        .from('property_comments')
+        .from('commentaires_proprietes')
         .select(`
           *,
-          property:properties(title, type, city)
+          proprietes(titre, type_offre, ville)
         `)
-        .order('created_at', { ascending: false });
+        .order('cree_le', { ascending: false });
 
       if (error) throw error;
       setComments(data || []);
@@ -56,7 +56,7 @@ const PropertyCommentsTable: React.FC = () => {
 
     try {
       const { error } = await supabase
-        .from('property_comments')
+        .from('commentaires_proprietes')
         .delete()
         .eq('id', id);
 
@@ -110,27 +110,27 @@ const PropertyCommentsTable: React.FC = () => {
                 {comments.map((comment) => (
                   <TableRow key={comment.id}>
                     <TableCell className="font-medium">
-                      {comment.property?.title || 'Propriété supprimée'}
+                      {comment.proprietes?.titre || 'Propriété supprimée'}
                     </TableCell>
                     <TableCell>
-                      {comment.property && (
-                        <Badge variant={comment.property.type === 'vente' ? 'default' : 'secondary'}>
-                          {comment.property.type}
+                      {comment.proprietes && (
+                        <Badge variant={comment.proprietes.type_offre === 'vente' ? 'default' : 'secondary'}>
+                          {comment.proprietes.type_offre}
                         </Badge>
                       )}
                     </TableCell>
-                    <TableCell>{comment.property?.city || '-'}</TableCell>
-                    <TableCell>{comment.author_name}</TableCell>
-                    <TableCell>{comment.author_email}</TableCell>
+                    <TableCell>{comment.proprietes?.ville || '-'}</TableCell>
+                    <TableCell>{comment.auteur_nom}</TableCell>
+                    <TableCell>{comment.auteur_email}</TableCell>
                     <TableCell>
                       <div className="max-w-xs truncate">
-                        {comment.comment.length > 50 
-                          ? `${comment.comment.substring(0, 50)}...` 
-                          : comment.comment
+                        {comment.contenu.length > 50 
+                          ? `${comment.contenu.substring(0, 50)}...` 
+                          : comment.contenu
                         }
                       </div>
                     </TableCell>
-                    <TableCell>{formatDate(comment.created_at)}</TableCell>
+                    <TableCell>{formatDate(comment.cree_le)}</TableCell>
                     <TableCell>
                       <div className="flex gap-2">
                         <Dialog>
@@ -151,23 +151,23 @@ const PropertyCommentsTable: React.FC = () => {
                               <div className="space-y-4">
                                 <div>
                                   <h4 className="font-semibold mb-2">Propriété</h4>
-                                  <p>{selectedComment.property?.title || 'Propriété supprimée'}</p>
+                                  <p>{selectedComment.proprietes?.titre || 'Propriété supprimée'}</p>
                                   <p className="text-sm text-gray-600">
-                                    {selectedComment.property?.type} - {selectedComment.property?.city}
+                                    {selectedComment.proprietes?.type_offre} - {selectedComment.proprietes?.ville}
                                   </p>
                                 </div>
                                 <div>
                                   <h4 className="font-semibold mb-2">Auteur</h4>
-                                  <p>{selectedComment.author_name}</p>
-                                  <p className="text-sm text-gray-600">{selectedComment.author_email}</p>
+                                  <p>{selectedComment.auteur_nom}</p>
+                                  <p className="text-sm text-gray-600">{selectedComment.auteur_email}</p>
                                 </div>
                                 <div>
                                   <h4 className="font-semibold mb-2">Commentaire</h4>
-                                  <p className="whitespace-pre-wrap">{selectedComment.comment}</p>
+                                  <p className="whitespace-pre-wrap">{selectedComment.contenu}</p>
                                 </div>
                                 <div>
                                   <h4 className="font-semibold mb-2">Date</h4>
-                                  <p>{formatDate(selectedComment.created_at)}</p>
+                                  <p>{formatDate(selectedComment.cree_le)}</p>
                                 </div>
                               </div>
                             )}
