@@ -42,7 +42,7 @@ const PropertyCard: React.FC<PropertyCardProps> = ({ type_propriete: property, o
               className="w-full h-48 object-cover rounded-t-lg group-hover:opacity-90 transition-opacity"
             />
             <Badge 
-              variant={property.type_offre === 'vente' ? 'default' : 'secondary'}
+              variant={property.type_offre === 'location' ? 'default' : 'secondary'}
               className="absolute top-2 left-2 text-xs"
             >
               {property.type_offre === 'vente' ? '🏠 VENTE' : '🔑 LOCATION'}

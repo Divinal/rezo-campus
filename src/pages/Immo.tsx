@@ -15,7 +15,7 @@ interface Property {
   id: string;
   titre: string;
   description: string;
-  type_offre: "vente" | "location";
+  type_offre: "location" | "vente";
   prix: number;
   surface: number;
   chambres: number;
@@ -35,7 +35,7 @@ interface Property {
 const Immo: React.FC = () => {
   const [properties, setProperties] = useState<Property[]>([]);
   const [loading, setLoading] = useState(true);
-  const [activeTab, setActiveTab] = useState('vente');
+  const [activeTab, setActiveTab] = useState('location');
   const [selectedProperty, setSelectedProperty] = useState<Property | null>(null);
 
   useEffect(() => {
@@ -135,22 +135,22 @@ const Immo: React.FC = () => {
             <Tabs value={activeTab} onValueChange={setActiveTab} className="w-full">
               <div className="flex justify-center mb-8">
                 <TabsList className="grid w-full max-w-md grid-cols-2">
-                  <TabsTrigger value="vente" className="text-lg py-3">
-                    🏠 Ventes
-                  </TabsTrigger>
                   <TabsTrigger value="location" className="text-lg py-3">
                     🔑 Locations
+                  </TabsTrigger>
+                  <TabsTrigger value="vente" className="text-lg py-3">
+                    🏠 Ventes
                   </TabsTrigger>
                 </TabsList>
               </div>
 
-              <TabsContent value="vente" className="space-y-6">
+              <TabsContent value="location" className="space-y-6">
                 <div className="text-center mb-8">
                   <h2 className="text-3xl font-bold text-primary mb-2">
-                    Propriétés à Vendre
+                    Propriétés à Louer
                   </h2>
                   <p className="text-gray-600">
-                    Découvrez nos offres de vente immobilière
+                    Trouvez votre location idéale
                   </p>
                 </div>
                 
@@ -177,13 +177,13 @@ const Immo: React.FC = () => {
                 )}
               </TabsContent>
 
-              <TabsContent value="location" className="space-y-6">
+              <TabsContent value="vente" className="space-y-6">
                 <div className="text-center mb-8">
                   <h2 className="text-3xl font-bold text-primary mb-2">
-                    Propriétés à Louer
+                    Propriétés à Vendre
                   </h2>
                   <p className="text-gray-600">
-                    Trouvez votre location idéale
+                    Découvrez nos offres de vente immobilière
                   </p>
                 </div>
                 

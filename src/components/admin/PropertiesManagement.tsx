@@ -13,7 +13,7 @@ import { Trash2, Edit } from 'lucide-react';
 interface Property {
   id: string;
   titre: string;
-  type_offre: 'vente' | 'location';
+  type_offre: 'location' | 'vente';
   prix: number;
   description: string;
   chambres: number;
@@ -38,7 +38,7 @@ const PropertiesManagement: React.FC = () => {
   const [editingProperty, setEditingProperty] = useState<Property | null>(null);
   const [formData, setFormData] = useState({
     title: '',
-    type: 'vente' as 'vente' | 'location',
+    type: 'location' as 'location' | 'vente',
     price: '',
     description: '',
     bedrooms: '',
@@ -210,13 +210,13 @@ const PropertiesManagement: React.FC = () => {
               required
             />
             
-            <Select value={formData.type} onValueChange={(value: 'vente' | 'location') => setFormData({...formData, type: value})}>
+            <Select value={formData.type} onValueChange={(value: 'location' | 'vente') => setFormData({...formData, type: value})}>
               <SelectTrigger>
                 <SelectValue placeholder="Type de transaction" />
               </SelectTrigger>
               <SelectContent>
-                <SelectItem value="vente">Vente</SelectItem>
                 <SelectItem value="location">Location</SelectItem>
+                <SelectItem value="vente">Vente</SelectItem>
               </SelectContent>
             </Select>
 
@@ -359,7 +359,7 @@ const PropertiesManagement: React.FC = () => {
                 <TableRow key={property.id}>
                   <TableCell className="font-medium">{property.titre}</TableCell>
                   <TableCell>
-                    <Badge variant={property.type_offre === 'vente' ? 'default' : 'secondary'}>
+                    <Badge variant={property.type_offre === 'location' ? 'default' : 'secondary'}>
                       {property.type_offre}
                     </Badge>
                   </TableCell>
