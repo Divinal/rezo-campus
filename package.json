@@ -6,7 +6,7 @@
    "type": "module",
    "scripts": {
       "dev": "vite",
-      "build": "vite build",
+      "build": "vite build && cp dist/index.html dist/404.html",
       "build:dev": "vite build --mode development",
       "update-browsers": "npm install caniuse-lite@latest --save-dev",
       "lint": "eslint .",

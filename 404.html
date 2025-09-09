@@ -1,4 +1,3 @@
-
 <!DOCTYPE html>
 <html lang="fr">
   <head>
@@ -6,23 +5,15 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>Redirection</title>
     <script>
-      // Récupère l'URL complète
-      var pathSegmentsToKeep = 0;
       var l = window.location;
       var redirectUrl = l.protocol + '//' + l.hostname + (l.port ? ':' + l.port : '');
-      
-      // Conserve le chemin d'origine
-      var path = l.pathname.split('/');
-      path.length = Math.max(pathSegmentsToKeep, 0);
-      
-      // Si le chemin inclut "school", conserve cette partie
-      if (l.pathname.includes('/school/')) {
-        redirectUrl = redirectUrl + '/#' + l.pathname;
-      } else {
-        redirectUrl = redirectUrl + '/';
-      }
-      
-      // Redirige vers l'application React
+
+      // Si tu déploies dans un sous-dossier (ex: /rezo-campus), ajoute-le ici :
+      var repo = "/"; // change en "/rezo-campus" si besoin
+
+      // On redirige vers /#/<path>
+      redirectUrl = redirectUrl + repo + "fr"+ l.pathname + l.search + l.hash;
+
       window.location.replace(redirectUrl);
     </script>
   </head>
