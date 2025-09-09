@@ -1,33 +1,110 @@
 
 <!DOCTYPE html>
 <html lang="fr">
-  <head>
-    <meta charset="UTF-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>Redirection</title>
-    <script>
-      // Récupère l'URL complète
-      var pathSegmentsToKeep = 0;
-      var l = window.location;
-      var redirectUrl = l.protocol + '//' + l.hostname + (l.port ? ':' + l.port : '');
-      
-      // Conserve le chemin d'origine
-      var path = l.pathname.split('/');
-      path.length = Math.max(pathSegmentsToKeep, 0);
-      
-      // Si le chemin inclut "school", conserve cette partie
-      if (l.pathname.includes('/school/')) {
-        redirectUrl = redirectUrl + '/#' + l.pathname;
-      } else {
-        redirectUrl = redirectUrl + '/';
-      }
-      
-      // Redirige vers l'application React
-      window.location.replace(redirectUrl);
-    </script>
-  </head>
+    <head>
+        <meta charset="UTF-8" />
+        <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+        <title>Rézo Campus – Gestion des Établissements</title>
+        <meta name="description" content="Explorez notre sélection d'établissements d'excellence et trouvez la formation qui vous correspond." />
+        <meta name="author" content="RezoCampus" />
+        <meta name="robots" content="index, follow" />
+        <link rel="canonical" href="https://www.rezocampus.fr" />
+        
+        <!-- Favicon -->
+        <link rel="icon" type="image/png" href="https://www.rezocampus.fr/faviconn.png" />
+
+        <!-- Pour le SOE de EDGE -->
+        <meta name="msvalidate.01" content="531BBE47D0E6ED885FFE5174ECD309BE" />
+        
+        <!-- Google recaptcha -->
+        <script src="https://www.google.com/recaptcha/api.js" async defer></script>
+
+        <!-- Polices -->
+        <link rel="preconnect" href="https://fonts.googleapis.com">
+        <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+        <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+
+        <!-- Open Graph / Facebook -->
+        <meta property="og:title" content="Rézo Campus – Gestion des Établissements" />
+        <meta property="og:description" content="Explorez notre sélection d'établissements d'excellence et trouvez la formation qui vous correspond." />
+        <meta property="og:type" content="website" />
+        <meta property="og:url" content="https://www.rezocampus.fr" />
+        <!-- <meta property="og:image" content="/og-image.png" /> -->
+
+        <!-- Twitter -->
+        <meta name="twitter:card" content="summary_large_image" />
+        <meta name="twitter:title" content="Rézo Campus – Gestion des Établissements" />
+        <meta name="twitter:description" content="Explorez notre sélection d'établissements d'excellence et trouvez la formation qui vous correspond." />
+        <meta property="og:image" content="https://www.rezocampus.fr/og-image.png" />
+        <meta name="twitter:image" content="https://www.rezocampus.fr/og-image.png" />
+
+          <!-- ✅ JSON-LD : Liste des établissements -->
+        <script type="application/ld+json">
+         {
+          "@context": "https://schema.org",
+          "@type": "ItemList",
+          "name": "Liste des établissements de Rézo Campus",
+          "url": "https://rezocampus.fr/index",
+          "itemListElement": [
+            {
+              "@type": "ListItem",
+              "position": 1,
+              "name": "Groupe Miage",
+              "url": "https://rezocampus.fr/school/Groupe-Miage"
+            },
+            {
+              "@type": "ListItem",
+              "position": 2,
+              "name": "Best Institut ECOLE DE FORMATION PROFESSIONNELLE PRIVÉE",
+              "url": "https://rezocampus.fr/school/Best-Institut"
+            },
+            {
+              "@type": "ListItem",
+              "position": 3,
+              "name": "Cesa-SUP",
+              "url": "https://rezocampus.fr/school/CESA-Sup"
+            },
+            {
+              "@type": "ListItem",
+              "position": 4,
+              "name": "Group IPCS Institut Professionnel des Carrières de Santé",
+              "url": "https://rezocampus.fr/school/Group-IPCS"
+            },
+            {
+              "@type": "ListItem",
+              "position": 5,
+              "name": "Et bien d'autres",
+              "url": "https://rezocampus.fr/index"
+            }
+          ]
+        }
+        </script>
+
+
+        <!-- Google Ads (si utilisé) -->
+        <script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-9015371653975229"
+          crossorigin="anonymous"></script>
+          <script async custom-element="amp-ad" src="https://cdn.ampproject.org/v0/amp-ad-0.1.js"></script>
+      <script type="module" crossorigin src="./assets/index-DShDJvah.js"></script>
+      <link rel="modulepreload" crossorigin href="./assets/react-vendor-CqSy2UxY.js">
+      <link rel="modulepreload" crossorigin href="./assets/ui-vendor-BQQb5tgz.js">
+      <link rel="modulepreload" crossorigin href="./assets/ui-components-CV_6Ufbm.js">
+      <link rel="modulepreload" crossorigin href="./assets/query-vendor-DnEBIYcz.js">
+      <link rel="modulepreload" crossorigin href="./assets/router-vendor-DNnaRNFL.js">
+      <link rel="modulepreload" crossorigin href="./assets/supabase-vendor-BVwEB7VQ.js">
+      <link rel="stylesheet" crossorigin href="./assets/index-BdVNJEEQ.css">
+    </head>
   <body>
-    <h1>Redirection en cours...</h1>
-    <p>Si vous n'êtes pas redirigé automatiquement, <a href="/">cliquez ici</a>.</p>
+    <div id="root"></div>
+    <!-- IMPORTANT: DO NOT REMOVE THIS SCRIPT TAG OR THIS VERY COMMENT! -->
+    <script src="https://cdn.gpteng.co/gptengineer.js" type="module"></script>
+     <amp-ad
+        layout="fixed"
+        width="200"
+        height="50"
+        type="adsense"
+        data-ad-client="ca-pub-9015371653975229"
+        data-ad-slot="6486064403">
+      </amp-ad>
   </body>
 </html>
