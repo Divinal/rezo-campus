@@ -6,7 +6,9 @@ import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { Badge } from '@/components/ui/badge';
-import { MapPin, Bed, Bath, Square, Eye, Heart, MessageCircle } from 'lucide-react';
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
+import { Slider } from '@/components/ui/slider';
+import { MapPin, Bed, Bath, Square, Eye, Heart, MessageCircle, Filter } from 'lucide-react';
 import { toast } from '@/hooks/use-toast';
 import PropertyCard from '@/components/PropertyCard';
 import PropertyComments from '@/components/PropertyComments';
@@ -37,10 +39,33 @@ const Immo: React.FC = () => {
   const [loading, setLoading] = useState(true);
   const [activeTab, setActiveTab] = useState('location');
   const [selectedProperty, setSelectedProperty] = useState<Property | null>(null);
+  
+  // Filtres
+  const [selectedPropertyType, setSelectedPropertyType] = useState<string>('all');
+  const [priceRange, setPriceRange] = useState<[number, number]>([0, 1000000]);
+  const [surfaceRange, setSurfaceRange] = useState<[number, number]>([0, 500]);
+  const [propertyTypes, setPropertyTypes] = useState<string[]>([]);
+  const [maxPrice, setMaxPrice] = useState(1000000);
+  const [maxSurface, setMaxSurface] = useState(500);
 
   useEffect(() => {
     fetchProperties();
+    fetchPropertyTypes();
   }, []);
+
+  useEffect(() => {
+    if (properties.length > 0) {
+      const prices = properties.map(p => p.prix);
+      const surfaces = properties.map(p => p.surface);
+      const maxPriceValue = Math.max(...prices);
+      const maxSurfaceValue = Math.max(...surfaces);
+      
+      setMaxPrice(maxPriceValue);
+      setMaxSurface(maxSurfaceValue);
+      setPriceRange([0, maxPriceValue]);
+      setSurfaceRange([0, maxSurfaceValue]);
+    }
+  }, [properties]);
 
   const fetchProperties = async () => {
     try {
@@ -73,17 +98,43 @@ const Immo: React.FC = () => {
     }
   };
 
+  const fetchPropertyTypes = async () => {
+    try {
+      const { data, error } = await supabase
+        .from('proprietes')
+        .select('type_propriete')
+        .not('type_propriete', 'is', null);
+
+      if (error) {
+        console.error('Erreur lors du chargement des types:', error);
+        return;
+      }
+
+      const uniqueTypes = [...new Set(data?.map(item => item.type_propriete) || [])] as string[];
+      setPropertyTypes(uniqueTypes);
+    } catch (error) {
+      console.error('Erreur:', error);
+    }
+  };
+
   const incrementViews = async (propertyId: string) => {
     try {
+      const currentProperty = properties.find(p => p.id === propertyId);
+      const currentViews = currentProperty?.vues || 0;
+      const newViews = currentViews + 1;
+
       const { error } = await supabase
         .from('proprietes')
-        .update({ vues: properties.find(p => p.id === propertyId)?.vues + 1 || 1 })
+        .update({ vues: newViews })
         .eq('id', propertyId);
 
       if (!error) {
         setProperties(prev => 
-          prev.map(p => p.id === propertyId ? { ...p, vues: (p.vues || 0) + 1 } : p)
+          prev.map(p => p.id === propertyId ? { ...p, vues: newViews } : p)
         );
+        console.log(`Vues incrémentées pour la propriété ${propertyId}: ${newViews}`);
+      } else {
+        console.error('Erreur lors de l\'incrémentation des vues:', error);
       }
     } catch (error) {
       console.error('Erreur lors de l\'incrémentation des vues:', error);
@@ -95,7 +146,27 @@ const Immo: React.FC = () => {
     incrementViews(property.id);
   };
 
-  const filteredProperties = properties.filter(property => property.type_offre === activeTab);
+  const filteredProperties = properties.filter(property => {
+    // Filtre par type d'offre (location/vente)
+    if (property.type_offre !== activeTab) return false;
+    
+    // Filtre par type de propriété
+    if (selectedPropertyType !== 'all' && property.type_propriete !== selectedPropertyType) return false;
+    
+    // Filtre par prix
+    if (property.prix < priceRange[0] || property.prix > priceRange[1]) return false;
+    
+    // Filtre par superficie
+    if (property.surface < surfaceRange[0] || property.surface > surfaceRange[1]) return false;
+    
+    return true;
+  });
+
+  const resetFilters = () => {
+    setSelectedPropertyType('all');
+    setPriceRange([0, maxPrice]);
+    setSurfaceRange([0, maxSurface]);
+  };
 
   if (loading) {
     return (
@@ -143,6 +214,76 @@ const Immo: React.FC = () => {
                   </TabsTrigger>
                 </TabsList>
               </div>
+
+              {/* Filtres */}
+              <Card className="mb-8">
+                <CardHeader>
+                  <CardTitle className="flex items-center gap-2">
+                    <Filter className="w-5 h-5" />
+                    Filtres
+                  </CardTitle>
+                </CardHeader>
+                <CardContent>
+                  <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+                    {/* Filtre par type de propriété */}
+                    <div className="space-y-2">
+                      <label className="text-sm font-medium">Type de propriété</label>
+                      <Select value={selectedPropertyType} onValueChange={setSelectedPropertyType}>
+                        <SelectTrigger>
+                          <SelectValue placeholder="Tous les types" />
+                        </SelectTrigger>
+                        <SelectContent>
+                          <SelectItem value="all">Tous les types</SelectItem>
+                          {propertyTypes.map((type) => (
+                            <SelectItem key={type} value={type}>
+                              {type.charAt(0).toUpperCase() + type.slice(1)}
+                            </SelectItem>
+                          ))}
+                        </SelectContent>
+                      </Select>
+                    </div>
+
+                    {/* Filtre par prix */}
+                    <div className="space-y-2">
+                      <label className="text-sm font-medium">
+                        Prix: {priceRange[0].toLocaleString()} - {priceRange[1].toLocaleString()} DH
+                      </label>
+                      <Slider
+                        value={priceRange}
+                        onValueChange={(value) => setPriceRange(value as [number, number])}
+                        max={maxPrice}
+                        min={0}
+                        step={1000}
+                        className="w-full"
+                      />
+                    </div>
+
+                    {/* Filtre par superficie */}
+                    <div className="space-y-2">
+                      <label className="text-sm font-medium">
+                        Superficie: {surfaceRange[0]} - {surfaceRange[1]} m²
+                      </label>
+                      <Slider
+                        value={surfaceRange}
+                        onValueChange={(value) => setSurfaceRange(value as [number, number])}
+                        max={maxSurface}
+                        min={0}
+                        step={5}
+                        className="w-full"
+                      />
+                    </div>
+                  </div>
+                  
+                  <div className="flex justify-between items-center mt-4">
+                    <p className="text-sm text-gray-600">
+                      {filteredProperties.length} propriété(s) trouvée(s)
+                    </p>
+                    <Button variant="outline" onClick={resetFilters}>
+                      Réinitialiser les filtres
+                    </Button>
+                  </div>
+                </CardContent>
+              </Card>
 
               <TabsContent value="location" className="space-y-6">
                 <div className="text-center mb-8">
