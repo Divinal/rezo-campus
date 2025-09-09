@@ -167,7 +167,7 @@ const PropertyComments: React.FC<PropertyCommentsProps> = ({ propertyId }) => {
                 />
               </div>
               <div>
-                <Label htmlFor="author_email">Email (optionnel)</Label>
+                <Label htmlFor="author_email">Email *</Label>
                 <Input
                   id="author_email"
                   type="email"
@@ -183,7 +183,7 @@ const PropertyComments: React.FC<PropertyCommentsProps> = ({ propertyId }) => {
                 id="content"
                 value={formData.content}
                 onChange={(e) => setFormData(prev => ({ ...prev, content: e.target.value }))}
-                placeholder="Partagez votre avis sur cette propriété..."
+                placeholder="Partagez votre avis sur cette propriété, ou écrivez pour plus d'infos..."
                 rows={4}
                 required
               />
