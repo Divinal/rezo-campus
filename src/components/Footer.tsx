@@ -44,6 +44,11 @@ const Footer: React.FC = () => {
                   Les Actualité
                 </Link>
               </li>
+                  <li>
+                <Link to="/pays-visa" className="text-gray-300 hover:text-secondary transition-colors">
+                  Voyager au Maroc
+                </Link>
+              </li>
                <li>
                 <Link to="/Index" className="text-gray-300 hover:text-secondary transition-colors">
                   Les Formations & Etablissements
@@ -63,6 +68,11 @@ const Footer: React.FC = () => {
               <li>
                 <Link to="/terms-of-service" className="text-gray-300 hover:text-secondary transition-colors">
                   Conditions d'utilisation
+                </Link>
+              </li>
+                  <li>
+                <Link to="/administration" className="text-gray-300 hover:text-secondary transition-colors">
+                  Procédure de voyage au Maroc
                 </Link>
               </li>
             </ul>

@@ -179,7 +179,9 @@ const Landing: React.FC = () => {
               <div className="bg-blue-100 w-12 h-12 rounded-lg flex items-center justify-center mb-4">
                 <BookOpen className="w-6 h-6 text-blue-600" />
               </div>
-              <h3 className="text-xl font-semibold mb-3 text-gray-800">Commerce & Gestion</h3>
+              <h3 className="text-xl font-semibold mb-3 text-gray-800"><Link to="/index" className="text-xl font-semibold mb-4 hover:underline text-green-600">
+                Commerce & Gestion ↱
+              </Link></h3>
               <p className="text-gray-600">Formations en commerce, marketing, finance et gestion d'entreprise.</p>
             </div>
             
@@ -187,7 +189,9 @@ const Landing: React.FC = () => {
               <div className="bg-green-100 w-12 h-12 rounded-lg flex items-center justify-center mb-4">
                 <GraduationCap className="w-6 h-6 text-green-600" />
               </div>
-              <h3 className="text-xl font-semibold mb-3 text-gray-800">Informatique</h3>
+              <h3 className="text-xl font-semibold mb-3 text-gray-800"><Link to="/index" className="text-xl font-semibold mb-4 hover:underline text-green-600">
+                Informatique ↱
+              </Link></h3>
               <p className="text-gray-600">Développement web, mobile, intelligence artificielle et cybersécurité.</p>
             </div>
             
@@ -195,7 +199,9 @@ const Landing: React.FC = () => {
               <div className="bg-purple-100 w-12 h-12 rounded-lg flex items-center justify-center mb-4">
                 <Users className="w-6 h-6 text-purple-600" />
               </div>
-              <h3 className="text-xl font-semibold mb-3 text-gray-800">Design & Arts</h3>
+              <h3 className="text-xl font-semibold mb-3 text-gray-800"><Link to="/index" className="text-xl font-semibold mb-4 hover:underline text-green-600">
+                Design & Arts ↱
+              </Link></h3>
               <p className="text-gray-600">Design graphique, architecture, mode et arts appliqués.</p>
             </div>
             
@@ -203,7 +209,9 @@ const Landing: React.FC = () => {
               <div className="bg-red-100 w-12 h-12 rounded-lg flex items-center justify-center mb-4">
                 <MapPin className="w-6 h-6 text-red-600" />
               </div>
-              <h3 className="text-xl font-semibold mb-3 text-gray-800">Ingénierie</h3>
+              <h3 className="text-xl font-semibold mb-3 text-gray-800"><Link to="/index" className="text-xl font-semibold mb-4 hover:underline text-green-600">
+                Ingénierie ↱
+              </Link></h3>
               <p className="text-gray-600">Génie civil, mécanique, électrique et industriel.</p>
             </div>
             
@@ -211,7 +219,9 @@ const Landing: React.FC = () => {
               <div className="bg-yellow-100 w-12 h-12 rounded-lg flex items-center justify-center mb-4">
                 <Phone className="w-6 h-6 text-yellow-600" />
               </div>
-              <h3 className="text-xl font-semibold mb-3 text-gray-800">Communication</h3>
+              <h3 className="text-xl font-semibold mb-3 text-gray-800"> <Link to="/index" className="text-xl font-semibold mb-4 hover:underline text-green-600">
+                Communication ↱
+              </Link></h3>
               <p className="text-gray-600">Journalisme, relations publiques et communication digitale.</p>
             </div>
             
@@ -219,7 +229,9 @@ const Landing: React.FC = () => {
               <div className="bg-indigo-100 w-12 h-12 rounded-lg flex items-center justify-center mb-4">
                 <Star className="w-6 h-6 text-indigo-600" />
               </div>
-              <h3 className="text-xl font-semibold mb-3 text-gray-800">Santé</h3>
+              <h3 className="text-xl font-semibold mb-3 text-gray-800"><Link to="/index" className="text-xl font-semibold mb-4 hover:underline text-green-600">
+                Santé ↱
+              </Link></h3>
               <p className="text-gray-600">Médecine, pharmacie, soins infirmiers et paramédical.</p>
             </div>
           </div>
@@ -240,7 +252,10 @@ const Landing: React.FC = () => {
           
           <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-8">
             <div className="bg-white bg-opacity-10 rounded-lg p-6">
-              <h3 className="text-xl font-semibold mb-4">Visa Étudiant</h3>
+              <h3 className="text-xl font-semibold mb-4">
+                <Link to="/pays-visa" className="text-xl font-semibold mb-4 hover:underline text-green-300">
+                Visa Étudiant ↱
+              </Link></h3>
               <p className="mb-4">Assistance complète pour l'obtention de votre visa étudiant.</p>
               <ul className="list-disc list-inside space-y-2 text-sm">
                 <li>Préparation du dossier</li>
@@ -250,7 +265,11 @@ const Landing: React.FC = () => {
             </div>
             
             <div className="bg-white bg-opacity-10 rounded-lg p-6">
-              <h3 className="text-xl font-semibold mb-4">Logement</h3>
+              <h3 className="text-xl font-semibold mb-4">
+                <Link to="/immo" className="text-xl font-semibold mb-4 hover:underline text-green-300">
+                Logement ↱
+              </Link>
+              </h3>
               <p className="mb-4">Trouvez le logement idéal pour vos études.</p>
               <ul className="list-disc list-inside space-y-2 text-sm">
                 <li>Résidences universitaires</li>
@@ -260,7 +279,11 @@ const Landing: React.FC = () => {
             </div>
             
             <div className="bg-white bg-opacity-10 rounded-lg p-6">
-              <h3 className="text-xl font-semibold mb-4">Carte de Séjour</h3>
+              <h3 className="text-xl font-semibold mb-4">
+                <Link to="/carte-sejour" className="text-xl font-semibold mb-4 hover:underline text-green-300">
+               Carte de Séjour ↱
+                </Link>
+              </h3>
               <p className="mb-4">Obtenez votre titre de séjour rapidement.</p>
               <ul className="list-disc list-inside space-y-2 text-sm">
                 <li>Constitution du dossier</li>

@@ -96,19 +96,25 @@ const Header: React.FC = () => {
                   onClick={() => handleVisaOptionClick('pays-visa')}
                   className="hover:bg-gray-100 cursor-pointer"
                 >
-                  Pays avec Visa ou AEVM
+                 <Link to="/pays-visa">
+                    Pays avec Visa ou AEVM
+                  </Link>
                 </DropdownMenuItem>
                 <DropdownMenuItem 
                   onClick={() => handleVisaOptionClick('logement')}
                   className="hover:bg-gray-100 cursor-pointer"
                 >
-                  Trouver un logement
+                   <Link to="/immo">
+                    Trouver un logement
+                  </Link>
                 </DropdownMenuItem>
                 <DropdownMenuItem 
                   onClick={() => handleVisaOptionClick('carte-sejour')}
                   className="hover:bg-gray-100 cursor-pointer"
                 >
+                 <Link to="/carte-sejour">
                   Carte de séjour
+                </Link>
                 </DropdownMenuItem>
               </DropdownMenuContent>
             </DropdownMenu>

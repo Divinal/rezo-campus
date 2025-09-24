@@ -7,22 +7,19 @@ import Header from '@/components/Header';
 import Footer from '@/components/Footer';
 
 const Administration = () => {
-  const [activeTab, setActiveTab] = useState('visa');
-
+  const [activeTab, setActiveTab] = useState('aevm');
   const visaPriorityCountries = [
     'République Démocratique du Congo (RDC)',
     'Côte d\'Ivoire', 
     'Bénin',
     'Cameroun'
   ];
-
   const aevmCountries = [
     'Togo',
     'Sénégal', 
     'Congo Brazzaville',
     'Gabon'
   ];
-
   const visaDocuments = [
     'Passeport valide (au moins 6 mois)',
     'Formulaire de demande de visa dûment rempli',
@@ -33,7 +30,6 @@ const Administration = () => {
     'Certificat médical (selon le pays)',
     'Assurance voyage'
   ];
-
   const aevmDocuments = [
     'Passeport valide (au moins 6 mois)',
     'Formulaire AEVM en ligne',
@@ -43,11 +39,9 @@ const Administration = () => {
     'Billet d\'avion aller-retour',
     'Assurance voyage valide'
   ];
-
   return (
     <div className="min-h-screen bg-gradient-to-br from-background to-secondary/20">
-      <Header />
-      
+      <Header />      
       {/* Hero Section */}
       <section className="bg-gradient-to-r from-primary to-primary/80 text-white py-16 relative overflow-hidden">
         <div className="absolute inset-0 bg-[url('/Images/Mondial.jpg')] bg-cover bg-center opacity-20"></div>
@@ -62,7 +56,6 @@ const Administration = () => {
           </div>
         </div>
       </section>
-
       {/* Main Content */}
       <section className="py-16">
         <div className="container mx-auto px-4">
@@ -75,7 +68,6 @@ const Administration = () => {
                 💻 AEVM
               </TabsTrigger>
             </TabsList>
-
             {/* VISA Content */}
             <TabsContent value="visa" className="space-y-8">
               <div className="animate-fade-in">
@@ -87,7 +79,6 @@ const Administration = () => {
                     Processus complet pour obtenir votre visa d'entrée au Maroc
                   </p>
                 </div>
-
                 {/* Priority Countries */}
                 <Card className="mb-8 border-primary/20 shadow-lg hover-scale">
                   <CardHeader className="bg-primary/5">
@@ -114,7 +105,6 @@ const Administration = () => {
                     </div>
                   </CardContent>
                 </Card>
-
                 {/* Visa Procedure */}
                 <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
                   <Card className="shadow-lg hover-scale">
@@ -149,7 +139,6 @@ const Administration = () => {
                       </div>
                     </CardContent>
                   </Card>
-
                   <Card className="shadow-lg hover-scale">
                     <CardHeader>
                       <CardTitle className="flex items-center gap-2">
@@ -175,7 +164,6 @@ const Administration = () => {
                 </div>
               </div>
             </TabsContent>
-
             {/* AEVM Content */}
             <TabsContent value="aevm" className="space-y-8">
               <div className="animate-fade-in">
@@ -214,7 +202,6 @@ const Administration = () => {
                     </div>
                   </CardContent>
                 </Card>
-
                 {/* AEVM Procedure */}
                 <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
                   <Card className="shadow-lg hover-scale">
@@ -224,19 +211,19 @@ const Administration = () => {
                         Procédure AEVM
                       </CardTitle>
                     </CardHeader>
-                    <CardContent className="space-y-4">
+                   <CardContent className="space-y-4">
                       <div className="space-y-3">
                         {[
                           'Accéder au portail officiel AEVM en ligne',
-                          'Créer un compte utilisateur',
+                          'Créer un compte utilisateur ↱',
                           'Remplir le formulaire électronique',
                           'Télécharger les documents requis',
                           'Effectuer le paiement en ligne',
                           'Attendre la validation (24-72h)',
-                          'Télécharger l\'AEVM approuvée',
-                          'Imprimer et présenter à l\'arrivée'
+                          "Télécharger l'AEVM approuvée",
+                          "Imprimer et présenter à l'arrivée"
                         ].map((step, index) => (
-                          <div 
+                          <div
                             key={index}
                             className="flex items-start gap-3 animate-fade-in"
                             style={{ animationDelay: `${index * 0.1}s` }}
@@ -244,13 +231,26 @@ const Administration = () => {
                             <Badge variant="outline" className="mt-1 text-xs px-2">
                               {index + 1}
                             </Badge>
-                            <span className="text-sm">{step}</span>
+                            <span className="text-sm">
+                              {index === 1 ? (
+                                <a
+                                  href="https://www.acces-maroc.ma/#/"
+                                  target="_blank"
+                                  rel="noopener noreferrer"
+                                  className="text-blue-600 hover:underline"
+                                >
+                                  {step}
+                                </a>
+                              ) : (
+                                step
+                              )}
+                            </span>
                           </div>
                         ))}
                       </div>
                     </CardContent>
-                  </Card>
 
+                  </Card>
                   <Card className="shadow-lg hover-scale">
                     <CardHeader>
                       <CardTitle className="flex items-center gap-2">
@@ -274,7 +274,6 @@ const Administration = () => {
                     </CardContent>
                   </Card>
                 </div>
-
                 {/* Important Note */}
                 <Card className="mt-8 border-amber-200 bg-amber-50 dark:bg-amber-950/20 shadow-lg">
                   <CardContent className="pt-6">
@@ -297,10 +296,8 @@ const Administration = () => {
           </Tabs>
         </div>
       </section>
-
       <Footer />
     </div>
   );
 };
-
 export default Administration;
