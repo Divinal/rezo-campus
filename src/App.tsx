@@ -22,6 +22,7 @@ import TermsOfService from './pages/TermsOfService';
 import PrivacyPolicy from './pages/PrivacyPolicy';
 import FoireOrientationForm from './components/FoireOrientationForm';
 import Immo from './pages/Immo';
+import Administration from './pages/Administration';
 
 
 const queryClient = new QueryClient();
@@ -50,6 +51,7 @@ const App = () => (
           <Route path="/FoireOrientationForm" element={<FoireOrientationForm />} />
           <Route path="/privacy-policy" element={<PrivacyPolicy />} />
           <Route path="/immo" element={<Immo />} />
+          <Route path="/administration" element={<Administration />} />
 
           {/* ADD ALL CUSTOM ROUTES ABOVE THE CATCH-ALL "*" ROUTE */}
           <Route path="*" element={<NotFound />} />

@@ -83,7 +83,15 @@ const Header: React.FC = () => {
             
             {/* Menu déroulant Visa */}
             <DropdownMenu>
+              <DropdownMenuTrigger className="text-white hover:text-secondary transition-colors flex items-center gap-1">
+                Visa <ChevronDown className="w-4 h-4" />
+              </DropdownMenuTrigger>
               <DropdownMenuContent className="bg-white border border-gray-200 shadow-lg z-50">
+                <DropdownMenuItem asChild className="hover:bg-gray-100 cursor-pointer">
+                  <Link to="/administration">
+                    Administration Visa & AEVM
+                  </Link>
+                </DropdownMenuItem>
                 <DropdownMenuItem 
                   onClick={() => handleVisaOptionClick('pays-visa')}
                   className="hover:bg-gray-100 cursor-pointer"
@@ -242,6 +250,11 @@ const Header: React.FC = () => {
                     Visa <ChevronDown className="w-4 h-4" />
                   </DropdownMenuTrigger>
                   <DropdownMenuContent className="bg-white border border-gray-200 shadow-lg z-50">
+                    <DropdownMenuItem asChild className="hover:bg-gray-100 cursor-pointer">
+                      <Link to="/administration" onClick={() => setIsMobileMenuOpen(false)}>
+                        Administration Visa & AEVM
+                      </Link>
+                    </DropdownMenuItem>
                     <DropdownMenuItem 
                       onClick={() => {
                         handleVisaOptionClick('pays-visa');
