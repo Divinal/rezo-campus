@@ -251,32 +251,20 @@ const Immo: React.FC = () => {
       
       <main className="flex-grow">
         {/* Hero Section */}
-        <section className="bg-gradient-to-br from-primary via-primary/90 to-primary/80 text-white py-20 relative overflow-hidden">
-          <div className="absolute inset-0 opacity-30">
-            <div className="w-full h-full bg-white/10 bg-[radial-gradient(circle_at_50%_50%,rgba(255,255,255,0.1)_2px,transparent_2px)] bg-[length:60px_60px]"></div>
-          </div>
-          <div className="container mx-auto px-4 text-center relative z-10">
-            <h1 className="text-4xl md:text-6xl font-bold mb-6 animate-fade-in">
-              🏠 Rezo Immo 
-            </h1>
-            <p className="text-xl md:text-2xl max-w-3xl mx-auto mb-8 animate-fade-in opacity-90">
-              Trouvez votre logement idéal - Vente et Location
-            </p>
-            <div className="max-w-md mx-auto">
+         <section className="py-3 bg-gradient-to-b from-background to-muted/100">
+          <div className="max-w-md mx-auto">
               <div className="relative">
-                <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400 w-5 h-5" />
+                <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-300 w-5 h-5" />
                 <Input
                   type="text"
                   placeholder="Rechercher une propriété, quartier, ville..."
                   value={searchTerm}
                   onChange={(e) => setSearchTerm(e.target.value)}
-                  className="pl-10 pr-4 py-3 bg-white/95 backdrop-blur border-0 rounded-xl text-gray-900 placeholder:text-gray-500 focus:ring-2 focus:ring-white/50"
+                  className="pl-10 pr-4 py-3 bg-white/95 backdrop-blur border border-green-500 rounded-xl text-gray-900 placeholder:text-gray-500 focus:ring-2 focus:ring-white/50"
                 />
               </div>
             </div>
-          </div>
         </section>
-
         {/* Main Content */}
         <section className="py-12 bg-gradient-to-b from-background to-muted/30">
           <div className="container mx-auto px-4">
@@ -511,7 +499,6 @@ const Immo: React.FC = () => {
             </Tabs>
           </div>
         </section>
-
         {/* Property Details Modal */}
         <Dialog open={!!selectedProperty} onOpenChange={() => setSelectedProperty(null)}>
           <DialogContent className="max-w-6xl max-h-[95vh] overflow-y-auto p-0">
@@ -562,7 +549,6 @@ const Immo: React.FC = () => {
                     </div>
                   </div>
                 </DialogHeader>
-
                 <div className="p-6">
                   <div className="grid grid-cols-1 xl:grid-cols-2 gap-8">
                     {/* Property Details */}
@@ -620,7 +606,6 @@ const Immo: React.FC = () => {
                           </div>
                         </CardContent>
                       </Card>
-
                       <Card className="border-0 shadow-md">
                         <CardHeader>
                           <CardTitle className="text-primary">Description</CardTitle>
@@ -669,8 +654,20 @@ const Immo: React.FC = () => {
             )}
           </DialogContent>
         </Dialog>
-      </main>
-      
+         <section className="bg-gradient-to-br from-primary via-primary/50 to-primary/40 text-white py-20 relative overflow-hidden">
+          <div className="absolute inset-0 opacity-30">
+            <div className="w-full h-full bg-white/10 bg-[radial-gradient(circle_at_50%_50%,rgba(255,255,255,0.1)_2px,transparent_2px)] bg-[length:60px_60px]"></div>
+          </div>
+          <div className="container mx-auto px-4 text-center relative z-10">
+            <h1 className="text-4xl md:text-6xl font-bold mb-6 animate-fade-in">
+              🏠 Rezo Immo 
+            </h1>
+            <p className="text-xl md:text-2xl max-w-3xl mx-auto mb-8 animate-fade-in opacity-90">
+              Trouvez votre logement idéal - Vente et Location
+            </p>           
+          </div>
+        </section>
+      </main>      
       <Footer />
     </div>
   );
