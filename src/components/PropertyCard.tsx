@@ -42,9 +42,24 @@ const PropertyCard: React.FC<PropertyCardProps> = ({
 }) => {
   return (
     <Card className="group overflow-hidden hover:shadow-xl transition-all duration-500 bg-card border border-border/50 hover:border-primary/30 transform hover:-translate-y-1">
-      {/* Image placeholder */}
+      {/* Property Image */}
       <div className="h-48 bg-gradient-to-br from-primary/10 via-primary/5 to-secondary/10 relative overflow-hidden">
-        <div className="absolute inset-0 flex items-center justify-center text-muted-foreground">
+        {property.images && property.images.length > 0 ? (
+          <img 
+            src={property.images[0]} 
+            alt={property.titre}
+            className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500"
+            onError={(e) => {
+              const target = e.target as HTMLImageElement;
+              target.style.display = 'none';
+              const placeholder = target.nextElementSibling as HTMLElement;
+              if (placeholder) placeholder.style.display = 'flex';
+            }}
+          />
+        ) : null}
+        
+        {/* Fallback placeholder */}
+        <div className={`absolute inset-0 flex items-center justify-center text-muted-foreground ${property.images && property.images.length > 0 ? 'hidden' : ''}`}>
           <div className="text-center">
             <div className="text-4xl mb-2 group-hover:scale-110 transition-transform duration-300">🏠</div>
             <div className="text-sm">Photo non disponible</div>
