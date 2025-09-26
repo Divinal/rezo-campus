@@ -76,14 +76,7 @@ const Header: React.FC = () => {
             </Link>
             <Link to="/blog" className="text-white hover:text-secondary transition-all duration-300 hover-scale story-link">
               Actualités
-            </Link>
-            <Link to="/immo" className="text-white hover:text-secondary transition-all duration-300 hover-scale story-link">
-              🏠 Immo
-            </Link>
-            <Link to="/can-2025" className="text-white hover:text-secondary transition-all duration-300 hover-scale story-link">
-              🏆 CAN 2025
-            </Link>
-            
+            </Link>            
             {/* Menu déroulant Visa */}
             <DropdownMenu>
               <DropdownMenuTrigger className="text-white hover:text-secondary transition-all duration-300 hover-scale flex items-center gap-1 group">
@@ -121,7 +114,12 @@ const Header: React.FC = () => {
                 </DropdownMenuItem>
               </DropdownMenuContent>
             </DropdownMenu>
-
+              <Link to="/immo" className="text-white hover:text-secondary transition-all duration-300 hover-scale story-link">
+              🏠 Immo
+            </Link>
+            <Link to="/can-2025" className="text-white hover:text-secondary transition-all duration-300 hover-scale story-link">
+              🏆 CAN 2025
+            </Link>
             <Link to="/about" className="text-white hover:text-secondary transition-all duration-300 hover-scale story-link">
               About
             </Link>

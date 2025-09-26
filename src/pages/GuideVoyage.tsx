@@ -2,19 +2,22 @@ import React from 'react';
 import { Link } from 'react-router-dom';
 import { ArrowLeft, Plane, Hotel, MapPin, CreditCard, Phone, Shield, Calendar, Clock, Car, Train, AlertTriangle, Heart, Camera } from 'lucide-react';
 import { Button } from '@/components/ui/button';
+import Header from '../components/Header';
+import Footer from '../components/Footer';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
 import { Alert, AlertDescription } from '@/components/ui/alert';
 
 const GuideVoyage = () => {
-  const documentsVisa = [
-    'Passeport valide (6 mois minimum)',
-    'Formulaire de demande de visa',
-    'Photos d\'identité récentes',
-    'Justificatifs financiers',
-    'Réservation d\'hôtel ou invitation',
-    'Billet d\'avion aller-retour'
-  ];
+const documentsVisa = [
+  { label: 'Passeport valide (6 mois minimum)' },
+  { label: 'Formulaire de demande de visa', link: '/documents/formulaire-demande-visa-maroc.pdf' },
+  { label: 'Commencer la demande AEVM', link: 'https://www.acces-maroc.ma/#/', external: true },
+  { label: "Photos d'identité récentes" },
+  { label: 'Justificatifs financiers' },
+  { label: "Réservation d'hôtel ou invitation" },
+  { label: "Billet d'avion aller-retour" }
+];
 
   const moyensTransport = [
     {
@@ -114,6 +117,7 @@ const GuideVoyage = () => {
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-background to-muted">
+      <Header />
       {/* Header */}
       <div className="bg-gradient-to-r from-blue-600 to-purple-600 text-white py-12">
         <div className="container mx-auto px-4">
@@ -165,7 +169,7 @@ const GuideVoyage = () => {
                   <Badge variant="outline">Allemagne</Badge>
                   <Badge variant="outline">Espagne</Badge>
                 </div>
-                <Link to="/pays-visa-aevm" className="mt-4 inline-block">
+                <Link to="/pays-visa" className="mt-4 inline-block">
                   <Button variant="outline" size="sm">Voir la liste complète</Button>
                 </Link>
               </CardContent>
@@ -173,21 +177,38 @@ const GuideVoyage = () => {
 
             <Card className="hover-scale animate-fade-in" style={{animationDelay: '0.1s'}}>
               <CardHeader>
-                <CardTitle className="flex items-center">
+               <CardTitle className="flex items-center flex-wrap gap-2">
                   <Shield className="mr-2 h-5 w-5 text-primary" />
-                  Visa requis
+                  Visa ou AEVM Requis —
+                  <Link
+                    to="/pays-visa"
+                    className="text-blue-600 hover:underline text-sm font-normal"
+                  >
+                    Vérifier ici
+                  </Link>
                 </CardTitle>
               </CardHeader>
               <CardContent>
                 <p className="mb-4">Documents nécessaires :</p>
-                <ul className="space-y-2 text-sm">
-                  {documentsVisa.map((doc, index) => (
-                    <li key={index} className="flex items-center">
-                      <span className="w-2 h-2 bg-primary rounded-full mr-2"></span>
-                      {doc}
-                    </li>
-                  ))}
-                </ul>
+              <ul className="space-y-2 text-sm">
+                {documentsVisa.map((doc, index) => (
+                  <li key={index} className="flex items-center">
+                    <span className="w-2 h-2 bg-primary rounded-full mr-2"></span>
+                   {doc.link ? (
+                      <a
+                        href={doc.link}
+                        className="text-blue-600 hover:underline"
+                        {...(doc.external ? { target: "_blank", rel: "noopener noreferrer" } : { download: true })}
+                      >
+                        {doc.label}
+                        {doc.external ? ' ↗️' : ' (Télécharger ici 📥)'}
+                      </a>
+                    ) : (
+                      doc.label
+                    )}
+                  </li>
+                ))}
+              </ul>
               </CardContent>
             </Card>
           </div>
@@ -457,6 +478,7 @@ const GuideVoyage = () => {
           </div>
         </section>
       </div>
+      <Footer />
     </div>
   );
 };

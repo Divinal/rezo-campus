@@ -2,6 +2,8 @@ import React from 'react';
 import { Link } from 'react-router-dom';
 import { Calendar, Download, MapPin, Clock, Trophy, Users, Plane } from 'lucide-react';
 import { Button } from '@/components/ui/button';
+import Header from '../components/Header';
+import Footer from '../components/Footer';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
 
@@ -158,34 +160,35 @@ END:VCALENDAR`;
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-background to-muted">
+      <Header />
       {/* Hero Section */}
       <div className="relative bg-gradient-to-r from-green-600 via-red-600 to-red-700 text-white py-20 overflow-hidden">
         <div className="absolute inset-0 bg-black/20"></div>
         <div className="relative container mx-auto px-4 text-center">
           <div className="animate-fade-in">
             <h1 className="text-5xl md:text-7xl font-bold mb-6 tracking-tight">
-              CAN 2025
+              CAN - MAROC 2025
             </h1>
             <p className="text-xl md:text-2xl mb-8 opacity-90">
-              Coupe d'Afrique des Nations - Maroc 🇲🇦
+              Coupe d'Afrique des Nations - Maroc
             </p>
             <p className="text-lg md:text-xl mb-8">
               21 décembre 2025 - 18 janvier 2026
             </p>
             <div className="flex flex-col sm:flex-row gap-4 justify-center">
-              <Button 
-                onClick={handleDownloadCalendar}
-                size="lg" 
-                className="bg-white text-green-600 hover:bg-gray-100 hover-scale"
-              >
-                <Download className="mr-2 h-5 w-5" />
-                Télécharger le calendrier
-              </Button>
+             <a
+                  href="/documents/Calendrier-CAN-MAROC-2025.pdf"
+                  download
+                  className="flex items-center bg-white text-green-600 hover:bg-gray-200 hover:scale-105 px-4 py-2 rounded transition"
+                >
+                  <Download className="mr-2 h-5 w-5" />
+                  Télécharger le calendrier
+                </a>             
               <Link to="/guide-voyage">
                 <Button 
                   size="lg" 
                   variant="outline" 
-                  className="border-white text-white hover:bg-white hover:text-green-600 hover-scale"
+                  className="flex items-center bg-white text-green-600 hover:bg-gray-200 hover:scale-105 px-4 py-2 rounded transition"
                 >
                   <Plane className="mr-2 h-5 w-5" />
                   Guide complet voyage CAN
@@ -362,6 +365,7 @@ END:VCALENDAR`;
           </div>
         </section>
       </div>
+       <Footer />
     </div>
   );
 };
