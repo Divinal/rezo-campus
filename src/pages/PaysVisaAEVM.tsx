@@ -489,7 +489,7 @@ const PaysVisaAEVM = () => {
             {selectedType === 'visa' ? (
               <>
                 <a
-                    href="/Documents/formulaire-demande-visa-maroc.pdf"
+                    href="/documents/formulaire-demande-visa-maroc.pdf"
                     download
                     className="w-full inline-flex items-center justify-center px-4 py-2 bg-blue-600 hover:bg-blue-700 text-white text-lg font-medium rounded transition-colors"
                   >
