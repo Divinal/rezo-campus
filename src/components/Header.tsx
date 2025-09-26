@@ -80,6 +80,9 @@ const Header: React.FC = () => {
             <Link to="/immo" className="text-white hover:text-secondary transition-colors">
               🏠 Immo
             </Link>
+            <Link to="/can-2025" className="text-white hover:text-secondary transition-colors hover-scale">
+              🏆 CAN 2025
+            </Link>
             
             {/* Menu déroulant Visa */}
             <DropdownMenu>
@@ -247,6 +250,13 @@ const Header: React.FC = () => {
                 onClick={() => setIsMobileMenuOpen(false)}
               >
                 🏠 Immo
+              </Link>
+              <Link 
+                to="/can-2025" 
+                className="text-white hover:text-secondary transition-colors block px-3 py-2 hover-scale"
+                onClick={() => setIsMobileMenuOpen(false)}
+              >
+                🏆 CAN 2025
               </Link>
               
               {/* Menu Visa mobile */}
