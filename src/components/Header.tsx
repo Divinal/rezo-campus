@@ -62,42 +62,42 @@ const Header: React.FC = () => {
   ];
 
   return (
-    <header className="bg-primary shadow-md">
+    <header className="bg-primary shadow-md animate-fade-in">
       {/* Navigation principale en haut */}
       <div className="container mx-auto px-4 py-2">
         <div className="flex justify-between items-center">
           {/* Navigation principale (à gauche) */}
-          <nav className="hidden lg:flex space-x-6">
-            <Link to="/" className="text-white hover:text-secondary transition-colors">
+          <nav className="hidden lg:flex space-x-6 animate-fade-in">
+            <Link to="/" className="text-white hover:text-secondary transition-all duration-300 hover-scale story-link">
               Home
             </Link>
-            <Link to="/index" className="text-white hover:text-secondary transition-colors">
+            <Link to="/index" className="text-white hover:text-secondary transition-all duration-300 hover-scale story-link">
               Schools
             </Link>
-            <Link to="/blog" className="text-white hover:text-secondary transition-colors">
+            <Link to="/blog" className="text-white hover:text-secondary transition-all duration-300 hover-scale story-link">
               Actualités
             </Link>
-            <Link to="/immo" className="text-white hover:text-secondary transition-colors">
+            <Link to="/immo" className="text-white hover:text-secondary transition-all duration-300 hover-scale story-link">
               🏠 Immo
             </Link>
-            <Link to="/can-2025" className="text-white hover:text-secondary transition-colors hover-scale">
+            <Link to="/can-2025" className="text-white hover:text-secondary transition-all duration-300 hover-scale story-link">
               🏆 CAN 2025
             </Link>
             
             {/* Menu déroulant Visa */}
             <DropdownMenu>
-              <DropdownMenuTrigger className="text-white hover:text-secondary transition-colors flex items-center gap-1">
-                Visa <ChevronDown className="w-4 h-4" />
+              <DropdownMenuTrigger className="text-white hover:text-secondary transition-all duration-300 hover-scale flex items-center gap-1 group">
+                Visa <ChevronDown className="w-4 h-4 group-hover:rotate-180 transition-transform duration-300" />
               </DropdownMenuTrigger>
-              <DropdownMenuContent className="bg-white border border-gray-200 shadow-lg z-50">
-                <DropdownMenuItem asChild className="hover:bg-gray-100 cursor-pointer">
+              <DropdownMenuContent className="bg-white border border-gray-200 shadow-lg z-50 animate-scale-in">
+                <DropdownMenuItem asChild className="hover:bg-gray-100 cursor-pointer transition-colors">
                   <Link to="/administration">
                     Administration Visa & AEVM
                   </Link>
                 </DropdownMenuItem>
                 <DropdownMenuItem 
                   onClick={() => handleVisaOptionClick('pays-visa')}
-                  className="hover:bg-gray-100 cursor-pointer"
+                  className="hover:bg-gray-100 cursor-pointer transition-colors"
                 >
                  <Link to="/pays-visa">
                     Pays avec Visa ou AEVM
@@ -105,7 +105,7 @@ const Header: React.FC = () => {
                 </DropdownMenuItem>
                 <DropdownMenuItem 
                   onClick={() => handleVisaOptionClick('logement')}
-                  className="hover:bg-gray-100 cursor-pointer"
+                  className="hover:bg-gray-100 cursor-pointer transition-colors"
                 >
                    <Link to="/immo">
                     Trouver un logement
@@ -113,7 +113,7 @@ const Header: React.FC = () => {
                 </DropdownMenuItem>
                 <DropdownMenuItem 
                   onClick={() => handleVisaOptionClick('carte-sejour')}
-                  className="hover:bg-gray-100 cursor-pointer"
+                  className="hover:bg-gray-100 cursor-pointer transition-colors"
                 >
                  <Link to="/carte-sejour">
                   Carte de séjour
@@ -122,12 +122,12 @@ const Header: React.FC = () => {
               </DropdownMenuContent>
             </DropdownMenu>
 
-            <Link to="/about" className="text-white hover:text-secondary transition-colors">
+            <Link to="/about" className="text-white hover:text-secondary transition-all duration-300 hover-scale story-link">
               About
             </Link>
-            <Link to="/contact" className="text-white hover:text-secondary transition-colors">
+            <Link to="/contact" className="text-white hover:text-secondary transition-all duration-300 hover-scale story-link">
               Contact
-            </Link>             
+            </Link>
           </nav>
       {/* <Link
           to="/FoireOrientationForm"
@@ -144,7 +144,7 @@ const Header: React.FC = () => {
         </Link> */}
 
           {/* Recherche, Réseaux sociaux et Login (à droite) */}
-          <div className="hidden lg:flex items-center gap-4">
+          <div className="hidden lg:flex items-center gap-4 animate-fade-in">
             
             {/* Réseaux sociaux */}
             <div className="flex items-center gap-2">
@@ -152,7 +152,7 @@ const Header: React.FC = () => {
                 href="https://web.facebook.com/profile.php?id=61577756490219"
                 target="_blank"
                 rel="noopener noreferrer"
-                className="text-white hover:text-secondary transition-colors p-1"
+                className="text-white hover:text-secondary transition-all duration-300 hover-scale p-1"
                 aria-label="Facebook"
               >
                 <Facebook className="w-5 h-5" />
@@ -161,7 +161,7 @@ const Header: React.FC = () => {
                 href="https://www.instagram.com/rezocampus"
                 target="_blank"
                 rel="noopener noreferrer"
-                className="text-white hover:text-secondary transition-colors p-1"
+                className="text-white hover:text-secondary transition-all duration-300 hover-scale p-1"
                 aria-label="Instagram"
               >
                 <Instagram className="w-5 h-5" />
@@ -170,7 +170,7 @@ const Header: React.FC = () => {
                 href="https://www.linkedin.com/company/104015534/"
                 target="_blank"
                 rel="noopener noreferrer"
-                className="text-white hover:text-secondary transition-colors p-1"
+                className="text-white hover:text-secondary transition-all duration-300 hover-scale p-1"
                 aria-label="LinkedIn"
               >
                 <Linkedin className="w-5 h-5" />
@@ -179,7 +179,7 @@ const Header: React.FC = () => {
                 href="https://www.youtube.com/@RezoCAMPUS"
                 target="_blank"
                 rel="noopener noreferrer"
-                className="text-white hover:text-secondary transition-colors p-1"
+                className="text-white hover:text-secondary transition-all duration-300 hover-scale p-1"
                 aria-label="YouTube"
               >
                 <Youtube className="w-5 h-5" />
@@ -190,14 +190,14 @@ const Header: React.FC = () => {
               variant="outline"
               size="sm"
               onClick={() => setIsSearchOpen(true)}
-              className="bg-white/10 border-white/20 text-white hover:bg-white/20"
+              className="bg-white/10 border-white/20 text-white hover:bg-white/20 hover-scale transition-all duration-300"
             >
               <Search className="w-4 h-4 mr-2" />
               Rechercher...
             </Button>
 
             {/* Login */}
-            <Link to="/login" className="text-white hover:text-secondary transition-colors flex items-center gap-2">
+            <Link to="/login" className="text-white hover:text-secondary transition-all duration-300 hover-scale flex items-center gap-2">
               <LogIn className="w-4 h-4" />
               Login
             </Link>
@@ -221,7 +221,7 @@ const Header: React.FC = () => {
 
         {/* Menu mobile */}
         {isMobileMenuOpen && (
-          <nav className="lg:hidden mt-4 pb-4">
+          <nav className="lg:hidden mt-4 pb-4 animate-slide-in-right">
             <div className="flex flex-col space-y-3">
               <Link 
                 to="/" 
@@ -375,9 +375,9 @@ const Header: React.FC = () => {
       {/* Logo et slogan - sur la même ligne sous la navigation */}
       <div className="container mx-auto px-4 py-6">
         <div className="flex items-center justify-center gap-4">
-          <Link to="/" className="text-white flex items-center gap-4">
-            <img src="/faviconn.png" alt="Logo" className="w-16 h-16 lg:w-20 lg:h-20" />
-            <div className="text-lg lg:text-2xl font-bold">
+          <Link to="/" className="text-white flex items-center gap-4 group">
+            <img src="/faviconn.png" alt="Logo" className="w-16 h-16 lg:w-20 lg:h-20 group-hover:scale-110 transition-transform duration-500 animate-fade-in" />
+            <div className="text-lg lg:text-2xl font-bold group-hover:text-secondary transition-all duration-300 animate-fade-in">
               Rézo Campus – L'éducation à portée de clic.
             </div>
           </Link>
