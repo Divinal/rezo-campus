@@ -9,6 +9,8 @@ import Footer from '../components/Footer';
 import { Textarea } from '@/components/ui/textarea';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { Plane, FileText, MapPin, Bed, Car, Shield, Star, Check, X, CreditCard, Users, Calendar, Globe, Phone, Mail, Clock, Award, Camera, Utensils, Navigation, Heart, Crown} from 'lucide-react';
+import { supabase } from '@/integrations/supabase/client';
+import { toast } from 'sonner';
 
 const CANMoroccoPackages = () => {
   const [selectedPackage, setSelectedPackage] = useState(null);
@@ -145,16 +147,68 @@ const CANMoroccoPackages = () => {
   };
 
   const handleSubmitOrder = async () => {
-    // Ici tu intégreras PayPal ou le paiement bancaire
     console.log('Commande soumise:', orderData);
     
-    if (orderData.paymentMethod === 'paypal') {
-      // Redirection vers PayPal
-      alert('Redirection vers PayPal... (à implémenter)');
-    } else {
-      // Paiement bancaire
-      alert('Instructions de virement bancaire envoyées par email (à implémenter)');
+    // Validation des champs obligatoires
+    if (!orderData.firstName || !orderData.lastName || !orderData.email || !orderData.nationality || !orderData.arrivalDate || !orderData.departureDate) {
+      toast.error('Veuillez remplir tous les champs obligatoires');
+      return;
     }
+
+    try {
+      // Préparer les données pour l'envoi d'email
+      const bookingData = {
+        firstName: orderData.firstName,
+        lastName: orderData.lastName,
+        email: orderData.email,
+        phone: orderData.phone,
+        nationality: orderData.nationality,
+        packageName: selectedPackage.name,
+        packagePrice: selectedPackage.price,
+        travelers: orderData.travelers,
+        totalPrice: selectedPackage.price * orderData.travelers,
+        paymentMethod: orderData.paymentMethod,
+        arrivalDate: orderData.arrivalDate,
+        departureDate: orderData.departureDate,
+        specialRequests: orderData.specialRequests
+      };
+
+      // Envoyer l'email de confirmation
+      const { data, error } = await supabase.functions.invoke('send-booking-email', {
+        body: bookingData
+      });
+
+      if (error) {
+        console.error('Erreur envoi email:', error);
+        toast.error('Erreur lors de l\'envoi de l\'email de confirmation');
+        return;
+      }
+
+      toast.success('Email de confirmation envoyé avec succès !');
+      
+      if (orderData.paymentMethod === 'paypal') {
+        // Le composant PayPal gérera le paiement
+        console.log('Paiement PayPal en cours...');
+      } else {
+        // Pour le virement bancaire, l'email contient déjà le RIB
+        toast.success('Instructions de virement bancaire envoyées par email');
+        setShowOrderForm(false);
+      }
+    } catch (error) {
+      console.error('Erreur lors du traitement de la commande:', error);
+      toast.error('Erreur lors du traitement de votre commande');
+    }
+  };
+
+  const handlePayPalSuccess = (details) => {
+    console.log('Paiement PayPal réussi:', details);
+    toast.success(`Paiement réussi ! Référence: ${details.id}`);
+    setShowOrderForm(false);
+  };
+
+  const handlePayPalError = (error) => {
+    console.error('Erreur PayPal:', error);
+    toast.error('Erreur lors du paiement PayPal');
   };
 
   return (
@@ -468,21 +522,56 @@ const CANMoroccoPackages = () => {
                   </p>
                 </div>
 
-                <div className="flex space-x-4">
-                  <Button
-                    variant="outline"
-                    onClick={() => setShowOrderForm(false)}
-                    className="flex-1"
-                  >
-                    Annuler
-                  </Button>
-                  <Button
-                    onClick={handleSubmitOrder}
-                    className="flex-1 bg-green-600 hover:bg-green-700 text-white"
-                    disabled={!orderData.firstName || !orderData.email || !orderData.nationality}
-                  >
-                    {orderData.paymentMethod === 'paypal' ? 'Payer avec PayPal' : 'Confirmer la commande'}
-                  </Button>
+                <div className="space-y-4">
+                  {orderData.paymentMethod === 'paypal' && orderData.firstName && orderData.email && orderData.nationality ? (
+                    <div className="space-y-4">
+                      <Button
+                        onClick={handleSubmitOrder}
+                        className="w-full bg-blue-600 hover:bg-blue-700 text-white"
+                      >
+                        Envoyer email de confirmation et procéder au paiement
+                      </Button>
+                      
+                      <PayPalButtons
+                        style={{ layout: "vertical" }}
+                        createOrder={(data, actions) => {
+                          return actions.order.create({
+                            intent: "CAPTURE",
+                            purchase_units: [{
+                              amount: {
+                                value: (selectedPackage.price * orderData.travelers).toString(),
+                                currency_code: "EUR"
+                              },
+                              description: `${selectedPackage.name} - ${orderData.travelers} personne(s)`
+                            }]
+                          });
+                        }}
+                        onApprove={(data, actions) => {
+                          return actions.order.capture().then((details) => {
+                            handlePayPalSuccess(details);
+                          });
+                        }}
+                        onError={handlePayPalError}
+                      />
+                    </div>
+                  ) : (
+                    <div className="flex space-x-4">
+                      <Button
+                        variant="outline"
+                        onClick={() => setShowOrderForm(false)}
+                        className="flex-1"
+                      >
+                        Annuler
+                      </Button>
+                      <Button
+                        onClick={handleSubmitOrder}
+                        className="flex-1 bg-green-600 hover:bg-green-700 text-white"
+                        disabled={!orderData.firstName || !orderData.email || !orderData.nationality}
+                      >
+                        {orderData.paymentMethod === 'bank' ? 'Recevoir le RIB par email' : 'Continuer'}
+                      </Button>
+                    </div>
+                  )}
                 </div>
                 </div>
             </div>
