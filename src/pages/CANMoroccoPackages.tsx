@@ -475,7 +475,7 @@ const CANMoroccoPackages = () => {
                 </div>
 
                 {/* Méthode de paiement */}
-                <div className="bg-gray-50 p-4 rounded-lg">
+                {/* <div className="bg-gray-50 p-4 rounded-lg">
                   <h4 className="font-bold text-gray-800 mb-4">Mode de paiement</h4>
                   <div className="space-y-3">
                     <label className="flex items-center space-x-3 cursor-pointer">
@@ -507,7 +507,7 @@ const CANMoroccoPackages = () => {
                       </div>
                     </label>
                   </div>
-                </div>
+                </div> */}
 
                 {/* Prix total */}
                 <div className="bg-green-50 p-4 rounded-lg border-2 border-green-200">
@@ -563,13 +563,13 @@ const CANMoroccoPackages = () => {
                       >
                         Annuler
                       </Button>
-                      <Button
+                      {/* <Button
                         onClick={handleSubmitOrder}
                         className="flex-1 bg-green-600 hover:bg-green-700 text-white"
                         disabled={!orderData.firstName || !orderData.email || !orderData.nationality}
                       >
                         {orderData.paymentMethod === 'bank' ? 'Recevoir le RIB par email' : 'Continuer'}
-                      </Button>
+                      </Button> */}
                     </div>
                   )}
                 </div>

@@ -35,7 +35,7 @@ const queryClient = new QueryClient();
 const App = () => (
   <QueryClientProvider client={queryClient}>
     <PayPalScriptProvider options={{
-      clientId: "AZK7G9JdDqbLEwRJMEhqbNr9fCAdPYhgKGrg8k5r6-ByChRr8sshJfZKMqA7j7KMCDFYDyqJ9oJHw0a9",
+      clientId: "Acw1XaVUIzI2O5m0-xkelBf7kY1eV6Q50KutDBY9J4uEMBX1VvICGM62IxCrUKehg-E5u5O824c2UGe0",
       currency: "EUR",
       intent: "capture"
     }}>
