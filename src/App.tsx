@@ -26,6 +26,7 @@ import Administration from "./pages/Administration";
 import CarteSejour from "./pages/CarteSejour";
 import PaysVisaAEVM from "./pages/PaysVisaAEVM";
 import CAN2025 from "./pages/CAN2025";
+import CANMoroccoPackages from "./pages/CANMoroccoPackages";
 import GuideVoyage from "./pages/GuideVoyage";
 
 const queryClient = new QueryClient();
@@ -58,6 +59,7 @@ const App = () => (
           <Route path="/pays-visa" element={<PaysVisaAEVM />} />
           <Route path="/carte-sejour" element={<CarteSejour />} />
           <Route path="/can-2025" element={<CAN2025 />} />
+          <Route path="/pack-assistance" element={<CANMoroccoPackages />} />
           <Route path="/guide-voyage" element={<GuideVoyage />} />
 
           {/* Route catch-all */}

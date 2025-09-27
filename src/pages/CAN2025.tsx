@@ -194,6 +194,16 @@ END:VCALENDAR`;
                   Guide complet voyage CAN
                 </Button>
               </Link>
+               <Link to="/pack-assistance">
+                <Button 
+                  size="lg" 
+                  variant="outline" 
+                  className="flex items-center bg-white text-green-600 hover:bg-gray-200 hover:scale-105 px-4 py-2 rounded transition"
+                >
+                  <Users className="mr-2 h-5 w-5" />
+                  Accompangement Spéciale CAN 2025
+                </Button>
+              </Link>
             </div>
           </div>
         </div>
