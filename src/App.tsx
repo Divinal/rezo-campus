@@ -27,6 +27,7 @@ import Administration from "./pages/Administration";
 import CarteSejour from "./pages/CarteSejour";
 import PaysVisaAEVM from "./pages/PaysVisaAEVM";
 import CAN2025 from "./pages/CAN2025";
+import ShopifyTraining from "./pages/ShopifyTraining";
 import CANMoroccoPackages from "./pages/CANMoroccoPackages";
 import GuideVoyage from "./pages/GuideVoyage";
 
@@ -59,7 +60,7 @@ const App = () => (
           <Route path="/dashboard" element={<Dashboard />} />
           <Route path="/terms-of-service" element={<TermsOfService />} />
           <Route path="/privacy-policy" element={<PrivacyPolicy />} />
-          <Route path="/FoireOrientationForm" element={<FoireOrientationForm />} />
+          <Route path="/Formulaire-inscription" element={<FoireOrientationForm />} />
           <Route path="/immo" element={<Immo />} />
           <Route path="/administration" element={<Administration />} />
           <Route path="/pays-visa" element={<PaysVisaAEVM />} />
@@ -67,6 +68,7 @@ const App = () => (
           <Route path="/can-2025" element={<CAN2025 />} />
           <Route path="/pack-assistance" element={<CANMoroccoPackages />} />
           <Route path="/guide-voyage" element={<GuideVoyage />} />
+           <Route path="/Shopify-Training" element={<ShopifyTraining />} />
 
             {/* Route catch-all */}
             <Route path="*" element={<NotFound />} />

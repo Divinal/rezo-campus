@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
-import { LogIn, Menu, X, ChevronDown, Search, Facebook, Instagram, Linkedin, Youtube } from 'lucide-react';
+import { Users, LogIn, Menu, X, ChevronDown, Search, Facebook, Instagram, Linkedin, Youtube } from 'lucide-react';
 import {
   DropdownMenu,
   DropdownMenuContent,
@@ -195,6 +195,10 @@ const Header: React.FC = () => {
             </Button>
 
             {/* Login */}
+             <Link to="/Shopify-Training" className="text-white hover:text-secondary transition-all duration-300 hover-scale flex items-center gap-2">
+              <Users className="w-4 h-4" />
+              Post
+            </Link>
             <Link to="/login" className="text-white hover:text-secondary transition-all duration-300 hover-scale flex items-center gap-2">
               <LogIn className="w-4 h-4" />
               Login
