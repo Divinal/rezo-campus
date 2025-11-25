@@ -8,13 +8,14 @@ import Header from '../components/Header';
 import Footer from '../components/Footer';
 import { Textarea } from '@/components/ui/textarea';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
-import { Plane, FileText, MapPin, Bed, Car, Shield, Star, Check, X, CreditCard, Users, Calendar, Globe, Phone, Mail, Clock, Award, Camera, Utensils, Navigation, Heart, Crown} from 'lucide-react';
+import { Plane, FileText, MapPin, Bed, Car, Shield, Star, Check, X, CreditCard, Users, Calendar, Globe, Phone, Mail, Clock, Award, Camera, Utensils, Navigation, Heart, Crown, ChevronDown, ChevronUp} from 'lucide-react';
 import { supabase } from '@/integrations/supabase/client';
 import { toast } from 'sonner';
 
 const CANMoroccoPackages = () => {
   const [selectedPackage, setSelectedPackage] = useState(null);
   const [showOrderForm, setShowOrderForm] = useState(false);
+  const [expandedPackages, setExpandedPackages] = useState({});
   const [orderData, setOrderData] = useState({
     package: '',
     firstName: '',
@@ -140,6 +141,13 @@ const CANMoroccoPackages = () => {
     setSelectedPackage(pkg);
     setOrderData({...orderData, package: pkg.id});
     setShowOrderForm(true);
+  };
+
+  const toggleExpandPackage = (packageId) => {
+    setExpandedPackages(prev => ({
+      ...prev,
+      [packageId]: !prev[packageId]
+    }));
   };
 
   const handleInputChange = (field, value) => {
@@ -273,29 +281,62 @@ const CANMoroccoPackages = () => {
                 <CardContent className="p-6">
                   <p className="text-gray-600 mb-6">{pkg.description}</p>
                   
-                  {/* Services */}
+                  {/* Services avec expand/collapse */}
                   <div className="space-y-4 mb-6">
                     <h5 className="font-bold text-gray-800 flex items-center">
                       <Check className="w-5 h-5 text-green-500 mr-2" />
                       Services inclus:
                     </h5>
                     <ul className="space-y-2">
+                      {/* Afficher les 4 premiers services */}
                       {pkg.services.slice(0, 4).map((service, idx) => (
                         <li key={idx} className="flex items-start text-sm">
                           <Check className="w-4 h-4 text-green-500 mr-2 mt-0.5 flex-shrink-0" />
                           <span>{service}</span>
                         </li>
                       ))}
+                      
+                      {/* Afficher les services supplémentaires si expandé */}
+                      {expandedPackages[pkg.id] && pkg.services.length > 4 && (
+                        <>
+                          {pkg.services.slice(4).map((service, idx) => (
+                            <li 
+                              key={idx + 4} 
+                              className="flex items-start text-sm animate-in slide-in-from-top duration-300"
+                            >
+                              <Check className="w-4 h-4 text-green-500 mr-2 mt-0.5 flex-shrink-0" />
+                              <span>{service}</span>
+                            </li>
+                          ))}
+                        </>
+                      )}
+                      
+                      {/* Bouton pour afficher/masquer les services supplémentaires */}
                       {pkg.services.length > 4 && (
-                        <li className="text-sm text-green-600 font-medium">
-                          + {pkg.services.length - 4} autres services...
+                        <li>
+                          <button
+                            onClick={() => toggleExpandPackage(pkg.id)}
+                            className="flex items-center text-sm text-green-600 hover:text-green-700 font-medium bg-green-50 hover:bg-green-100 px-3 py-2 rounded-lg transition-all duration-200 w-full justify-center group"
+                          >
+                            {expandedPackages[pkg.id] ? (
+                              <>
+                                <ChevronUp className="w-4 h-4 mr-1 group-hover:animate-bounce" />
+                                Voir moins de services
+                              </>
+                            ) : (
+                              <>
+                                <ChevronDown className="w-4 h-4 mr-1 group-hover:animate-bounce" />
+                                + {pkg.services.length - 4} autres services
+                              </>
+                            )}
+                          </button>
                         </li>
                       )}
                     </ul>
                   </div>
 
                   <Button 
-                    className={`w-full bg-gradient-to-r ${pkg.color} hover:opacity-90 text-white font-bold py-3 text-lg`}
+                    className={`w-full bg-gradient-to-r ${pkg.color} hover:opacity-90 text-white font-bold py-3 text-lg transition-all duration-300 hover:scale-105 hover:shadow-lg`}
                     onClick={() => handlePackageSelect(pkg)}
                   >
                     Choisir ce Pack
@@ -309,8 +350,8 @@ const CANMoroccoPackages = () => {
 
       {/* Order Form Modal */}
       {showOrderForm && selectedPackage && (
-        <div className="fixed inset-0 bg-black bg-opacity-50 z-50 flex items-center justify-center p-4">
-          <div className="bg-white rounded-lg max-w-2xl w-full max-h-[90vh] overflow-y-auto">
+        <div className="fixed inset-0 bg-black bg-opacity-50 z-50 flex items-center justify-center p-4 animate-in fade-in duration-300">
+          <div className="bg-white rounded-lg max-w-2xl w-full max-h-[90vh] overflow-y-auto animate-in slide-in-from-bottom duration-500">
             <div className="p-6">
               <div className="flex justify-between items-start mb-6">
                 <div>
@@ -324,7 +365,7 @@ const CANMoroccoPackages = () => {
                 <Button
                   variant="outline"
                   onClick={() => setShowOrderForm(false)}
-                  className="text-gray-500 hover:text-gray-700"
+                  className="text-gray-500 hover:text-gray-700 hover:bg-gray-100 transition-colors"
                 >
                   <X className="w-5 h-5" />
                 </Button>
@@ -383,37 +424,37 @@ const CANMoroccoPackages = () => {
                     </SelectTrigger>
                     <SelectContent>
                       <SelectItem value="andorre">Andorre</SelectItem>
-                        <SelectItem value="angola">Angola</SelectItem>
-                        <SelectItem value="benin">Bénin</SelectItem>
-                        <SelectItem value="belgique">Belgique</SelectItem>
-                        <SelectItem value="burkina-faso">Burkina Faso</SelectItem>
-                        <SelectItem value="burundi">Burundi</SelectItem>
-                        <SelectItem value="canada">Canada</SelectItem>
-                        <SelectItem value="comores">Comores</SelectItem>
-                        <SelectItem value="cote-ivoire">Côte d'Ivoire</SelectItem>
-                        <SelectItem value="djibouti">Djibouti</SelectItem>
-                        <SelectItem value="france">France</SelectItem>
-                        <SelectItem value="guinee">Guinée</SelectItem>
-                        <SelectItem value="guinee-bissau">Guinée-Bissau</SelectItem>
-                        <SelectItem value="guinee-equatoriale">Guinée équatoriale</SelectItem>
-                        <SelectItem value="haiti">Haïti</SelectItem>
-                        <SelectItem value="liban">Liban</SelectItem>
-                        <SelectItem value="luxembourg">Luxembourg</SelectItem>
-                        <SelectItem value="madagascar">Madagascar</SelectItem>
-                        <SelectItem value="mali">Mali</SelectItem>
-                        <SelectItem value="maurice">Île Maurice</SelectItem>
-                        <SelectItem value="niger">Niger</SelectItem>
-                        <SelectItem value="nigeria">Nigeria</SelectItem>
-                        <SelectItem value="rc">République du Congo</SelectItem>
-                        <SelectItem value="rdc">République Démocratique du Congo</SelectItem>
-                        <SelectItem value="rwanda">Rwanda</SelectItem>
-                        <SelectItem value="senegal">Sénégal</SelectItem>
-                        <SelectItem value="seychelles">Seychelles</SelectItem>
-                        <SelectItem value="suisse">Suisse</SelectItem>
-                        <SelectItem value="tchad">Tchad</SelectItem>
-                        <SelectItem value="togo">Togo</SelectItem>
-                        <SelectItem value="vanuatu">Vanuatu</SelectItem>
-                        <SelectItem value="vietnam">Vietnam</SelectItem>
+                      <SelectItem value="angola">Angola</SelectItem>
+                      <SelectItem value="benin">Bénin</SelectItem>
+                      <SelectItem value="belgique">Belgique</SelectItem>
+                      <SelectItem value="burkina-faso">Burkina Faso</SelectItem>
+                      <SelectItem value="burundi">Burundi</SelectItem>
+                      <SelectItem value="canada">Canada</SelectItem>
+                      <SelectItem value="comores">Comores</SelectItem>
+                      <SelectItem value="cote-ivoire">Côte d'Ivoire</SelectItem>
+                      <SelectItem value="djibouti">Djibouti</SelectItem>
+                      <SelectItem value="france">France</SelectItem>
+                      <SelectItem value="guinee">Guinée</SelectItem>
+                      <SelectItem value="guinee-bissau">Guinée-Bissau</SelectItem>
+                      <SelectItem value="guinee-equatoriale">Guinée équatoriale</SelectItem>
+                      <SelectItem value="haiti">Haïti</SelectItem>
+                      <SelectItem value="liban">Liban</SelectItem>
+                      <SelectItem value="luxembourg">Luxembourg</SelectItem>
+                      <SelectItem value="madagascar">Madagascar</SelectItem>
+                      <SelectItem value="mali">Mali</SelectItem>
+                      <SelectItem value="maurice">Île Maurice</SelectItem>
+                      <SelectItem value="niger">Niger</SelectItem>
+                      <SelectItem value="nigeria">Nigeria</SelectItem>
+                      <SelectItem value="rc">République du Congo</SelectItem>
+                      <SelectItem value="rdc">République Démocratique du Congo</SelectItem>
+                      <SelectItem value="rwanda">Rwanda</SelectItem>
+                      <SelectItem value="senegal">Sénégal</SelectItem>
+                      <SelectItem value="seychelles">Seychelles</SelectItem>
+                      <SelectItem value="suisse">Suisse</SelectItem>
+                      <SelectItem value="tchad">Tchad</SelectItem>
+                      <SelectItem value="togo">Togo</SelectItem>
+                      <SelectItem value="vanuatu">Vanuatu</SelectItem>
+                      <SelectItem value="vietnam">Vietnam</SelectItem>
                       <SelectItem value="autres">Autres</SelectItem>
                     </SelectContent>
                   </Select>
@@ -474,41 +515,6 @@ const CANMoroccoPackages = () => {
                   />
                 </div>
 
-                {/* Méthode de paiement */}
-                {/* <div className="bg-gray-50 p-4 rounded-lg">
-                  <h4 className="font-bold text-gray-800 mb-4">Mode de paiement</h4>
-                  <div className="space-y-3">
-                    <label className="flex items-center space-x-3 cursor-pointer">
-                      <input
-                        type="radio"
-                        name="payment"
-                        value="paypal"
-                        checked={orderData.paymentMethod === 'paypal'}
-                        onChange={(e) => handleInputChange('paymentMethod', e.target.value)}
-                        className="text-blue-600"
-                      />
-                      <div className="flex items-center space-x-2">
-                        <CreditCard className="w-5 h-5 text-blue-600" />
-                        <span>PayPal (Paiement sécurisé immédiat)</span>
-                      </div>
-                    </label>
-                    <label className="flex items-center space-x-3 cursor-pointer">
-                      <input
-                        type="radio"
-                        name="payment"
-                        value="bank"
-                        checked={orderData.paymentMethod === 'bank'}
-                        onChange={(e) => handleInputChange('paymentMethod', e.target.value)}
-                        className="text-green-600"
-                      />
-                      <div className="flex items-center space-x-2">
-                        <MapPin className="w-5 h-5 text-green-600" />
-                        <span>Virement bancaire (Instructions par email)</span>
-                      </div>
-                    </label>
-                  </div>
-                </div> */}
-
                 {/* Prix total */}
                 <div className="bg-green-50 p-4 rounded-lg border-2 border-green-200">
                   <div className="flex justify-between items-center text-lg font-bold">
@@ -563,17 +569,10 @@ const CANMoroccoPackages = () => {
                       >
                         Annuler
                       </Button>
-                      {/* <Button
-                        onClick={handleSubmitOrder}
-                        className="flex-1 bg-green-600 hover:bg-green-700 text-white"
-                        disabled={!orderData.firstName || !orderData.email || !orderData.nationality}
-                      >
-                        {orderData.paymentMethod === 'bank' ? 'Recevoir le RIB par email' : 'Continuer'}
-                      </Button> */}
                     </div>
                   )}
                 </div>
-                </div>
+              </div>
             </div>
           </div>
         </div>
@@ -613,26 +612,29 @@ const CANMoroccoPackages = () => {
         </div>
       </section>
       <section className="py-16 bg-gradient-to-r from-green-600 via-green-500 to-red-600 text-white">
-        <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mt-12">
-              <div className="bg-white/10 backdrop-blur-sm rounded-lg p-6">
-                <Shield className="w-12 h-12 mx-auto mb-4 text-yellow-300" />
-                <h3 className="text-lg font-bold mb-2">100% Sécurisé</h3>
-                <p className="text-sm text-green-100">Paiements sécurisés et assistance 24/7</p>
-              </div>
-              <div className="bg-white/10 backdrop-blur-sm rounded-lg p-6">
-                <Star className="w-12 h-12 mx-auto mb-4 text-yellow-300" />
-                <h3 className="text-lg font-bold mb-2">Service Premium</h3>
-                <p className="text-sm text-green-100">Accompagnement personnalisé de A à Z</p>
-              </div>
-              <div className="bg-white/10 backdrop-blur-sm rounded-lg p-6">
-                <Heart className="w-12 h-12 mx-auto mb-4 text-yellow-300" />
-                <h3 className="text-lg font-bold mb-2">Expérience Unique</h3>
-                <p className="text-sm text-green-100">Découvrez le Maroc comme jamais</p>
-              </div>
+        <div className="container mx-auto px-4">
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+            <div className="bg-white/10 backdrop-blur-sm rounded-lg p-6 text-center hover:bg-white/20 transition-all duration-300 hover:scale-105">
+              <Shield className="w-12 h-12 mx-auto mb-4 text-yellow-300" />
+              <h3 className="text-lg font-bold mb-2">100% Sécurisé</h3>
+              <p className="text-sm text-green-100">Paiements sécurisés et assistance 24/7</p>
             </div>
+            <div className="bg-white/10 backdrop-blur-sm rounded-lg p-6 text-center hover:bg-white/20 transition-all duration-300 hover:scale-105">
+              <Star className="w-12 h-12 mx-auto mb-4 text-yellow-300" />
+              <h3 className="text-lg font-bold mb-2">Service Premium</h3>
+              <p className="text-sm text-green-100">Accompagnement personnalisé de A à Z</p>
+            </div>
+            <div className="bg-white/10 backdrop-blur-sm rounded-lg p-6 text-center hover:bg-white/20 transition-all duration-300 hover:scale-105">
+              <Heart className="w-12 h-12 mx-auto mb-4 text-yellow-300" />
+              <h3 className="text-lg font-bold mb-2">Expérience Unique</h3>
+              <p className="text-sm text-green-100">Découvrez le Maroc comme jamais</p>
+            </div>
+          </div>
+        </div>
       </section>
-       <Footer />
+      <Footer />
     </div>
   );
 };
+
 export default CANMoroccoPackages;

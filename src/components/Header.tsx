@@ -71,7 +71,7 @@ const Header: React.FC = () => {
             <Link to="/" className="text-white hover:text-secondary transition-all duration-300 hover-scale story-link">
               Home
             </Link>
-            <Link to="/index" className="text-white hover:text-secondary transition-all duration-300 hover-scale story-link">
+            <Link to="/schools" className="text-white hover:text-secondary transition-all duration-300 hover-scale story-link">
               Schools
             </Link>
             <Link to="/blog" className="text-white hover:text-secondary transition-all duration-300 hover-scale story-link">

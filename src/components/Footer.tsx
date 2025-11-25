@@ -17,7 +17,7 @@ const Footer: React.FC = () => {
               aux informations sur les programmes, modalités d'inscription et parcours.
             </p>
             <p>
-              Notre WhatsApp : <img src="Images/code.PNG" alt="Lien WhatsApp" className="mr-4 w-16 h-18"/>
+              Notre WhatsApp : <img src="Images/code.jpg" alt="Lien WhatsApp" className="mr-4 w-16 h-18"/>
             </p>
           </div>
           
@@ -81,8 +81,8 @@ const Footer: React.FC = () => {
           <div>
             <h3 className="text-xl font-semibold mb-4 bg-blue-600 px-2 py-1">Contact</h3>
             <address className="not-italic text-gray-300 mb-4">
-              <p>444 Boulevard Grande Ceinture</p>
-              <p>20350 Casablanca, Morocco </p>
+              <p>64, Rue Allal Ben Abdellah Casablanca</p>
+              <p>20000 Casablanca, Morocco </p>
               <p className="mt-2">Email: campusrezo@gmail.com</p>
               <p>Tél: +212 617-725867</p>
             </address>

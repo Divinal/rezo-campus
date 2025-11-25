@@ -6,7 +6,7 @@ import { HashRouter, Routes, Route } from "react-router-dom";
 import { PayPalScriptProvider } from "@paypal/react-paypal-js";
 
 import Landing from "./pages/Landing";
-import Index from "./pages/Index";
+import Schools from "./pages/Schools";
 import SchoolDetail from "./pages/SchoolDetail";
 import SchoolEdit from "./pages/SchoolEdit";
 import About from "./pages/About";
@@ -46,7 +46,7 @@ const App = () => (
         <HashRouter>
           <Routes>
           <Route path="/" element={<Landing />} />
-          <Route path="/index" element={<Index />} />
+          <Route path="/schools" element={<Schools />} />
           <Route path="/school/:id" element={<SchoolDetail />} />
           <Route path="/school/edit/:id" element={<SchoolEdit />} />
           <Route path="/about" element={<About />} />
