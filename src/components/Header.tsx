@@ -231,7 +231,7 @@ const Header: React.FC = () => {
                 Home
               </Link>
               <Link 
-                to="/index" 
+                to="/schools" 
                 className="text-white hover:text-secondary transition-colors block px-3 py-2"
                 onClick={() => setIsMobileMenuOpen(false)}
               >
@@ -316,6 +316,15 @@ const Header: React.FC = () => {
               >
                 Contact
               </Link>
+                          <Button
+              variant="outline"
+              size="sm"
+              onClick={() => setIsSearchOpen(true)}
+              className="bg-white/10 border-white/20 text-white hover:bg-white/20 hover-scale transition-all duration-300"
+            >
+              <Search className="w-4 h-4 mr-2" />
+              Rechercher...
+            </Button>
 
               {/* Réseaux sociaux mobile */}
               <div className="flex items-center gap-4 px-3 py-2">
