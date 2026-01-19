@@ -30,6 +30,9 @@ import CAN2025 from "./pages/CAN2025";
 import ShopifyTraining from "./pages/ShopifyTraining";
 import CANMoroccoPackages from "./pages/CANMoroccoPackages";
 import GuideVoyage from "./pages/GuideVoyage";
+import GradesSystem from './pages/GradesSystem';
+
+
 
 const queryClient = new QueryClient();
 
@@ -69,6 +72,7 @@ const App = () => (
           <Route path="/pack-assistance" element={<CANMoroccoPackages />} />
           <Route path="/guide-voyage" element={<GuideVoyage />} />
            <Route path="/Shopify-Training" element={<ShopifyTraining />} />
+           <Route path="/notes" element={<GradesSystem />} />
 
             {/* Route catch-all */}
             <Route path="*" element={<NotFound />} />

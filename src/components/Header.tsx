@@ -201,6 +201,11 @@ const Header: React.FC = () => {
               <LogIn className="w-4 h-4" />
               Login
             </Link>
+            <li>
+             <Link to="/notes" className="text-gray-300 hover:text-secondary transition-colors">
+              Consulter les notes
+              </Link>
+            </li>
           </div>
 
           {/* Menu mobile button */}
@@ -366,6 +371,11 @@ const Header: React.FC = () => {
                   <Youtube className="w-5 h-5" />
                 </a>
               </div>
+               <li>
+             <Link to="/notes" className="text-gray-300 hover:text-secondary transition-colors">
+              Consulter les notes
+              </Link>
+             </li>
 
               {/* Login mobile */}
               <Link 
