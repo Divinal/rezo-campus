@@ -1,5 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { Plus, Trash2, BookOpen, ArrowLeft, Lock } from 'lucide-react';
+import { supabase } from '@/lib/supabaseClient';
+import { toast } from '@/components/ui/sonner';
 
 interface Discipline {
   id: number;
@@ -7,7 +9,8 @@ interface Discipline {
 }
 
 interface Note {
-  disciplineId: number;
+  id: number;
+  discipline_id: number;
   note: number;
 }
 
@@ -17,7 +20,6 @@ interface Student {
   prenom: string;
   classe: string;
   numero: string;
-  notes: Note[];
 }
 
 interface NewStudent {
@@ -36,6 +38,7 @@ interface TeacherPageProps {
 const TeacherPage: React.FC<TeacherPageProps> = ({ isAuthenticated, onAuthenticate, onBack }) => {
   const [disciplines, setDisciplines] = useState<Discipline[]>([]);
   const [students, setStudents] = useState<Student[]>([]);
+  const [studentNotes, setStudentNotes] = useState<{[key: number]: Note[]}>({});
   const [newDiscipline, setNewDiscipline] = useState('');
   const [newStudent, setNewStudent] = useState<NewStudent>({ nom: '', prenom: '', classe: '', numero: '' });
   const [passwordInput, setPasswordInput] = useState('');
@@ -43,23 +46,66 @@ const TeacherPage: React.FC<TeacherPageProps> = ({ isAuthenticated, onAuthentica
   const [teacherPassword, setTeacherPassword] = useState('enseignant2025');
 
   useEffect(() => {
-    const savedDisciplines = localStorage.getItem('disciplines');
-    const savedStudents = localStorage.getItem('students');
     const savedPassword = localStorage.getItem('teacherPassword');
-    
-    if (savedDisciplines) setDisciplines(JSON.parse(savedDisciplines));
-    if (savedStudents) setStudents(JSON.parse(savedStudents));
     if (savedPassword) setTeacherPassword(savedPassword);
     else localStorage.setItem('teacherPassword', teacherPassword);
   }, []);
 
   useEffect(() => {
-    localStorage.setItem('disciplines', JSON.stringify(disciplines));
-  }, [disciplines]);
+    if (isAuthenticated) {
+      loadAllData();
+    }
+  }, [isAuthenticated]);
 
-  useEffect(() => {
-    localStorage.setItem('students', JSON.stringify(students));
-  }, [students]);
+  const loadAllData = async () => {
+    await Promise.all([
+      loadDisciplines(),
+      loadStudents()
+    ]);
+  };
+
+  const loadDisciplines = async () => {
+    const { data, error } = await supabase
+      .from('disciplines')
+      .select('*')
+      .order('nom');
+
+    if (error) {
+      console.error('Erreur:', error);
+      toast.error("Erreur lors du chargement des disciplines");
+    } else {
+      setDisciplines(data || []);
+    }
+  };
+
+  const loadStudents = async () => {
+    const { data, error } = await supabase
+      .from('students')
+      .select('*')
+      .order('nom');
+
+    if (error) {
+      console.error('Erreur:', error);
+      toast.error("Erreur lors du chargement des étudiants");
+    } else {
+      setStudents(data || []);
+      // Charger les notes pour chaque étudiant
+      if (data) {
+        data.forEach(student => loadStudentNotes(student.id));
+      }
+    }
+  };
+
+  const loadStudentNotes = async (studentId: number) => {
+    const { data, error } = await supabase
+      .from('notes')
+      .select('*')
+      .eq('student_id', studentId);
+
+    if (!error && data) {
+      setStudentNotes(prev => ({ ...prev, [studentId]: data }));
+    }
+  };
 
   const checkTeacherPassword = () => {
     if (passwordInput === teacherPassword) {
@@ -72,53 +118,124 @@ const TeacherPage: React.FC<TeacherPageProps> = ({ isAuthenticated, onAuthentica
     }
   };
 
-  const addDiscipline = () => {
-    if (newDiscipline.trim()) {
-      setDisciplines([...disciplines, { id: Date.now(), nom: newDiscipline }]);
+  const addDiscipline = async () => {
+    if (!newDiscipline.trim()) return;
+
+    const { data, error } = await supabase
+      .from('disciplines')
+      .insert([{ nom: newDiscipline }])
+      .select();
+
+    if (error) {
+      console.error('Erreur:', error);
+      toast.error("Erreur lors de l'ajout de la discipline");
+    } else {
+      toast.success("Discipline ajoutée avec succès");
       setNewDiscipline('');
+      loadDisciplines();
     }
   };
 
-  const deleteDiscipline = (id: number) => {
-    setDisciplines(disciplines.filter(d => d.id !== id));
-    setStudents(students.map(student => ({
-      ...student,
-      notes: student.notes.filter(n => n.disciplineId !== id)
-    })));
+  const deleteDiscipline = async (id: number) => {
+    const { error } = await supabase
+      .from('disciplines')
+      .delete()
+      .eq('id', id);
+
+    if (error) {
+      console.error('Erreur:', error);
+      toast.error("Erreur lors de la suppression");
+    } else {
+      toast.success("Discipline supprimée");
+      loadDisciplines();
+    }
   };
 
-  const addStudent = () => {
-    if (newStudent.nom && newStudent.prenom && newStudent.classe && newStudent.numero) {
-      const studentExists = students.some(s => s.numero === newStudent.numero);
-      if (studentExists) {
-        alert('Ce numéro est déjà utilisé !');
-        return;
+  const addStudent = async () => {
+    if (!newStudent.nom || !newStudent.prenom || !newStudent.classe || !newStudent.numero) {
+      toast.error("Veuillez remplir tous les champs");
+      return;
+    }
+
+    const { data, error } = await supabase
+      .from('students')
+      .insert([newStudent])
+      .select();
+
+    if (error) {
+      if (error.code === '23505') { // Code d'erreur pour contrainte unique
+        toast.error("Ce numéro est déjà utilisé");
+      } else {
+        console.error('Erreur:', error);
+        toast.error("Erreur lors de l'ajout de l'étudiant");
       }
-      setStudents([...students, { ...newStudent, notes: [], id: Date.now() }]);
+    } else {
+      toast.success("Étudiant ajouté avec succès");
       setNewStudent({ nom: '', prenom: '', classe: '', numero: '' });
+      loadStudents();
     }
   };
 
-  const deleteStudent = (id: number) => {
-    setStudents(students.filter(s => s.id !== id));
+  const deleteStudent = async (id: number) => {
+    const { error } = await supabase
+      .from('students')
+      .delete()
+      .eq('id', id);
+
+    if (error) {
+      console.error('Erreur:', error);
+      toast.error("Erreur lors de la suppression");
+    } else {
+      toast.success("Étudiant supprimé");
+      loadStudents();
+    }
   };
 
-  const updateNote = (studentId: number, disciplineId: number, note: string) => {
-    setStudents(students.map(student => {
-      if (student.id === studentId) {
-        const existingNoteIndex = student.notes.findIndex(n => n.disciplineId === disciplineId);
-        const newNotes = [...student.notes];
-        
-        if (existingNoteIndex >= 0) {
-          newNotes[existingNoteIndex] = { disciplineId, note: parseFloat(note) || 0 };
-        } else {
-          newNotes.push({ disciplineId, note: parseFloat(note) || 0 });
-        }
-        
-        return { ...student, notes: newNotes };
+  const updateNote = async (studentId: number, disciplineId: number, noteValue: string) => {
+    const parsedNote = parseFloat(noteValue);
+    
+    if (isNaN(parsedNote) || parsedNote < 0 || parsedNote > 20) {
+      return;
+    }
+
+    // Vérifier si la note existe déjà
+    const { data: existingNote } = await supabase
+      .from('notes')
+      .select('id')
+      .eq('student_id', studentId)
+      .eq('discipline_id', disciplineId)
+      .single();
+
+    if (existingNote) {
+      // Mettre à jour
+      const { error } = await supabase
+        .from('notes')
+        .update({ note: parsedNote })
+        .eq('id', existingNote.id);
+
+      if (error) {
+        console.error('Erreur:', error);
+        toast.error("Erreur lors de la mise à jour");
+      } else {
+        loadStudentNotes(studentId);
       }
-      return student;
-    }));
+    } else {
+      // Insérer
+      const { error } = await supabase
+        .from('notes')
+        .insert([{
+          student_id: studentId,
+          discipline_id: disciplineId,
+          note: parsedNote
+        }]);
+
+      if (error) {
+        console.error('Erreur:', error);
+        toast.error("Erreur lors de l'ajout de la note");
+      } else {
+        loadStudentNotes(studentId);
+      }
+    }
   };
 
   const calculateAverage = (notes: Note[]) => {
@@ -131,9 +248,9 @@ const TeacherPage: React.FC<TeacherPageProps> = ({ isAuthenticated, onAuthentica
     if (newPassword && newPassword.length >= 6) {
       setTeacherPassword(newPassword);
       localStorage.setItem('teacherPassword', newPassword);
-      alert('Mot de passe modifié avec succès !');
+      toast.success('Mot de passe modifié avec succès !');
     } else {
-      alert('Le mot de passe doit contenir au moins 6 caractères');
+      toast.error('Le mot de passe doit contenir au moins 6 caractères');
     }
   };
 
@@ -183,6 +300,10 @@ const TeacherPage: React.FC<TeacherPageProps> = ({ isAuthenticated, onAuthentica
               >
                 Se connecter
               </button>
+
+              <p className="text-xs text-gray-500 text-center mt-4">
+                Mot de passe par défaut: enseignant2025
+              </p>
             </div>
           </div>
         </div>
@@ -308,55 +429,58 @@ const TeacherPage: React.FC<TeacherPageProps> = ({ isAuthenticated, onAuthentica
             <div className="bg-purple-50 p-6 rounded-lg">
               <h2 className="text-xl font-semibold mb-4 text-gray-800">Étudiants et Notes</h2>
               <div className="space-y-4">
-                {students.map((student) => (
-                  <div key={student.id} className="bg-white p-4 rounded-lg shadow">
-                    <div className="flex justify-between items-center mb-3">
-                      <div>
-                        <h3 className="font-semibold text-lg">
-                          {student.nom} {student.prenom}
-                        </h3>
-                        <p className="text-sm text-gray-600">
-                          Classe: {student.classe} | Numéro: {student.numero}
-                        </p>
+                {students.map((student) => {
+                  const notes = studentNotes[student.id] || [];
+                  return (
+                    <div key={student.id} className="bg-white p-4 rounded-lg shadow">
+                      <div className="flex justify-between items-center mb-3">
+                        <div>
+                          <h3 className="font-semibold text-lg">
+                            {student.nom} {student.prenom}
+                          </h3>
+                          <p className="text-sm text-gray-600">
+                            Classe: {student.classe} | Numéro: {student.numero}
+                          </p>
+                        </div>
+                        <button
+                          onClick={() => deleteStudent(student.id)}
+                          className="text-red-500 hover:text-red-700"
+                        >
+                          <Trash2 size={20} />
+                        </button>
                       </div>
-                      <button
-                        onClick={() => deleteStudent(student.id)}
-                        className="text-red-500 hover:text-red-700"
-                      >
-                        <Trash2 size={20} />
-                      </button>
-                    </div>
-                    <div className="grid grid-cols-2 md:grid-cols-3 gap-3">
-                      {disciplines.map((disc) => {
-                        const note = student.notes.find(n => n.disciplineId === disc.id);
-                        return (
-                          <div key={disc.id}>
-                            <label className="text-sm text-gray-600 block mb-1">
-                              {disc.nom}
-                            </label>
-                            <input
-                              type="number"
-                              min="0"
-                              max="20"
-                              step="0.5"
-                              value={note?.note || ''}
-                              onChange={(e) => updateNote(student.id, disc.id, e.target.value)}
-                              placeholder="Note"
-                              className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-purple-500"
-                            />
-                          </div>
-                        );
-                      })}
-                    </div>
-                    {student.notes.length > 0 && (
-                      <div className="mt-3 pt-3 border-t border-gray-200">
-                        <span className="font-semibold">
-                          Moyenne: {calculateAverage(student.notes)} / 20
-                        </span>
+                      <div className="grid grid-cols-2 md:grid-cols-3 gap-3">
+                        {disciplines.map((disc) => {
+                          const note = notes.find(n => n.discipline_id === disc.id);
+                          return (
+                            <div key={disc.id}>
+                              <label className="text-sm text-gray-600 block mb-1">
+                                {disc.nom}
+                              </label>
+                              <input
+                                type="number"
+                                min="0"
+                                max="20"
+                                step="0.5"
+                                value={note?.note || ''}
+                                onChange={(e) => updateNote(student.id, disc.id, e.target.value)}
+                                placeholder="Note"
+                                className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-purple-500"
+                              />
+                            </div>
+                          );
+                        })}
                       </div>
-                    )}
-                  </div>
-                ))}
+                      {notes.length > 0 && (
+                        <div className="mt-3 pt-3 border-t border-gray-200">
+                          <span className="font-semibold">
+                            Moyenne: {calculateAverage(notes)} / 20
+                          </span>
+                        </div>
+                      )}
+                    </div>
+                  );
+                })}
                 {students.length === 0 && (
                   <p className="text-gray-500 text-center py-4">Aucun étudiant ajouté</p>
                 )}

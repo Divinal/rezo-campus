@@ -1,5 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { Search, Users, Lock } from 'lucide-react';
+import { supabase } from '@/lib/supabaseClient';
+import { toast } from '@/components/ui/sonner';
 
 interface Discipline {
   id: number;
@@ -7,7 +9,8 @@ interface Discipline {
 }
 
 interface Note {
-  disciplineId: number;
+  id: number;
+  discipline_id: number;
   note: number;
 }
 
@@ -17,7 +20,6 @@ interface Student {
   prenom: string;
   classe: string;
   numero: string;
-  notes: Note[];
 }
 
 interface StudentPageProps {
@@ -26,22 +28,70 @@ interface StudentPageProps {
 
 const StudentPage: React.FC<StudentPageProps> = ({ onAccessTeacher }) => {
   const [disciplines, setDisciplines] = useState<Discipline[]>([]);
-  const [students, setStudents] = useState<Student[]>([]);
   const [searchNumero, setSearchNumero] = useState('');
   const [selectedStudent, setSelectedStudent] = useState<Student | null>(null);
+  const [studentNotes, setStudentNotes] = useState<Note[]>([]);
   const [showResults, setShowResults] = useState(false);
+  const [loading, setLoading] = useState(false);
 
+  // Charger les disciplines au démarrage
   useEffect(() => {
-    const savedDisciplines = localStorage.getItem('disciplines');
-    const savedStudents = localStorage.getItem('students');
-    if (savedDisciplines) setDisciplines(JSON.parse(savedDisciplines));
-    if (savedStudents) setStudents(JSON.parse(savedStudents));
+    loadDisciplines();
   }, []);
 
-  const searchStudent = () => {
-    const student = students.find(s => s.numero === searchNumero);
-    setSelectedStudent(student || null);
+  const loadDisciplines = async () => {
+    const { data, error } = await supabase
+      .from('disciplines')
+      .select('*')
+      .order('nom');
+
+    if (error) {
+      console.error('Erreur lors du chargement des disciplines:', error);
+    } else {
+      setDisciplines(data || []);
+    }
+  };
+
+  const searchStudent = async () => {
+    if (!searchNumero.trim()) {
+      toast.error("Veuillez entrer un numéro");
+      return;
+    }
+
+    setLoading(true);
+
+    // Rechercher l'étudiant
+    const { data: studentData, error: studentError } = await supabase
+      .from('students')
+      .select('*')
+      .eq('numero', searchNumero)
+      .single();
+
+    if (studentError || !studentData) {
+      setSelectedStudent(null);
+      setStudentNotes([]);
+      setShowResults(true);
+      setLoading(false);
+      return;
+    }
+
+    setSelectedStudent(studentData);
+
+    // Charger les notes de l'étudiant
+    const { data: notesData, error: notesError } = await supabase
+      .from('notes')
+      .select('*')
+      .eq('student_id', studentData.id);
+
+    if (notesError) {
+      console.error('Erreur lors du chargement des notes:', notesError);
+      setStudentNotes([]);
+    } else {
+      setStudentNotes(notesData || []);
+    }
+
     setShowResults(true);
+    setLoading(false);
   };
 
   const calculateAverage = (notes: Note[]) => {
@@ -61,20 +111,15 @@ const StudentPage: React.FC<StudentPageProps> = ({ onAccessTeacher }) => {
               </div>
               <h1 className="text-3xl font-bold text-gray-800">Consultation des Notes</h1>
             </div>
+            
+            {/* Bouton commenté si vous ne voulez pas l'accès enseignant visible */}
             {/* <button
-  onClick={onAccessTeacher}
-  className="text-gray-400 hover:text-gray-600 transition"
-  title="Accès enseignant"
->
-  <Lock size={20} />
-</button> */}
-            <button
               onClick={onAccessTeacher}
               className="text-gray-400 hover:text-gray-600 transition"
               title="Accès enseignant"
             >
               <Lock size={20} />
-            </button>
+            </button> */}
           </div>
 
           <div className="bg-gradient-to-r from-green-50 to-teal-50 p-6 rounded-lg">
@@ -89,13 +134,15 @@ const StudentPage: React.FC<StudentPageProps> = ({ onAccessTeacher }) => {
                 onKeyPress={(e) => e.key === 'Enter' && searchStudent()}
                 placeholder="Entrez votre numéro unique"
                 className="flex-1 px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-green-500 focus:border-transparent text-lg"
+                disabled={loading}
               />
               <button
                 onClick={searchStudent}
-                className="bg-green-600 text-white px-8 py-3 rounded-lg hover:bg-green-700 flex items-center gap-2"
+                disabled={loading}
+                className="bg-green-600 text-white px-8 py-3 rounded-lg hover:bg-green-700 flex items-center gap-2 disabled:opacity-50 disabled:cursor-not-allowed"
               >
                 <Search size={20} />
-                Rechercher
+                {loading ? 'Recherche...' : 'Rechercher'}
               </button>
             </div>
 
@@ -109,10 +156,10 @@ const StudentPage: React.FC<StudentPageProps> = ({ onAccessTeacher }) => {
                     <p className="text-gray-600 mb-6">Classe: {selectedStudent.classe}</p>
                     
                     <div className="space-y-3">
-                      {selectedStudent.notes.map((note) => {
-                        const disc = disciplines.find(d => d.id === note.disciplineId);
+                      {studentNotes.map((note) => {
+                        const disc = disciplines.find(d => d.id === note.discipline_id);
                         return disc ? (
-                          <div key={note.disciplineId} className="flex justify-between items-center p-4 bg-gray-50 rounded-lg">
+                          <div key={note.id} className="flex justify-between items-center p-4 bg-gray-50 rounded-lg">
                             <span className="font-medium text-lg">{disc.nom}</span>
                             <span className={`font-bold text-xl ${note.note >= 10 ? 'text-green-600' : 'text-red-600'}`}>
                               {note.note} / 20
@@ -122,22 +169,22 @@ const StudentPage: React.FC<StudentPageProps> = ({ onAccessTeacher }) => {
                       })}
                     </div>
 
-                    {selectedStudent.notes.length > 0 && (
+                    {studentNotes.length > 0 && (
                       <div className="mt-6 pt-6 border-t-2 border-gray-200">
                         <div className="flex justify-between items-center">
                           <span className="font-bold text-xl">Moyenne Générale:</span>
                           <span className={`font-bold text-2xl ${
-                            parseFloat(calculateAverage(selectedStudent.notes)) >= 10 
+                            parseFloat(calculateAverage(studentNotes)) >= 10 
                               ? 'text-green-600' 
                               : 'text-red-600'
                           }`}>
-                            {calculateAverage(selectedStudent.notes)} / 20
+                            {calculateAverage(studentNotes)} / 20
                           </span>
                         </div>
                       </div>
                     )}
                     
-                    {selectedStudent.notes.length === 0 && (
+                    {studentNotes.length === 0 && (
                       <p className="text-gray-500 text-center mt-4 py-8">
                         Aucune note enregistrée pour le moment
                       </p>
