@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { Plus, Trash2, BookOpen, ArrowLeft, Lock } from 'lucide-react';
+import { Plus, Trash2, BookOpen, ArrowLeft, Lock, ChevronDown, Users } from 'lucide-react';
 import { supabase } from '@/lib/supabaseClient';
 import { toast } from '@/components/ui/sonner';
 
@@ -11,7 +11,8 @@ interface Discipline {
 interface Note {
   id: number;
   discipline_id: number;
-  note: number;
+  note1: number | null;
+  note2: number | null;
 }
 
 interface Student {
@@ -38,12 +39,19 @@ interface TeacherPageProps {
 const TeacherPage: React.FC<TeacherPageProps> = ({ isAuthenticated, onAuthenticate, onBack }) => {
   const [disciplines, setDisciplines] = useState<Discipline[]>([]);
   const [students, setStudents] = useState<Student[]>([]);
-  const [studentNotes, setStudentNotes] = useState<{[key: number]: Note[]}>({});
+  const [selectedStudent, setSelectedStudent] = useState<Student | null>(null);
+  const [studentNotes, setStudentNotes] = useState<Note[]>([]);
   const [newDiscipline, setNewDiscipline] = useState('');
-  const [newStudent, setNewStudent] = useState<NewStudent>({ nom: '', prenom: '', classe: '', numero: '' });
+  const [newStudent, setNewStudent] = useState<NewStudent>({ 
+    nom: '', 
+    prenom: '', 
+    classe: '', 
+    numero: '' 
+  });
   const [passwordInput, setPasswordInput] = useState('');
   const [showPasswordError, setShowPasswordError] = useState(false);
   const [teacherPassword, setTeacherPassword] = useState('enseignant2025');
+  const [loading, setLoading] = useState(false);
 
   useEffect(() => {
     const savedPassword = localStorage.getItem('teacherPassword');
@@ -82,29 +90,36 @@ const TeacherPage: React.FC<TeacherPageProps> = ({ isAuthenticated, onAuthentica
     const { data, error } = await supabase
       .from('students')
       .select('*')
-      .order('nom');
+      .order('nom', { ascending: true });
 
     if (error) {
       console.error('Erreur:', error);
       toast.error("Erreur lors du chargement des étudiants");
     } else {
       setStudents(data || []);
-      // Charger les notes pour chaque étudiant
-      if (data) {
-        data.forEach(student => loadStudentNotes(student.id));
-      }
     }
   };
 
   const loadStudentNotes = async (studentId: number) => {
+    setLoading(true);
     const { data, error } = await supabase
       .from('notes')
       .select('*')
       .eq('student_id', studentId);
 
-    if (!error && data) {
-      setStudentNotes(prev => ({ ...prev, [studentId]: data }));
+    if (error) {
+      console.error('Erreur:', error);
+      toast.error("Erreur lors du chargement des notes");
+      setStudentNotes([]);
+    } else {
+      setStudentNotes(data || []);
     }
+    setLoading(false);
+  };
+
+  const handleStudentSelect = (student: Student) => {
+    setSelectedStudent(student);
+    loadStudentNotes(student.id);
   };
 
   const checkTeacherPassword = () => {
@@ -121,7 +136,7 @@ const TeacherPage: React.FC<TeacherPageProps> = ({ isAuthenticated, onAuthentica
   const addDiscipline = async () => {
     if (!newDiscipline.trim()) return;
 
-    const { data, error } = await supabase
+    const { error } = await supabase
       .from('disciplines')
       .insert([{ nom: newDiscipline }])
       .select();
@@ -157,13 +172,13 @@ const TeacherPage: React.FC<TeacherPageProps> = ({ isAuthenticated, onAuthentica
       return;
     }
 
-    const { data, error } = await supabase
+    const { error } = await supabase
       .from('students')
       .insert([newStudent])
       .select();
 
     if (error) {
-      if (error.code === '23505') { // Code d'erreur pour contrainte unique
+      if (error.code === '23505') {
         toast.error("Ce numéro est déjà utilisé");
       } else {
         console.error('Erreur:', error);
@@ -187,61 +202,83 @@ const TeacherPage: React.FC<TeacherPageProps> = ({ isAuthenticated, onAuthentica
       toast.error("Erreur lors de la suppression");
     } else {
       toast.success("Étudiant supprimé");
+      if (selectedStudent?.id === id) {
+        setSelectedStudent(null);
+        setStudentNotes([]);
+      }
       loadStudents();
     }
   };
 
-  const updateNote = async (studentId: number, disciplineId: number, noteValue: string) => {
-    const parsedNote = parseFloat(noteValue);
+  const updateNote = async (disciplineId: number, noteType: 'note1' | 'note2', noteValue: string) => {
+    if (!selectedStudent) return;
+
+    const parsedNote = noteValue === '' ? null : parseFloat(noteValue);
     
-    if (isNaN(parsedNote) || parsedNote < 0 || parsedNote > 20) {
+    if (parsedNote !== null && (isNaN(parsedNote) || parsedNote < 0 || parsedNote > 20)) {
+      toast.error("La note doit être entre 0 et 20");
       return;
     }
 
     // Vérifier si la note existe déjà
-    const { data: existingNote } = await supabase
-      .from('notes')
-      .select('id')
-      .eq('student_id', studentId)
-      .eq('discipline_id', disciplineId)
-      .single();
+    const existingNote = studentNotes.find(n => n.discipline_id === disciplineId);
 
     if (existingNote) {
       // Mettre à jour
+      const updateData = {
+        [noteType]: parsedNote
+      };
+
       const { error } = await supabase
         .from('notes')
-        .update({ note: parsedNote })
+        .update(updateData)
         .eq('id', existingNote.id);
 
       if (error) {
         console.error('Erreur:', error);
         toast.error("Erreur lors de la mise à jour");
       } else {
-        loadStudentNotes(studentId);
+        loadStudentNotes(selectedStudent.id);
       }
     } else {
       // Insérer
+      const insertData = {
+        student_id: selectedStudent.id,
+        discipline_id: disciplineId,
+        [noteType]: parsedNote,
+        [noteType === 'note1' ? 'note2' : 'note1']: null
+      };
+
       const { error } = await supabase
         .from('notes')
-        .insert([{
-          student_id: studentId,
-          discipline_id: disciplineId,
-          note: parsedNote
-        }]);
+        .insert([insertData]);
 
       if (error) {
         console.error('Erreur:', error);
         toast.error("Erreur lors de l'ajout de la note");
       } else {
-        loadStudentNotes(studentId);
+        loadStudentNotes(selectedStudent.id);
       }
     }
   };
 
-  const calculateAverage = (notes: Note[]) => {
-    if (notes.length === 0) return '0.00';
-    const sum = notes.reduce((acc, n) => acc + n.note, 0);
-    return (sum / notes.length).toFixed(2);
+  const calculateAverage = (note1: number | null, note2: number | null): string => {
+    if (note1 === null && note2 === null) return '-';
+    if (note1 === null) return note2?.toFixed(2) || '-';
+    if (note2 === null) return note1?.toFixed(2) || '-';
+    return ((note1 + note2) / 2).toFixed(2);
+  };
+
+  const calculateGeneralAverage = (): string => {
+    const validNotes = studentNotes.filter(n => n.note1 !== null || n.note2 !== null);
+    if (validNotes.length === 0) return '0.00';
+
+    const sum = validNotes.reduce((acc, n) => {
+      const avg = calculateAverage(n.note1, n.note2);
+      return acc + (avg !== '-' ? parseFloat(avg) : 0);
+    }, 0);
+
+    return (sum / validNotes.length).toFixed(2);
   };
 
   const changePassword = (newPassword: string) => {
@@ -300,10 +337,6 @@ const TeacherPage: React.FC<TeacherPageProps> = ({ isAuthenticated, onAuthentica
               >
                 Se connecter
               </button>
-
-              <p className="text-xs text-gray-500 text-center mt-4">
-                Mot de passe par défaut: enseignant2025
-              </p>
             </div>
           </div>
         </div>
@@ -314,7 +347,7 @@ const TeacherPage: React.FC<TeacherPageProps> = ({ isAuthenticated, onAuthentica
   // Page enseignant authentifié
   return (
     <div className="min-h-screen bg-gradient-to-br from-indigo-50 to-purple-100 p-6">
-      <div className="max-w-6xl mx-auto">
+      <div className="max-w-7xl mx-auto">
         <div className="mb-6 flex justify-between items-center">
           <button
             onClick={onBack}
@@ -344,7 +377,7 @@ const TeacherPage: React.FC<TeacherPageProps> = ({ isAuthenticated, onAuthentica
             <h1 className="text-3xl font-bold text-gray-800">Espace Enseignant</h1>
           </div>
 
-          <div className="space-y-8">
+          <div className="grid grid-cols-1 lg:grid-cols-3 gap-6 mb-8">
             {/* Gestion des disciplines */}
             <div className="bg-blue-50 p-6 rounded-lg">
               <h2 className="text-xl font-semibold mb-4 text-gray-800">Disciplines</h2>
@@ -359,34 +392,33 @@ const TeacherPage: React.FC<TeacherPageProps> = ({ isAuthenticated, onAuthentica
                 />
                 <button
                   onClick={addDiscipline}
-                  className="bg-indigo-600 text-white px-6 py-2 rounded-lg hover:bg-indigo-700 flex items-center gap-2"
+                  className="bg-indigo-600 text-white px-4 py-2 rounded-lg hover:bg-indigo-700"
                 >
                   <Plus size={20} />
-                  Ajouter
                 </button>
               </div>
-              <div className="space-y-2">
+              <div className="space-y-2 max-h-60 overflow-y-auto">
                 {disciplines.map((disc) => (
                   <div key={disc.id} className="bg-white p-3 rounded-lg flex justify-between items-center">
-                    <span className="font-medium">{disc.nom}</span>
+                    <span className="font-medium text-sm">{disc.nom}</span>
                     <button
                       onClick={() => deleteDiscipline(disc.id)}
                       className="text-red-500 hover:text-red-700"
                     >
-                      <Trash2 size={18} />
+                      <Trash2 size={16} />
                     </button>
                   </div>
                 ))}
                 {disciplines.length === 0 && (
-                  <p className="text-gray-500 text-center py-4">Aucune discipline ajoutée</p>
+                  <p className="text-gray-500 text-center py-4 text-sm">Aucune discipline</p>
                 )}
               </div>
             </div>
 
             {/* Gestion des étudiants */}
-            <div className="bg-green-50 p-6 rounded-lg">
+            <div className="bg-green-50 p-6 rounded-lg lg:col-span-2">
               <h2 className="text-xl font-semibold mb-4 text-gray-800">Ajouter un étudiant</h2>
-              <div className="grid grid-cols-2 gap-4 mb-4">
+              <div className="grid grid-cols-2 gap-3 mb-4">
                 <input
                   type="text"
                   value={newStudent.nom}
@@ -424,68 +456,153 @@ const TeacherPage: React.FC<TeacherPageProps> = ({ isAuthenticated, onAuthentica
                 Ajouter l'étudiant
               </button>
             </div>
+          </div>
 
-            {/* Liste des étudiants avec notes */}
-            <div className="bg-purple-50 p-6 rounded-lg">
-              <h2 className="text-xl font-semibold mb-4 text-gray-800">Étudiants et Notes</h2>
-              <div className="space-y-4">
-                {students.map((student) => {
-                  const notes = studentNotes[student.id] || [];
-                  return (
-                    <div key={student.id} className="bg-white p-4 rounded-lg shadow">
-                      <div className="flex justify-between items-center mb-3">
-                        <div>
-                          <h3 className="font-semibold text-lg">
-                            {student.nom} {student.prenom}
-                          </h3>
-                          <p className="text-sm text-gray-600">
-                            Classe: {student.classe} | Numéro: {student.numero}
-                          </p>
-                        </div>
-                        <button
-                          onClick={() => deleteStudent(student.id)}
-                          className="text-red-500 hover:text-red-700"
-                        >
-                          <Trash2 size={20} />
-                        </button>
-                      </div>
-                      <div className="grid grid-cols-2 md:grid-cols-3 gap-3">
-                        {disciplines.map((disc) => {
-                          const note = notes.find(n => n.discipline_id === disc.id);
-                          return (
-                            <div key={disc.id}>
-                              <label className="text-sm text-gray-600 block mb-1">
-                                {disc.nom}
-                              </label>
-                              <input
-                                type="number"
-                                min="0"
-                                max="20"
-                                step="0.5"
-                                value={note?.note || ''}
-                                onChange={(e) => updateNote(student.id, disc.id, e.target.value)}
-                                placeholder="Note"
-                                className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-purple-500"
-                              />
-                            </div>
-                          );
-                        })}
-                      </div>
-                      {notes.length > 0 && (
-                        <div className="mt-3 pt-3 border-t border-gray-200">
-                          <span className="font-semibold">
-                            Moyenne: {calculateAverage(notes)} / 20
-                          </span>
-                        </div>
-                      )}
-                    </div>
-                  );
-                })}
-                {students.length === 0 && (
-                  <p className="text-gray-500 text-center py-4">Aucun étudiant ajouté</p>
-                )}
+          {/* Sélection d'étudiant et saisie des notes */}
+          <div className="bg-purple-50 p-6 rounded-lg">
+            <h2 className="text-xl font-semibold mb-4 text-gray-800">Saisie des notes</h2>
+            
+            {/* Liste de sélection d'étudiant */}
+            <div className="mb-6">
+              <label className="block text-sm font-medium text-gray-700 mb-2">
+                Sélectionnez un étudiant
+              </label>
+              <div className="relative">
+                <select
+                  value={selectedStudent?.id || ''}
+                  onChange={(e) => {
+                    const student = students.find(s => s.id === parseInt(e.target.value));
+                    if (student) handleStudentSelect(student);
+                  }}
+                  className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-purple-500 focus:border-transparent appearance-none bg-white"
+                >
+                  <option value="">-- Choisir un étudiant --</option>
+                  {students.map((student) => (
+                    <option key={student.id} value={student.id}>
+                      {student.nom} {student.prenom} - Classe: {student.classe} (N°{student.numero})
+                    </option>
+                  ))}
+                </select>
+                <ChevronDown className="absolute right-3 top-1/2 transform -translate-y-1/2 text-gray-400 pointer-events-none" size={20} />
               </div>
             </div>
+
+            {/* Affichage des champs de notes pour l'étudiant sélectionné */}
+            {selectedStudent && (
+              <div className="bg-white p-6 rounded-lg shadow">
+                <div className="flex justify-between items-center mb-6">
+                  <div>
+                    <h3 className="text-xl font-bold text-gray-800">
+                      {selectedStudent.nom} {selectedStudent.prenom}
+                    </h3>
+                    <p className="text-sm text-gray-600">
+                      Classe: {selectedStudent.classe} | N°: {selectedStudent.numero}
+                    </p>
+                  </div>
+                  <button
+                    onClick={() => deleteStudent(selectedStudent.id)}
+                    className="text-red-500 hover:text-red-700 flex items-center gap-2"
+                  >
+                    <Trash2 size={18} />
+                    Supprimer
+                  </button>
+                </div>
+
+                {loading ? (
+                  <div className="text-center py-8">
+                    <div className="inline-block animate-spin rounded-full h-8 w-8 border-b-2 border-purple-600"></div>
+                    <p className="mt-2 text-gray-600">Chargement des notes...</p>
+                  </div>
+                ) : disciplines.length > 0 ? (
+                  <>
+                    <div className="overflow-x-auto">
+                      <table className="w-full">
+                        <thead>
+                          <tr className="border-b-2 border-gray-200">
+                            <th className="text-left py-3 px-4 font-semibold text-gray-700">Discipline</th>
+                            <th className="text-center py-3 px-4 font-semibold text-gray-700">Contrôle 1</th>
+                            <th className="text-center py-3 px-4 font-semibold text-gray-700">Contrôle 2</th>
+                            <th className="text-center py-3 px-4 font-semibold text-gray-700">Moyenne</th>
+                          </tr>
+                        </thead>
+                        <tbody>
+                          {disciplines.map((disc) => {
+                            const note = studentNotes.find(n => n.discipline_id === disc.id);
+                            const moyenne = calculateAverage(note?.note1 || null, note?.note2 || null);
+                            
+                            return (
+                              <tr key={disc.id} className="border-b border-gray-100 hover:bg-gray-50">
+                                <td className="py-3 px-4 font-medium">{disc.nom}</td>
+                                <td className="py-3 px-4">
+                                  <input
+                                    type="number"
+                                    min="0"
+                                    max="20"
+                                    step="0.25"
+                                    value={note?.note1 ?? ''}
+                                    onChange={(e) => updateNote(disc.id, 'note1', e.target.value)}
+                                    placeholder="Note 1"
+                                    className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-purple-500 text-center"
+                                  />
+                                </td>
+                                <td className="py-3 px-4">
+                                  <input
+                                    type="number"
+                                    min="0"
+                                    max="20"
+                                    step="0.25"
+                                    value={note?.note2 ?? ''}
+                                    onChange={(e) => updateNote(disc.id, 'note2', e.target.value)}
+                                    placeholder="Note 2"
+                                    className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-purple-500 text-center"
+                                  />
+                                </td>
+                                <td className="py-3 px-4 text-center">
+                                  <span className={`font-bold text-lg ${
+                                    moyenne !== '-' && parseFloat(moyenne) >= 10 
+                                      ? 'text-green-600' 
+                                      : moyenne !== '-' 
+                                      ? 'text-red-600' 
+                                      : 'text-gray-400'
+                                  }`}>
+                                    {moyenne}
+                                  </span>
+                                </td>
+                              </tr>
+                            );
+                          })}
+                        </tbody>
+                      </table>
+                    </div>
+
+                    {/* Moyenne générale */}
+                    <div className="mt-6 pt-4 border-t-2 border-gray-200">
+                      <div className="flex justify-between items-center">
+                        <span className="text-lg font-bold text-gray-800">Moyenne Générale:</span>
+                        <span className={`text-2xl font-bold ${
+                          parseFloat(calculateGeneralAverage()) >= 10 
+                            ? 'text-green-600' 
+                            : 'text-red-600'
+                        }`}>
+                          {calculateGeneralAverage()} / 20
+                        </span>
+                      </div>
+                    </div>
+                  </>
+                ) : (
+                  <div className="text-center py-8 text-gray-500">
+                    Ajoutez d'abord des disciplines pour saisir les notes
+                  </div>
+                )}
+              </div>
+            )}
+
+            {!selectedStudent && (
+              <div className="text-center py-12 text-gray-500">
+                <Users size={48} className="mx-auto mb-4 opacity-50" />
+                <p>Sélectionnez un étudiant pour saisir ses notes</p>
+              </div>
+            )}
           </div>
         </div>
       </div>
