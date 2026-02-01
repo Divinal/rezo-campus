@@ -52,6 +52,8 @@ const TeacherPage: React.FC<TeacherPageProps> = ({ isAuthenticated, onAuthentica
   const [showPasswordError, setShowPasswordError] = useState(false);
   const [teacherPassword, setTeacherPassword] = useState('enseignant2025');
   const [loading, setLoading] = useState(false);
+  const [selectedClasse, setSelectedClasse] = useState<string>('');
+  const [filteredStudents, setFilteredStudents] = useState<Student[]>([]);
 
   useEffect(() => {
     const savedPassword = localStorage.getItem('teacherPassword');
@@ -64,6 +66,12 @@ const TeacherPage: React.FC<TeacherPageProps> = ({ isAuthenticated, onAuthentica
       loadAllData();
     }
   }, [isAuthenticated]);
+
+    useEffect(() => {
+    if (selectedClasse) {
+      setFilteredStudents(students.filter(s => s.classe === selectedClasse));
+    }
+  }, [students, selectedClasse]);
 
   const loadAllData = async () => {
     await Promise.all([
@@ -115,6 +123,24 @@ const TeacherPage: React.FC<TeacherPageProps> = ({ isAuthenticated, onAuthentica
       setStudentNotes(data || []);
     }
     setLoading(false);
+  };
+
+    // Extraire les classes uniques depuis la liste des étudiants
+  const getClasses = (): string[] => {
+    const classes = students.map(s => s.classe);
+    return [...new Set(classes)].sort();
+  };
+
+  // Filtrer les étudiants par classe
+  const handleClasseSelect = (classe: string) => {
+    setSelectedClasse(classe);
+    setSelectedStudent(null);
+    setStudentNotes([]);
+    if (classe) {
+      setFilteredStudents(students.filter(s => s.classe === classe));
+    } else {
+      setFilteredStudents([]);
+    }
   };
 
   const handleStudentSelect = (student: Student) => {
@@ -462,28 +488,61 @@ const TeacherPage: React.FC<TeacherPageProps> = ({ isAuthenticated, onAuthentica
           <div className="bg-purple-50 p-6 rounded-lg">
             <h2 className="text-xl font-semibold mb-4 text-gray-800">Saisie des notes</h2>
             
-            {/* Liste de sélection d'étudiant */}
-            <div className="mb-6">
-              <label className="block text-sm font-medium text-gray-700 mb-2">
-                Sélectionnez un étudiant
-              </label>
-              <div className="relative">
-                <select
-                  value={selectedStudent?.id || ''}
-                  onChange={(e) => {
-                    const student = students.find(s => s.id === parseInt(e.target.value));
-                    if (student) handleStudentSelect(student);
-                  }}
-                  className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-purple-500 focus:border-transparent appearance-none bg-white"
-                >
-                  <option value="">-- Choisir un étudiant --</option>
-                  {students.map((student) => (
-                    <option key={student.id} value={student.id}>
-                      {student.nom} {student.prenom} - Classe: {student.classe} (N°{student.numero})
+         {/* Sélection de la classe puis de l'étudiant */}
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mb-6">
+              {/* Sélection de la classe */}
+              <div>
+                <label className="block text-sm font-medium text-gray-700 mb-2">
+                  1. Sélectionnez une classe
+                </label>
+                <div className="relative">
+                  <select
+                    value={selectedClasse}
+                    onChange={(e) => handleClasseSelect(e.target.value)}
+                    className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-purple-500 focus:border-transparent appearance-none bg-white"
+                  >
+                    <option value="">-- Choisir une classe --</option>
+                    {getClasses().map((classe) => (
+                      <option key={classe} value={classe}>
+                        Classe {classe}
+                      </option>
+                    ))}
+                  </select>
+                  <ChevronDown className="absolute right-3 top-1/2 transform -translate-y-1/2 text-gray-400 pointer-events-none" size={20} />
+                </div>
+              </div>
+
+              {/* Sélection de l'étudiant */}
+              <div>
+                <label className="block text-sm font-medium text-gray-700 mb-2">
+                  2. Sélectionnez un étudiant
+                </label>
+                <div className="relative">
+                  <select
+                    value={selectedStudent?.id || ''}
+                    onChange={(e) => {
+                      const student = filteredStudents.find(s => s.id === parseInt(e.target.value));
+                      if (student) handleStudentSelect(student);
+                    }}
+                    disabled={!selectedClasse}
+                    className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-purple-500 focus:border-transparent appearance-none bg-white disabled:opacity-50 disabled:cursor-not-allowed"
+                  >
+                    <option value="">
+                      {selectedClasse ? '-- Choisir un étudiant --' : '-- Choisissez d\'une classe d\'abord --'}
                     </option>
-                  ))}
-                </select>
-                <ChevronDown className="absolute right-3 top-1/2 transform -translate-y-1/2 text-gray-400 pointer-events-none" size={20} />
+                    {filteredStudents.map((student) => (
+                      <option key={student.id} value={student.id}>
+                        {student.nom} {student.prenom} (N°{student.numero})
+                      </option>
+                    ))}
+                  </select>
+                  <ChevronDown className="absolute right-3 top-1/2 transform -translate-y-1/2 text-gray-400 pointer-events-none" size={20} />
+                </div>
+                {selectedClasse && filteredStudents.length === 0 && (
+                  <p className="text-sm text-orange-600 mt-2">
+                    Aucun étudiant dans cette classe
+                  </p>
+                )}
               </div>
             </div>
 
@@ -597,10 +656,14 @@ const TeacherPage: React.FC<TeacherPageProps> = ({ isAuthenticated, onAuthentica
               </div>
             )}
 
-            {!selectedStudent && (
+           {!selectedStudent && (
               <div className="text-center py-12 text-gray-500">
                 <Users size={48} className="mx-auto mb-4 opacity-50" />
-                <p>Sélectionnez un étudiant pour saisir ses notes</p>
+                <p>
+                  {!selectedClasse
+                    ? 'Choisissez une classe puis un étudiant pour saisir ses notes'
+                    : 'Choisissez un étudiant de cette classe pour saisir ses notes'}
+                </p>
               </div>
             )}
           </div>

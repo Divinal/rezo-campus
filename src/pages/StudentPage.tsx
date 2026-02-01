@@ -121,13 +121,12 @@ return (
     <h1 className="text-3xl font-bold text-gray-800">Consultation des Notes</h1>
   </div>
   
-  {/* <button
+  {/*<button
     onClick={onAccessTeacher}
     className="text-gray-400 hover:text-gray-600 transition"
-    title="Accès enseignant"
-  >
+    title="Accès enseignant">
     <Lock size={20} />
-  </button> */}
+  </button>*/}
 </div>
       <div className="bg-gradient-to-r from-green-50 to-teal-50 p-6 rounded-lg">
         <h2 className="text-xl font-semibold mb-4 text-gray-800 text-center">
