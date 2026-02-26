@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { Search, Users, Lock, BookOpen, Trophy, TrendingUp, RotateCcw } from 'lucide-react';
+import { Search, Users, Lock, BookOpen, Trophy, TrendingUp, RotateCcw, UserCheck } from 'lucide-react';
 import { supabase } from '@/lib/supabaseClient';
 import { toast } from '@/components/ui/sonner';
 import Header from '../components/Header';
@@ -23,6 +23,7 @@ interface Student {
   prenom: string;
   classe: string;
   numero: string;
+  groupe: string | null;
 }
 
 interface StudentPageProps {
@@ -34,6 +35,7 @@ const StudentPage: React.FC<StudentPageProps> = ({ onAccessTeacher }) => {
   const [searchNumero, setSearchNumero] = useState('');
   const [selectedStudent, setSelectedStudent] = useState<Student | null>(null);
   const [studentNotes, setStudentNotes] = useState<Note[]>([]);
+  const [groupMembers, setGroupMembers] = useState<Student[]>([]);
   const [showResults, setShowResults] = useState(false);
   const [loading, setLoading] = useState(false);
 
@@ -54,6 +56,27 @@ const StudentPage: React.FC<StudentPageProps> = ({ onAccessTeacher }) => {
     }
   };
 
+  const loadGroupMembers = async (groupe: string, currentStudentId: number) => {
+    if (!groupe) {
+      setGroupMembers([]);
+      return;
+    }
+
+    const { data, error } = await supabase
+      .from('students')
+      .select('*')
+      .eq('groupe', groupe)
+      .neq('id', currentStudentId)
+      .order('nom');
+
+    if (error) {
+      console.error('Erreur lors du chargement des membres du groupe:', error);
+      setGroupMembers([]);
+    } else {
+      setGroupMembers(data || []);
+    }
+  };
+
   const searchStudent = async () => {
     if (!searchNumero.trim()) {
       toast.error("Veuillez entrer un numéro");
@@ -71,6 +94,7 @@ const StudentPage: React.FC<StudentPageProps> = ({ onAccessTeacher }) => {
     if (studentError || !studentData) {
       setSelectedStudent(null);
       setStudentNotes([]);
+      setGroupMembers([]);
       setShowResults(true);
       setLoading(false);
       return;
@@ -78,6 +102,7 @@ const StudentPage: React.FC<StudentPageProps> = ({ onAccessTeacher }) => {
 
     setSelectedStudent(studentData);
 
+    // Charger les notes
     const { data: notesData, error: notesError } = await supabase
       .from('notes')
       .select('*')
@@ -90,6 +115,13 @@ const StudentPage: React.FC<StudentPageProps> = ({ onAccessTeacher }) => {
       setStudentNotes(notesData || []);
     }
 
+    // Charger les membres du groupe si l'étudiant en a un
+    if (studentData.groupe) {
+      await loadGroupMembers(studentData.groupe, studentData.id);
+    } else {
+      setGroupMembers([]);
+    }
+
     setShowResults(true);
     setLoading(false);
   };
@@ -98,6 +130,7 @@ const StudentPage: React.FC<StudentPageProps> = ({ onAccessTeacher }) => {
     setSearchNumero('');
     setSelectedStudent(null);
     setStudentNotes([]);
+    setGroupMembers([]);
     setShowResults(false);
   };
 
@@ -139,7 +172,8 @@ const StudentPage: React.FC<StudentPageProps> = ({ onAccessTeacher }) => {
 
   return (
     <>
-        <div className="min-h-screen bg-gradient-to-br from-green-50 via-teal-50 to-blue-50 px-3 sm:px-4 md:px-6 py-6 md:py-10">
+      <Header />
+      <div className="min-h-screen bg-gradient-to-br from-green-50 via-teal-50 to-blue-50 px-3 sm:px-4 md:px-6 py-6 md:py-10">
         <div className="max-w-5xl mx-auto space-y-4 md:space-y-6">
 
           {/* En-tête */}
@@ -160,13 +194,13 @@ const StudentPage: React.FC<StudentPageProps> = ({ onAccessTeacher }) => {
                   </p>
                 </div>
               </div>
-               {/*<button
+              <button
                 onClick={onAccessTeacher}
                 className="text-gray-300 hover:text-gray-500 transition p-1"
                 title="Accès enseignant"
               >
                 <Lock size={18} />
-              </button>*/}
+              </button>
             </div>
           </div>
 
@@ -206,7 +240,7 @@ const StudentPage: React.FC<StudentPageProps> = ({ onAccessTeacher }) => {
                   className="mt-3 text-sm text-gray-500 hover:text-gray-700 flex items-center gap-1"
                 >
                   <RotateCcw size={14} />
-                  Initialiser la recherche
+                  Nouvelle recherche
                 </button>
               )}
             </div>
@@ -221,7 +255,7 @@ const StudentPage: React.FC<StudentPageProps> = ({ onAccessTeacher }) => {
                   Entrez votre numéro unique pour consulter vos notes
                 </p>
                 <p className="text-gray-400 text-sm mt-1">
-                 Si vous ne vous rappelez plus de votre numéro unique veillez contacter Mr Aldriche
+                  Votre numéro vous a été communiqué par votre établissement
                 </p>
               </div>
             )}
@@ -250,6 +284,15 @@ const StudentPage: React.FC<StudentPageProps> = ({ onAccessTeacher }) => {
                             <span>
                               Matricule: <strong>{selectedStudent.numero}</strong>
                             </span>
+                            {selectedStudent.groupe && (
+                              <>
+                                <span className="hidden sm:inline">•</span>
+                                <span className="flex items-center gap-1 text-purple-600">
+                                  <UserCheck size={14} />
+                                  Groupe: <strong>{selectedStudent.groupe}</strong>
+                                </span>
+                              </>
+                            )}
                           </div>
                         </div>
 
@@ -271,6 +314,39 @@ const StudentPage: React.FC<StudentPageProps> = ({ onAccessTeacher }) => {
                         )}
                       </div>
                     </div>
+
+                    {/* Membres du groupe - visible uniquement si l'étudiant a un groupe */}
+                    {selectedStudent.groupe && groupMembers.length > 0 && (
+                      <div className="bg-purple-50 border border-purple-200 p-4 md:p-5 rounded-lg md:rounded-xl">
+                        <div className="flex items-center gap-2 mb-3">
+                          <UserCheck size={20} className="text-purple-600" />
+                          <h4 className="text-base md:text-lg font-semibold text-gray-800">
+                            Membres du  {selectedStudent.groupe}
+                          </h4>
+                          <span className="bg-purple-200 text-purple-700 text-xs font-semibold px-2 py-1 rounded-full">
+                            {groupMembers.length + 1} membres
+                          </span>
+                        </div>
+                        <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-2">
+                          {/* L'étudiant actuel */}
+                          <div className="bg-purple-100 border border-purple-300 px-3 py-2 rounded-lg">
+                            <p className="font-semibold text-purple-900">
+                              {selectedStudent.nom} {selectedStudent.prenom}
+                            </p>
+                            <p className="text-xs text-purple-600">(Vous)</p>
+                          </div>
+                          {/* Les autres membres */}
+                          {groupMembers.map((member) => (
+                            <div key={member.id} className="bg-white border border-purple-200 px-3 py-2 rounded-lg">
+                              <p className="font-medium text-gray-800">
+                                {member.nom} {member.prenom}
+                              </p>
+                              {/* <p className="text-xs text-gray-500">N°{member.numero}</p> */}
+                            </div>
+                          ))}
+                        </div>
+                      </div>
+                    )}
 
                     {/* Notes existantes */}
                     {studentNotes.length > 0 ? (
@@ -402,7 +478,7 @@ const StudentPage: React.FC<StudentPageProps> = ({ onAccessTeacher }) => {
                             parseFloat(calculateGeneralAverage()) >= 10 ? 'text-green-700' : 'text-orange-700'
                           }`}>
                             {parseFloat(calculateGeneralAverage()) >= 10
-                              ? '🎉 Félicitations ! Vous avez validé ces disciplines !'
+                              ? '🎉 Félicitations ! Vous avez validé votre trimestre !'
                               : '💪 Continuez vos efforts, vous pouvez y arriver !'}
                           </p>
                         </div>
@@ -444,6 +520,7 @@ const StudentPage: React.FC<StudentPageProps> = ({ onAccessTeacher }) => {
           </div>
         </div>
       </div>
+      <Footer />
     </>
   );
 };

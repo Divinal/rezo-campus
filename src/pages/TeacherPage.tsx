@@ -21,6 +21,7 @@ interface Student {
   prenom: string;
   classe: string;
   numero: string;
+   groupe: string | null; 
 }
 
 interface NewStudent {
@@ -28,6 +29,7 @@ interface NewStudent {
   prenom: string;
   classe: string;
   numero: string;
+  groupe: string;
 }
 
 interface TeacherPageProps {
@@ -46,7 +48,8 @@ const TeacherPage: React.FC<TeacherPageProps> = ({ isAuthenticated, onAuthentica
     nom: '', 
     prenom: '', 
     classe: '', 
-    numero: '' 
+    numero: '',
+    groupe: ''
   });
   const [passwordInput, setPasswordInput] = useState('');
   const [showPasswordError, setShowPasswordError] = useState(false);
@@ -212,7 +215,7 @@ const TeacherPage: React.FC<TeacherPageProps> = ({ isAuthenticated, onAuthentica
       }
     } else {
       toast.success("Étudiant ajouté avec succès");
-      setNewStudent({ nom: '', prenom: '', classe: '', numero: '' });
+      setNewStudent({ nom: '', prenom: '', classe: '', numero: '', groupe: ''});
       loadStudents();
     }
   };
@@ -473,6 +476,14 @@ const TeacherPage: React.FC<TeacherPageProps> = ({ isAuthenticated, onAuthentica
                   placeholder="Numéro unique"
                   className="px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-green-500 focus:border-transparent"
                 />
+                {/* NOUVEAU : Champ Groupe */}
+                <input
+                  type="text"
+                  value={newStudent.groupe}
+                  onChange={(e) => setNewStudent({...newStudent, groupe: e.target.value})}
+                  placeholder="Groupe (optionnel)"
+                  className="px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-green-500 focus:border-transparent col-span-2"
+                />
               </div>
               <button
                 onClick={addStudent}
@@ -548,16 +559,21 @@ const TeacherPage: React.FC<TeacherPageProps> = ({ isAuthenticated, onAuthentica
 
             {/* Affichage des champs de notes pour l'étudiant sélectionné */}
             {selectedStudent && (
-              <div className="bg-white p-6 rounded-lg shadow">
-                <div className="flex justify-between items-center mb-6">
-                  <div>
-                    <h3 className="text-xl font-bold text-gray-800">
-                      {selectedStudent.nom} {selectedStudent.prenom}
-                    </h3>
-                    <p className="text-sm text-gray-600">
-                      Classe: {selectedStudent.classe} | N°: {selectedStudent.numero}
-                    </p>
-                  </div>
+            <div className="bg-white p-6 rounded-lg shadow">
+              <div className="flex justify-between items-center mb-6">
+                <div>
+                  <h3 className="text-xl font-bold text-gray-800">
+                    {selectedStudent.nom} {selectedStudent.prenom}
+                  </h3>
+                  <p className="text-sm text-gray-600">
+                    Classe: {selectedStudent.classe} | N°: {selectedStudent.numero}
+                    {selectedStudent.groupe && (
+                      <span className="ml-2 text-purple-600 font-medium">
+                        | Groupe: {selectedStudent.groupe}
+                      </span>
+                    )}
+                  </p>
+                </div>
                   <button
                     onClick={() => deleteStudent(selectedStudent.id)}
                     className="text-red-500 hover:text-red-700 flex items-center gap-2"
