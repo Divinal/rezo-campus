@@ -39,7 +39,7 @@ const Landing: React.FC = () => {
       <Header />
       
       {/* Hero Section */}
-        <section className="relative bg-[url('/Images/Bourse.png')] bg-cover bg-center bg-no-repeat text-white py-20">
+        <section className="relative bg-[url('/Images/Panel.jpg')] bg-cover bg-center bg-no-repeat text-white py-20">
       {/* Superposition sombre semi-transparente */}
       <div className="absolute inset-0 bg-black bg-opacity-60 z-0"></div>
 
@@ -305,7 +305,7 @@ const Landing: React.FC = () => {
             Rejoignez des milliers d'étudiants qui ont trouvé leur voie grâce à RézoCampus
           </p>
           <Link
-            to="/index"
+            to="/"
             className="bg-primary text-white px-8 py-4 rounded-lg font-semibold hover:bg-opacity-90 transition-colors inline-flex items-center gap-2"
           >
             <GraduationCap className="w-6 h-6" />

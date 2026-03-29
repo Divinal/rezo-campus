@@ -116,8 +116,7 @@ const Header: React.FC = () => {
             </DropdownMenu>
               <Link to="/immo" className="text-white hover:text-secondary transition-all duration-300 hover-scale story-link">
               🏠 Immo
-            </Link>
-          
+            </Link>          
             <Link to="/about" className="text-white hover:text-secondary transition-all duration-300 hover-scale story-link">
               About
             </Link>
@@ -125,19 +124,19 @@ const Header: React.FC = () => {
               Contact
             </Link>
           </nav>
-      {/* <Link
-          to="/FoireOrientationForm"
+       <Link
+          to="/Formulaire-inscription"
           className="group relative inline-flex items-center bg-red-600 text-white border border-red-600 px-4 py-2 rounded-md transition-all duration-300 hover:bg-transparent hover:text-red-600"
         >
           <span className="transition-all duration-300 group-hover:mr-2">
-           𝐈𝐧𝐬𝐜𝐫𝐢𝐩𝐭𝐢𝐨𝐧 Master Class
+           𝐈𝐧𝐬𝐜𝐫𝐢𝐩𝐭𝐢𝐨𝐧 au Forum
           </span>
           <span
             className="opacity-0 translate-x-[-8px] group-hover:opacity-100 group-hover:translate-x-0 transition-all duration-300 text-red-600"
           >
             →
           </span>
-        </Link> */}
+        </Link> 
 
           {/* Recherche, Réseaux sociaux et Login (à droite) */}
           <div className="hidden lg:flex items-center gap-4 animate-fade-in">
@@ -193,10 +192,10 @@ const Header: React.FC = () => {
             </Button>
 
             {/* Login */}
-             <Link to="/Shopify-Training" className="text-white hover:text-secondary transition-all duration-300 hover-scale flex items-center gap-2">
+             {/* <Link to="/Shopify-Training" className="text-white hover:text-secondary transition-all duration-300 hover-scale flex items-center gap-2">
               <Users className="w-4 h-4" />
               Post
-            </Link>
+            </Link> */}
             <Link to="/login" className="text-white hover:text-secondary transition-all duration-300 hover-scale flex items-center gap-2">
               <LogIn className="w-4 h-4" />
               Login

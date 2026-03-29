@@ -82,7 +82,7 @@ const Contact: React.FC = () => {
 
               <div>
                 <h3 className="text-lg font-semibold mb-2">Email</h3>
-                <p>contact@rezocampus.fr</p>
+                <p>campusrezo@gmail.com</p>
               </div>
 
               <div>
@@ -182,7 +182,7 @@ const Contact: React.FC = () => {
             <div className="bg-white p-8 rounded-lg shadow-md space-y-6">
               <div>
                 <h2 className="text-xl font-bold text-primary mb-4">Responsable Technique</h2>
-                <img src="/Images/Photo1.jpg" alt="Directeur" className="w-32 h-32 rounded-full object-cover mb-4" />
+                <img src="/Images/PofilDivin.jpg" alt="Directeur" className="w-32 h-32 rounded-full object-cover mb-4" />
                 <p className="text-ms font-bold text-primary mb-4 text-justify">
                   "Bienvenue sur Rézo Campus une plateforme dédiée à la recherche, la gestion et l'orientation vers les établissements 
                   d'enseignement. Explorez une large sélection d'écoles, trouvez la formation qui vous correspond et inscrivez-vous en 

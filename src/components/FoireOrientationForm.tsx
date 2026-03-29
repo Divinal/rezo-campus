@@ -251,17 +251,17 @@ const FoireOrientationForm: React.FC = () => {
                   </svg>
                 </div>
                 <h1 className="text-2xl sm:text-3xl lg:text-4xl font-bold mb-2 leading-tight">
-                  Formation Pratique en E-commerce & Shopify
+                  Inscription au Grand Forum d’Orientation Scolaire & Technologique
                 </h1>
                 <p className="text-base sm:text-lg text-blue-100 mb-4">
-                  Formation Prête à l'Emploi
+                 Voici une opportunité UNIQUE de rencontrer EN FACE À FACE les universités marocaines les plus reconnues
                 </p>
                 <div className="flex flex-wrap items-center justify-center gap-3 text-sm">
                   <span className="inline-flex items-center gap-2 bg-white/20 backdrop-blur-sm px-4 py-2 rounded-full font-medium">
                     <svg className="w-4 h-4" fill="currentColor" viewBox="0 0 20 20">
                       <path fillRule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clipRule="evenodd" />
                     </svg>
-                    Inscriptions ouvertes
+                    Universités Marocaines
                   </span>
                   <span className="inline-flex items-center gap-2 bg-white/20 backdrop-blur-sm px-4 py-2 rounded-full font-medium">
                     <svg className="w-4 h-4" fill="currentColor" viewBox="0 0 20 20">
@@ -589,19 +589,30 @@ const FoireOrientationForm: React.FC = () => {
                     }`}
                     aria-invalid={errors.Formation && touched.Formation ? "true" : "false"}
                   >
-                    <option value="">-- Sélectionnez une compétence --</option>
-                    <option value="Marketing Digital">Marketing Digital</option>
-                    <option value="E-commerce">E-commerce</option>
-                    <option value="Publicité en ligne">Publicité en ligne</option>
+                    <option value="">-- Choisir une formation --</option>
+
+                   <option value="Assurance">Assurance</option>
+                    <option value="Communication">Communication</option>
                     <option value="Design Graphique">Design Graphique</option>
-                    <option value="Création de contenu">Création de contenu</option>
-                    <option value="Communication Digitale">Communication Digitale</option>
-                    <option value="Community Management">Community Management</option>
-                    <option value="Rédaction web / Copywriting">Rédaction web / Copywriting</option>
                     <option value="Développement Web">Développement Web</option>
-                    <option value="UX/UI Design">UX/UI Design</option>
-                    <option value="Branding / Identité visuelle">Branding / Identité visuelle</option>
-                    <option value="Aucune (Je suis motivé(e) et prêt(e) à apprendre)">Aucune (Je suis motivé(e) et prêt(e) à apprendre)</option>
+                    <option value="Droit">Droit</option>
+                    <option value="Douane">Douane</option>
+                    <option value="Économie">Économie</option>
+                    <option value="Éducation">Éducation</option>
+                    <option value="Électronique">Électronique</option>
+                    <option value="Finance">Finance</option>
+                    <option value="Génie Civil">Génie Civil</option>
+                    <option value="Gestion">Gestion</option>
+                    <option value="Informatique">Informatique</option>
+                    <option value="Logistique">Logistique</option>
+                    <option value="Marketing">Marketing</option>
+                    <option value="Médecine">Médecine</option>
+                    <option value="Ressources Humaines">Ressources Humaines</option>
+                    <option value="Santé">Santé</option>
+                    <option value="Sciences Infirmières">Sciences Infirmières</option>
+                    <option value="Télécommunications">Télécommunications</option>
+                    <option value="Transport">Transport</option>
+                    <option value="Je ne sais pas encore">Je ne sais pas encore (Besoin d’orientation)</option>
                     <option value="Autre">Autre</option>
                   </select>
                   <div className="absolute inset-y-0 right-0 flex items-center pr-4 pointer-events-none">
@@ -665,7 +676,7 @@ const FoireOrientationForm: React.FC = () => {
                       <svg className="w-6 h-6 transition-transform group-hover:scale-110 group-hover:rotate-12" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                         <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z" />
                       </svg>
-                      <span className="text-lg">Je m'inscris à la formation et paye 500 DH</span>
+                      <span className="text-lg">Je m'inscris</span>
                       <svg className="w-6 h-6 transition-transform group-hover:translate-x-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                         <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M13 7l5 5m0 0l-5 5m5-5H6" />
                       </svg>
@@ -681,7 +692,7 @@ const FoireOrientationForm: React.FC = () => {
                       <path fillRule="evenodd" d="M2.166 4.999A11.954 11.954 0 0010 1.944 11.954 11.954 0 0017.834 5c.11.65.166 1.32.166 2.001 0 5.225-3.34 9.67-8 11.317C5.34 16.67 2 12.225 2 7c0-.682.057-1.35.166-2.001zm11.541 3.708a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clipRule="evenodd" />
                     </svg>
                     <div className="flex-1">
-                      <p className="font-semibold text-green-900">Paiement sécurisé</p>
+                      <p className="font-semibold text-green-900">Donnée sécurisé</p>
                       <p className="text-xs text-green-700 mt-0.5">Vos données sont protégées et cryptées</p>
                     </div>
                   </div>
@@ -710,9 +721,9 @@ const FoireOrientationForm: React.FC = () => {
                   </svg>
                 </div>
                 <div className="flex-1">
-                  <p className="text-xs text-gray-500 font-semibold uppercase tracking-wide mb-1">Durée</p>
-                  <p className="text-base font-bold text-gray-900">Formation complète</p>
-                  <p className="text-xs text-gray-600 mt-1">2 - 3 mois</p>
+                  <p className="text-xs text-gray-500 font-semibold uppercase tracking-wide mb-1">Période du Forum</p>
+                  <p className="text-base font-bold text-gray-900">9 Mai 2026</p>
+                  <p className="text-xs text-gray-600 mt-1">3 jours</p>
                 </div>
               </div>
             </div>
@@ -725,9 +736,9 @@ const FoireOrientationForm: React.FC = () => {
                   </svg>
                 </div>
                 <div className="flex-1">
-                  <p className="text-xs text-gray-500 font-semibold uppercase tracking-wide mb-1">Certification</p>
-                  <p className="text-base font-bold text-gray-900">Attestation de Reconnaissance</p>
-                  <p className="text-xs text-gray-600 mt-1">Reconnu</p>
+                  <p className="text-xs text-gray-500 font-semibold uppercase tracking-wide mb-1">Participations</p>
+                  <p className="text-base font-bold text-gray-900">Des Université Marocaine</p>
+                  <p className="text-xs text-gray-600 mt-1">Reconnues</p>
                 </div>
               </div>
             </div>
@@ -757,19 +768,19 @@ const FoireOrientationForm: React.FC = () => {
                 </svg>
               </div>
               <div className="flex-1">
-                <h3 className="text-lg font-bold text-gray-900 mb-2">💡 Pourquoi choisir cette formation ?</h3>
+                <h3 className="text-lg font-bold text-gray-900 mb-2">💡 Pourquoi choisir ce Forum ?</h3>
                 <ul className="space-y-2 text-sm text-gray-700">
                   <li className="flex items-start gap-2">
                     <svg className="w-5 h-5 text-green-500 mt-0.5 flex-shrink-0" fill="currentColor" viewBox="0 0 20 20">
                       <path fillRule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clipRule="evenodd" />
                     </svg>
-                    <span>Accès immédiat après inscription et paiement</span>
+                    <span>→ Réponses à TOUTES tes questions d'orientation</span>
                   </li>
                   <li className="flex items-start gap-2">
                     <svg className="w-5 h-5 text-green-500 mt-0.5 flex-shrink-0" fill="currentColor" viewBox="0 0 20 20">
                       <path fillRule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clipRule="evenodd" />
                     </svg>
-                    <span>Certificat de formation à l'issue du programme</span>
+                    <span>→ Rencontres directes avec les responsables pédagogiques</span>
                   </li>
                 </ul>
               </div>

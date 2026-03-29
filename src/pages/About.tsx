@@ -6,15 +6,15 @@ import { Users, Mail, Phone } from 'lucide-react';
 
 const About: React.FC = () => {
   const teamMembers = [
-    // {
-    //   id: 1,
-    //   name: "Sokhna Maty NDIAYE",
-    //   role: "Consultante Communication & Marketing",
-    //   description: "Je mets ma passion pour les mots, les marques et l’impact au service des entreprises et projets qui souhaitent se démarquer, fédérer et croître. Forte d’une approche à la fois stratégique et créative.",
-    //   image: "/Images/Profil3.jpg",
-    //   email: "ndiayematy4633@gmail.com",
-    //   phone: "+212 779-367718"
-    // },
+    {
+      id: 1,
+      name: "YAYE OUMOU KEBA",
+      role: "Responsable Comptable & Financier",
+      description: "Je mets ma passion pour les mots, les marques et l’impact au service des entreprises et projets qui souhaitent se démarquer, fédérer et croître. Forte d’une approche à la fois stratégique et créative.",
+      image: "/Images/Imageoumou.png",
+      email: "Bboumou02@gmail.com",
+      phone: "+212 612-683569"
+    },
     {
       id: 2,
       name: "Abderrahmen ELOUAFI",
@@ -27,11 +27,11 @@ const About: React.FC = () => {
     {
       id: 3,
       name: "MVOUAMA Divin Aldriche",
-      role: "Fondateur Rézo Campus - RT&D ",
+      role: "Fondateur Rézo Campus - R&D ",
       description: "Développeur freelance Full-Stack, passionné par les technologies, l’innovation numérique et le développement logiciel. Fondateur de la plateforme éducative Rézo Campus, j’œuvre à rendre l’orientation scolaire et universitaire plus accessible grâce à des outils digitaux performants. Mon parcours est marqué par l'entrepreneuriat, la curiosité intellectuelle et la persévérance",
-      image: "/Images/Photo.png",
+      image: "/Images/DivinProf.jpg",
       email: "mvouamad@gmail.com",
-      phone: "+212 617-725867"
+      phone: "+212 617-725867 / +242 06 497 36 25"
     }
   ];
 

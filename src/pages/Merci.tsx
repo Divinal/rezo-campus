@@ -25,7 +25,7 @@ const Merci = () => {
         </p>
         
         <Link 
-          to="/Shopify-Training"
+          to="/"
           className="inline-block bg-blue-600 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded-md transition-colors"
         >
           Retour à la page de formation pour plus de détails 
