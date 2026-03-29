@@ -224,7 +224,6 @@ const FoireOrientationForm: React.FC = () => {
       setIsSubmitting(false);
     }
   };
-
   const getFieldIcon = (fieldName: string) => {
     const icons: Record<string, JSX.Element> = {
       Nom: <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z" />,
@@ -235,7 +234,6 @@ const FoireOrientationForm: React.FC = () => {
     };
     return icons[fieldName] || null;
   };
-
   return (
     <div className="min-h-screen bg-gradient-to-br from-blue-50 via-white to-indigo-50">
       <Header />
@@ -274,7 +272,6 @@ const FoireOrientationForm: React.FC = () => {
               <div className="absolute top-0 right-0 w-64 h-64 bg-white/5 rounded-full -mr-32 -mt-32"></div>
               <div className="absolute bottom-0 left-0 w-48 h-48 bg-white/5 rounded-full -ml-24 -mb-24"></div>
             </div>
-
             {/* Barre de progression */}
             <div className="bg-gray-50 px-6 sm:px-8 py-4 border-b border-gray-200">
               <div className="flex items-center justify-between mb-2">
@@ -590,7 +587,6 @@ const FoireOrientationForm: React.FC = () => {
                     aria-invalid={errors.Formation && touched.Formation ? "true" : "false"}
                   >
                     <option value="">-- Choisir une formation --</option>
-
                    <option value="Assurance">Assurance</option>
                     <option value="Communication">Communication</option>
                     <option value="Design Graphique">Design Graphique</option>
@@ -652,21 +648,22 @@ const FoireOrientationForm: React.FC = () => {
               )}
 
               {/* reCAPTCHA */}
-              <div className="flex justify-center py-4 bg-gray-50 rounded-xl border-2 border-dashed border-gray-300">
+              {/* <div className="flex justify-center py-4 bg-gray-50 rounded-xl border-2 border-dashed border-gray-300">
                 <RecaptchaComponent onVerify={handleRecaptchaChange} recaptchaRef={recaptchaRef} />
-              </div>
+              </div> */}
 
               {/* Bouton de soumission */}
               <div className="pt-4">
                 <button
                   type="submit"
-                  disabled={!recaptchaToken || isSubmitting}
+                  disabled={isSubmitting}
+                  //  disabled={!recaptchaToken || isSubmitting}
                   className="w-full relative overflow-hidden bg-gradient-to-r from-blue-600 via-blue-700 to-indigo-700 hover:from-blue-700 hover:via-blue-800 hover:to-indigo-800 disabled:from-gray-400 disabled:via-gray-400 disabled:to-gray-500 text-white font-bold py-5 px-8 rounded-xl transition-all duration-300 transform hover:scale-[1.02] active:scale-[0.98] disabled:scale-100 disabled:cursor-not-allowed shadow-2xl hover:shadow-3xl disabled:shadow-none flex items-center justify-center gap-3 group"
                 >
                   {isSubmitting ? (
                     <>
                       <svg className="animate-spin h-6 w-6" fill="none" viewBox="0 0 24 24">
-                        <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4"></circle>
+                        {/* <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4"></circle> */}
                         <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
                       </svg>
                       <span className="text-lg">Inscription en cours...</span>
