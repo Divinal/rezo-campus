@@ -1,9 +1,9 @@
 import React, { useState, useMemo } from 'react';
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
-import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
-import { Badge } from '@/components/ui/badge';
-import Header from '@/components/Header';
-import Footer from '@/components/Footer';
+import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '../components/ui/card';
+import { Tabs, TabsContent, TabsList, TabsTrigger } from '../components/ui/tabs';
+import { Badge } from '../components/ui/badge';
+import Header from '../components/Header';
+import Footer from '../components/Footer';
 import { 
   CheckCircle, 
   FileText, 
@@ -32,14 +32,16 @@ const Administration = () => {
     'République Démocratique du Congo (RDC)',
     'Côte d\'Ivoire', 
     'Bénin',
-    'Cameroun'
-  ], []);
+    'Cameroun',
+    'Haiti',
+    'Nigeria',
+    'Autre consulté dans le site du ministère des affaires étrangères du Maroc'], []);
 
   const aevmCountries = useMemo(() => [
-    'Togo',
-    'Sénégal', 
+    'Mali',
+    'Ghana', 
     'Congo Brazzaville',
-    'Gabon'
+    'Guinée'
   ], []);
 
   const visaDocuments = useMemo(() => [

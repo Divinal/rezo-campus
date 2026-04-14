@@ -5,9 +5,9 @@ import Header from '../components/Header';
 import Footer from '../components/Footer';
 import BlogArticle from '../components/BlogArticle';
 import AdvertisementCard from '../components/AdvertisementCard';
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
-import { Button } from '@/components/ui/button';
-import { supabase } from '@/lib/supabaseClient';
+import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '../components/ui/card';
+import { Button } from '../components/ui/button';
+import { supabase } from '../lib/supabaseClient';
 
 interface Article {
   article_id: number;
@@ -35,8 +35,16 @@ const Blog: React.FC = () => {
   // Charger les publicités (données statiques pour l'exemple)
   useEffect(() => {
     const staticAds: Advertisement[] = [
-      {
+        {
         id: 1,
+        title: "Grand Forum D'orientatiion Scolaire et Technologique -  2eme ÉDITION",
+        description: "Tu es étudiant(e) et tu ne sais pas encore quelle filière choisir ? Cette journée est FAITE POUR TOI ! \n\ 🙌 ✅ Rencontre directement les représentants des meilleures universités marocaines partenaires : \n\
+         📍 Rep. du Congo Brazzaville ",
+        image_url: "/Images/bonderolle 2.png",
+        link_url: "/contact"
+      },
+      {
+        id: 2,
         title: "1ère ÉDITION – FORMATION SPÉCIALE VACANCES",
         description: "Tu es au Maroc pendant les vacances ? Profite-en pour obtenir une certification professionnelle reconnue, 100% en dialecte marocain (Darija) ! 🧠 Informatique, communication, outils modernes… Tout ça, gratuitement 😲 \n\
          📆 Date du début: le 05 Aout 2025 \n\
@@ -45,7 +53,7 @@ const Blog: React.FC = () => {
         link_url: "/contact"
       },
       {
-        id: 2,
+        id: 3,
         title: "Bourse d’Études en Russie 2026 | Programme Open Doors – Étudier gratuitement !",
         description: "Vous rêvez étudier à l'étranger ? la Russie met à votre disposition une bourse d'étude 100% financier, alors ne cherchez plus ! Le Programme Open Doors (Russian Scholarship Project) offre aux étudiants internationaux la possibilité de rejoindre des cycles Licence, Master, Doctorat, voire Post‑Doctorat dans des universités russes prestigieuses—le tout entièrement gratuit et à distance.",
         image_url: "/Images/Bourse.png", 

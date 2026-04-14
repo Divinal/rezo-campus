@@ -532,7 +532,7 @@ const FoireOrientationForm: React.FC = () => {
                       id="Pays"
                       name="Pays"
                       type="text"
-                      placeholder="Ex: Maroc, France, Sénégal..."
+                      placeholder="Ex: Congo, Maroc, Sénégal..."
                       value={formData.Pays}
                       onChange={handleChange}
                       onBlur={handleBlur}
@@ -719,7 +719,7 @@ const FoireOrientationForm: React.FC = () => {
                 </div>
                 <div className="flex-1">
                   <p className="text-xs text-gray-500 font-semibold uppercase tracking-wide mb-1">Période du Forum</p>
-                  <p className="text-base font-bold text-gray-900">9 Mai 2026</p>
+                  <p className="text-base font-bold text-gray-900">16 Mai 2026</p>
                   <p className="text-xs text-gray-600 mt-1">3 jours</p>
                 </div>
               </div>

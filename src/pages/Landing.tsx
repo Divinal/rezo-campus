@@ -5,14 +5,8 @@ import { Search, BookOpen, Users, Star, ArrowRight, GraduationCap, MapPin, Phone
 import Header from '../components/Header';
 import Footer from '../components/Footer';
 import AvisGoogle from '../components/AvisGoogle';
-import {
-  Carousel,
-  CarouselContent,
-  CarouselItem,
-  CarouselNext,
-  CarouselPrevious,
-} from "@/components/ui/carousel";
-import { Card, CardContent } from "@/components/ui/card";
+import {Carousel, CarouselContent, CarouselItem, CarouselNext, CarouselPrevious,} from "../components/ui/carousel";
+import { Card, CardContent } from "../components/ui/card";
 import { schools } from '../data/schools';
 
 const Landing: React.FC = () => {
@@ -69,6 +63,36 @@ const Landing: React.FC = () => {
       </div>
     </section>
 
+    {/* Publicité du Forum */}
+    <section className="py-8 bg-gradient-to-r from-blue-600 to-indigo-600"
+      style={{ backgroundImage: "url('/Images/bonderolle 2.png')" }}
+    >
+        <div className="container mx-auto px-4">
+          <Link 
+            to="/formulaire-inscription"
+            className="flex flex-col md:flex-row items-center justify-between gap-5 text-black"
+          >
+             {/* <img 
+              src="/Images/bonderolle 2.png" 
+              alt="Forum orientation"
+              className="w-40 h-40 object-cover rounded-lg"
+            /> */}
+            <div className="flex items-center gap-4">
+              {/* <span className="text-4xl">📢</span> */}
+              <div>
+                <h3 className="text-2xl font-bold">Grand Forum D'orientation Scolaire et Technologique - 2eme ÉDITION</h3>
+                <p className="text-xl"><br />Tu es étudiant(e) et tu ne sais pas encore quelle filière choisir ? Cette journée est FAITE POUR TOI ! <br />
+                   Rencontre directement les représentants des meilleures universités marocaines partenaires <br /><br />
+                   📍 2 rue du tourisme, camp clairon, Congo-Brazzaville : Rep. du Congo <br />
+                  <span> 📆 Date : le 16 Mai 2026</span></p>
+              </div>
+            </div>
+            <button className="bg-white text-blue-600 px-6 py-2 rounded-full font-semibold hover:bg-blue-50 transition-colors">
+              Je m'inscris →
+            </button>
+          </Link>
+        </div>
+      </section>
 
       {/* Features Section */}
       <section className="py-20 bg-gray-50">

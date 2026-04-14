@@ -1,5 +1,5 @@
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-import { Button } from "@/components/ui/button";
+import { Card, CardContent, CardHeader, CardTitle } from "../components/ui/card";
+import { Button } from "../components/ui/button";
 import { Link } from 'react-router-dom';
 import { motion, AnimatePresence } from "framer-motion";
 import { useState } from "react";
@@ -147,7 +147,7 @@ const PaysVisaAEVM = () => {
 
   const aevmCountries = [
     {
-      name: "Togo",
+      name: "Mali",
       procedure: [
         {
           step: 1,
@@ -188,7 +188,7 @@ const PaysVisaAEVM = () => {
       specialInfo: "100% électronique - Pas de déplacement nécessaire"
     },
     {
-      name: "Sénégal",
+      name: "Ghana",
       procedure: [
         {
           step: 1,
@@ -270,7 +270,7 @@ const PaysVisaAEVM = () => {
       specialInfo: "QR Code pour vérification rapide à l'aéroport"
     },
     {
-      name: "Gabon",
+      name: "Guinée",
       procedure: [
         {
           step: 1,
