@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { Plus, Trash2, BookOpen, ArrowLeft, Lock, ChevronDown, Users } from 'lucide-react';
-import { supabase } from '@/lib/supabaseClient';
-import { toast } from '@/components/ui/sonner';
+import { supabase } from '../lib/supabaseClient';
+import { toast } from '../components/ui/sonner';
 
 interface Discipline {
   id: number;
@@ -13,6 +13,8 @@ interface Note {
   discipline_id: number;
   note1: number | null;
   note2: number | null;
+  note3: number | null; 
+
 }
 
 interface Student {
@@ -239,7 +241,7 @@ const TeacherPage: React.FC<TeacherPageProps> = ({ isAuthenticated, onAuthentica
     }
   };
 
-  const updateNote = async (disciplineId: number, noteType: 'note1' | 'note2', noteValue: string) => {
+  const updateNote = async (disciplineId: number, noteType: 'note1' | 'note2' | 'note3', noteValue: string) => {
     if (!selectedStudent) return;
 
     const parsedNote = noteValue === '' ? null : parseFloat(noteValue);
@@ -271,13 +273,15 @@ const TeacherPage: React.FC<TeacherPageProps> = ({ isAuthenticated, onAuthentica
       }
     } else {
       // Insérer
-      const insertData = {
-        student_id: selectedStudent.id,
-        discipline_id: disciplineId,
-        [noteType]: parsedNote,
-        [noteType === 'note1' ? 'note2' : 'note1']: null
-      };
-
+     const insertData = {
+      student_id: selectedStudent.id,
+      discipline_id: disciplineId,
+      [noteType]: parsedNote,
+      // Initialiser les autres notes à null
+      ...(noteType !== 'note1' && { note1: null }),
+      ...(noteType !== 'note2' && { note2: null }),
+      ...(noteType !== 'note3' && { note3: null })
+    };
       const { error } = await supabase
         .from('notes')
         .insert([insertData]);
@@ -291,19 +295,29 @@ const TeacherPage: React.FC<TeacherPageProps> = ({ isAuthenticated, onAuthentica
     }
   };
 
-  const calculateAverage = (note1: number | null, note2: number | null): string => {
+  {/*const calculateAverage = (note1: number | null, note2: number | null): string => {
     if (note1 === null && note2 === null) return '-';
     if (note1 === null) return note2?.toFixed(2) || '-';
     if (note2 === null) return note1?.toFixed(2) || '-';
     return ((note1 + note2) / 2).toFixed(2);
-  };
+  };*/}
+
+  const calculateAverage = (note1: number | null, note2: number | null, note3: number | null): string => {
+  // Filtrer les notes non nulles
+  const notes = [note1, note2, note3].filter(n => n !== null) as number[];  
+  // Si aucune note n'est saisie
+  if (notes.length === 0) return '-';  
+  // Calculer la moyenne des notes disponibles
+  const sum = notes.reduce((acc, n) => acc + n, 0);
+  return (sum / notes.length).toFixed(2);
+};
 
   const calculateGeneralAverage = (): string => {
-    const validNotes = studentNotes.filter(n => n.note1 !== null || n.note2 !== null);
+    const validNotes = studentNotes.filter(n => n.note1 !== null || n.note2 !== null || n.note3 !== null);
     if (validNotes.length === 0) return '0.00';
 
     const sum = validNotes.reduce((acc, n) => {
-      const avg = calculateAverage(n.note1, n.note2);
+      const avg = calculateAverage(n.note1, n.note2, n.note3);
       return acc + (avg !== '-' ? parseFloat(avg) : 0);
     }, 0);
 
@@ -597,14 +611,15 @@ const TeacherPage: React.FC<TeacherPageProps> = ({ isAuthenticated, onAuthentica
                             <th className="text-left py-3 px-4 font-semibold text-gray-700">Discipline</th>
                             <th className="text-center py-3 px-4 font-semibold text-gray-700">Contrôle 1</th>
                             <th className="text-center py-3 px-4 font-semibold text-gray-700">Contrôle 2</th>
+                            <th className="text-center py-3 px-4 font-semibold text-gray-700">Contrôle 3</th>
                             <th className="text-center py-3 px-4 font-semibold text-gray-700">Moyenne</th>
                           </tr>
                         </thead>
                         <tbody>
                           {disciplines.map((disc) => {
                             const note = studentNotes.find(n => n.discipline_id === disc.id);
-                            const moyenne = calculateAverage(note?.note1 || null, note?.note2 || null);
-                            
+                            const moyenne = calculateAverage(note?.note1 || null, note?.note2 || null, note?.note3 || null);
+
                             return (
                               <tr key={disc.id} className="border-b border-gray-100 hover:bg-gray-50">
                                 <td className="py-3 px-4 font-medium">{disc.nom}</td>
@@ -629,6 +644,18 @@ const TeacherPage: React.FC<TeacherPageProps> = ({ isAuthenticated, onAuthentica
                                     value={note?.note2 ?? ''}
                                     onChange={(e) => updateNote(disc.id, 'note2', e.target.value)}
                                     placeholder="Note 2"
+                                    className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-purple-500 text-center"
+                                  />
+                                </td>
+                                  <td className="py-3 px-4">
+                                  <input
+                                    type="number"
+                                    min="0"
+                                    max="20"
+                                    step="0.25"
+                                    value={note?.note3 ?? ''}
+                                    onChange={(e) => updateNote(disc.id, 'note3', e.target.value)}
+                                    placeholder="Note 3"
                                     className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-purple-500 text-center"
                                   />
                                 </td>

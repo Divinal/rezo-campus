@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { Search, Users, Lock, BookOpen, Trophy, TrendingUp, RotateCcw, UserCheck } from 'lucide-react';
-import { supabase } from '@/lib/supabaseClient';
-import { toast } from '@/components/ui/sonner';
+import { supabase } from '../lib/supabaseClient';
+import { toast } from '../components/ui/sonner';
 import Header from '../components/Header';
 import Footer from '../components/Footer';
 
@@ -15,6 +15,7 @@ interface Note {
   discipline_id: number;
   note1: number | null;
   note2: number | null;
+  note3: number | null;
 }
 
 interface Student {
@@ -134,19 +135,19 @@ const StudentPage: React.FC<StudentPageProps> = ({ onAccessTeacher }) => {
     setShowResults(false);
   };
 
-  const calculateAverage = (note1: number | null, note2: number | null): string => {
-    if (note1 === null && note2 === null) return '-';
-    if (note1 === null) return note2?.toFixed(2) || '-';
-    if (note2 === null) return note1?.toFixed(2) || '-';
-    return ((note1 + note2) / 2).toFixed(2);
+  const calculateAverage = (note1: number | null, note2: number | null, note3: number | null): string => {
+    const notes = [note1, note2, note3].filter(n => n !== null) as number[];  
+    if (notes.length === 0) return '-';  
+    const sum = notes.reduce((acc, n) => acc + n, 0);
+    return (sum / notes.length).toFixed(2);
   };
 
   const calculateGeneralAverage = (): string => {
-    const validNotes = studentNotes.filter(n => n.note1 !== null || n.note2 !== null);
+    const validNotes = studentNotes.filter(n => n.note1 !== null || n.note2 !== null || n.note3 !== null);
     if (validNotes.length === 0) return '0.00';
 
     const sum = validNotes.reduce((acc, n) => {
-      const avg = calculateAverage(n.note1, n.note2);
+      const avg = calculateAverage(n.note1, n.note2, n.note3);
       return acc + (avg !== '-' ? parseFloat(avg) : 0);
     }, 0);
 
@@ -155,7 +156,7 @@ const StudentPage: React.FC<StudentPageProps> = ({ onAccessTeacher }) => {
 
   const getValidatedSubjects = (): number => {
     return studentNotes.filter(n => {
-      const avg = calculateAverage(n.note1, n.note2);
+      const avg = calculateAverage(n.note1, n.note2, n.note3);
       return avg !== '-' && parseFloat(avg) >= 10;
     }).length;
   };
@@ -360,13 +361,14 @@ const StudentPage: React.FC<StudentPageProps> = ({ onAccessTeacher }) => {
                                   <th className="text-left px-5 py-4 font-semibold text-gray-700 border-b-2 border-gray-200">Discipline</th>
                                   <th className="text-center px-5 py-4 font-semibold text-gray-700 border-b-2 border-gray-200">Contrôle 1</th>
                                   <th className="text-center px-5 py-4 font-semibold text-gray-700 border-b-2 border-gray-200">Contrôle 2</th>
+                                  <th className="text-center px-5 py-4 font-semibold text-gray-700 border-b-2 border-gray-200">Contrôle 3</th>
                                   <th className="text-center px-5 py-4 font-semibold text-gray-700 border-b-2 border-gray-200">Moyenne</th>
                                 </tr>
                               </thead>
                               <tbody className="divide-y divide-gray-100">
                                 {studentNotes.map((note) => {
                                   const disc = disciplines.find(d => d.id === note.discipline_id);
-                                  const moyenne = calculateAverage(note.note1, note.note2);
+                                  const moyenne = calculateAverage(note.note1, note.note2, note.note3);
                                   const isValidated = moyenne !== '-' && parseFloat(moyenne) >= 10;
 
                                   return disc ? (
@@ -385,6 +387,11 @@ const StudentPage: React.FC<StudentPageProps> = ({ onAccessTeacher }) => {
                                       <td className="px-5 py-4 text-center">
                                         <span className={`inline-block px-3 py-1 rounded-lg font-semibold ${getNoteBg(note.note2)} ${getNoteColor(note.note2)}`}>
                                           {note.note2 !== null ? note.note2.toFixed(2) : '-'}
+                                        </span>
+                                      </td>
+                                       <td className="px-5 py-4 text-center">
+                                        <span className={`inline-block px-3 py-1 rounded-lg font-semibold ${getNoteBg(note.note3)} ${getNoteColor(note.note3)}`}>
+                                          {note.note3 !== null ? note.note3.toFixed(2) : '-'}
                                         </span>
                                       </td>
                                       <td className="px-5 py-4 text-center">
@@ -410,7 +417,7 @@ const StudentPage: React.FC<StudentPageProps> = ({ onAccessTeacher }) => {
                         <div className="md:hidden space-y-3">
                           {studentNotes.map((note) => {
                             const disc = disciplines.find(d => d.id === note.discipline_id);
-                            const moyenne = calculateAverage(note.note1, note.note2);
+                            const moyenne = calculateAverage(note.note1, note.note2, note.note3);
                             const isValidated = moyenne !== '-' && parseFloat(moyenne) >= 10;
 
                             return disc ? (
@@ -443,6 +450,12 @@ const StudentPage: React.FC<StudentPageProps> = ({ onAccessTeacher }) => {
                                     <div className="text-xs text-gray-500 mb-1">Contrôle 2</div>
                                     <div className={`font-bold text-lg ${getNoteColor(note.note2)}`}>
                                       {note.note2 !== null ? note.note2.toFixed(2) : '-'}
+                                    </div>
+                                  </div>
+                                   <div className="p-3 text-center">
+                                    <div className="text-xs text-gray-500 mb-1">Contrôle 3</div>
+                                    <div className={`font-bold text-lg ${getNoteColor(note.note3)}`}>
+                                      {note.note3 !== null ? note.note3.toFixed(2) : '-'}
                                     </div>
                                   </div>
                                 </div>
