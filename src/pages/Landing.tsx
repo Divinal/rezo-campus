@@ -33,7 +33,7 @@ const Landing: React.FC = () => {
       <Header />
       
       {/* Hero Section */}
-        <section className="relative bg-[url('/Images/Panel.jpg')] bg-cover bg-center bg-no-repeat text-white py-20">
+        <section className="relative bg-[url('/Images/Forum.jpeg')] bg-cover bg-center bg-no-repeat text-white py-20">
       {/* Superposition sombre semi-transparente */}
       <div className="absolute inset-0 bg-black bg-opacity-60 z-0"></div>
 
@@ -64,7 +64,7 @@ const Landing: React.FC = () => {
     </section>
 
     {/* Publicité du Forum */}
-    <section className="py-8 bg-gradient-to-r from-blue-600 to-indigo-600"
+    {/* <section className="py-8 bg-gradient-to-r from-blue-600 to-indigo-600"
       style={{ backgroundImage: "url('/Images/bonderolle 2.png')" }}
     >
         <div className="container mx-auto px-4">
@@ -72,13 +72,13 @@ const Landing: React.FC = () => {
             to="/formulaire-inscription"
             className="flex flex-col md:flex-row items-center justify-between gap-5 text-black"
           >
-             {/* <img 
+             <img 
               src="/Images/bonderolle 2.png" 
               alt="Forum orientation"
               className="w-40 h-40 object-cover rounded-lg"
-            /> */}
+            />
             <div className="flex items-center gap-4">
-              {/* <span className="text-4xl">📢</span> */}
+              
               <div>
                 <h3 className="text-2xl font-bold">Grand Forum D'orientation Scolaire et Technologique - 2eme ÉDITION</h3>
                 <p className="text-xl"><br />Tu es étudiant(e) et tu ne sais pas encore quelle filière choisir ? Cette journée est FAITE POUR TOI ! <br />
@@ -92,7 +92,7 @@ const Landing: React.FC = () => {
             </button>
           </Link>
         </div>
-      </section>
+      </section> */}
 
       {/* Features Section */}
       <section className="py-20 bg-gray-50">
