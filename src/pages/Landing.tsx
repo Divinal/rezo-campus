@@ -1,7 +1,7 @@
 
-import React from 'react';
+import React, { useState } from 'react';
 import { Link } from 'react-router-dom';
-import { Search, BookOpen, Users, Star, ArrowRight, GraduationCap, MapPin, Phone } from 'lucide-react';
+import { Search, BookOpen, Users, Star, ArrowRight, GraduationCap, MapPin, Phone, Info, ClipboardList, FileCheck, ChevronDown, ChevronUp } from 'lucide-react';
 import Header from '../components/Header';
 import Footer from '../components/Footer';
 import AvisGoogle from '../components/AvisGoogle';
@@ -10,6 +10,49 @@ import { Card, CardContent } from "../components/ui/card";
 import { schools } from '../data/schools';
 
 const Landing: React.FC = () => {
+  const [openProcedure, setOpenProcedure] = useState<number | null>(null);
+
+  const toggleProcedure = (index: number) =>
+    setOpenProcedure(prev => (prev === index ? null : index));
+
+  const procedures = [
+    {
+      icon: Info,
+      color: "bg-blue-100 text-blue-600",
+      title: "Notre Accompagnement",
+      subtitle: "Ce que nous faisons pour vous",
+      items: [
+        { label: "Informations sur les formations", detail: "Présentation détaillée de toutes les filières disponibles dans les écoles partenaires au Maroc et en Afrique." },
+        { label: "Informations sur les prix", detail: "Frais de scolarité, frais de dossier, frais d'inscription — tout est clairement communiqué sans surprise." },
+        { label: "Informations sur les logements", detail: "Résidences universitaires, appartements partagés, familles d'accueil — nous vous orientons vers les meilleures options." },
+        { label: "Informations sur le coût de la vie", detail: "Estimation mensuelle du budget (nourriture, transport, loisirs) selon la ville d'études choisie." },
+        { label: "Autres accompagnements", detail: "Orientation scolaire personnalisée, suivi post-inscription, aide à l'intégration et réseau d'anciens étudiants." },
+      ],
+    },
+    {
+      icon: ClipboardList,
+      color: "bg-green-100 text-green-600",
+      title: "Procédure d'Inscription",
+      subtitle: "Les étapes pour intégrer votre école",
+      items: [
+        { label: "Étape 1 – Prendre connaissance des informations", detail: "Consultez les formations disponibles, comparez les écoles et identifiez la filière qui correspond à votre projet professionnel." },
+        { label: "Étape 2 – Choisir la formation adaptée", detail: "Avec l'aide de notre équipe, sélectionnez l'école et la formation qui correspondent à votre niveau et à vos ambitions." },
+        { label: "Étape 3 – Envoyer les dossiers d'inscription", detail: "Préparez et envoyez votre dossier complet (diplômes, relevés de notes, lettre de motivation, passeport) à l'école choisie." },
+      ],
+    },
+    {
+      icon: FileCheck,
+      color: "bg-orange-100 text-orange-600",
+      title: "Demande d'AEVM",
+      subtitle: "Prise en charge complète après inscription",
+      items: [
+        { label: "Qu'est-ce que l'AEVM ?", detail: "L'Autorisation d'Entrée et de Visa Marocain (AEVM) est le document qui autorise un étudiant étranger à entrer et séjourner au Maroc pour ses études." },
+        { label: "Conditions préalables", detail: "Avoir une lettre d'admission de l'école, avoir réglé les frais d'inscription, et avoir les documents d'état civil en ordre." },
+        { label: "Notre prise en charge", detail: "Une fois les étapes d'inscription complétées, Rézo Campus prend en charge l'ensemble de la procédure de demande d'AEVM : constitution du dossier, dépôt auprès des services compétents et suivi." },
+      ],
+    },
+  ];
+
   const features = [
     {
       icon: Search,
@@ -94,10 +137,12 @@ const Landing: React.FC = () => {
         </div>
       </section> */}
 
-      {/* Features Section */}
+      {/* Features + Procédures — disposition 2 colonnes */}
       <section className="py-20 bg-gray-50">
         <div className="container mx-auto px-4">
-          <div className="text-center mb-16">
+
+          {/* Titre centré */}
+          <div className="text-center mb-12">
             <h2 className="text-3xl md:text-4xl font-bold text-gray-800 mb-4">
               Pourquoi Choisir RézoCampus ?
             </h2>
@@ -105,20 +150,63 @@ const Landing: React.FC = () => {
               Nous facilitons votre parcours éducatif avec des outils innovants et un accompagnement personnalisé.
             </p>
           </div>
-          
-          <div className="grid md:grid-cols-3 gap-8">
-            {features.map((feature, index) => {
-              const IconComponent = feature.icon;
-              return (
-                <div key={index} className="bg-white rounded-lg p-8 shadow-lg hover:shadow-xl transition-shadow">
-                  <div className="bg-primary bg-opacity-10 w-16 h-16 rounded-lg flex items-center justify-center mb-6">
-                    <IconComponent className="w-8 h-8 text-primary" />
+
+          <div className="flex flex-col lg:flex-row gap-8 items-start">
+
+            {/* ─── Colonne gauche : cartes features ─── */}
+            <div className="flex-1 space-y-5">
+              {features.map((feature, index) => {
+                const IconComponent = feature.icon;
+                return (
+                  <div key={index} className="bg-white rounded-xl p-6 shadow-md hover:shadow-lg transition-shadow flex items-start gap-5">
+                    <div className="bg-primary bg-opacity-10 w-14 h-14 rounded-xl flex items-center justify-center flex-shrink-0">
+                      <IconComponent className="w-7 h-7 text-primary" />
+                    </div>
+                    <div>
+                      <h3 className="text-lg font-semibold mb-2 text-gray-800">{feature.title}</h3>
+                      <p className="text-gray-600 text-sm leading-relaxed">{feature.description}</p>
+                    </div>
                   </div>
-                  <h3 className="text-xl font-semibold mb-4 text-gray-800">{feature.title}</h3>
-                  <p className="text-gray-600">{feature.description}</p>
-                </div>
-              );
-            })}
+                );
+              })}
+            </div>
+
+            {/* ─── Sidebar droite : procédures ─── */}
+            <div className="lg:w-96 space-y-5 flex-shrink-0">
+              {procedures.map((proc, index) => {
+                const isOpen = openProcedure === index;
+                return (
+                  <div key={index} className="rounded-xl overflow-hidden shadow-md border border-gray-200">
+                    {/* En-tête cliquable bleu foncé */}
+                    <button
+                      onClick={() => toggleProcedure(index)}
+                      className="w-full bg-primary px-5 py-3 flex items-center justify-between gap-3 hover:bg-primary/90 transition-colors"
+                    >
+                      <div className="flex items-center gap-3">
+                        <proc.icon className="w-4 h-4 text-secondary flex-shrink-0" />
+                        <h3 className="text-white font-bold text-sm">{proc.title}</h3>
+                      </div>
+                      {isOpen
+                        ? <ChevronUp className="w-4 h-4 text-white flex-shrink-0" />
+                        : <ChevronDown className="w-4 h-4 text-white flex-shrink-0" />
+                      }
+                    </button>
+                    {/* Corps blanc — visible seulement si ouvert */}
+                    {isOpen && (
+                      <div className="bg-white divide-y divide-gray-100">
+                        {proc.items.map((item, i) => (
+                          <div key={i} className="px-5 py-3">
+                            <p className="text-primary font-semibold text-sm">{item.label}</p>
+                            <p className="text-gray-500 text-xs mt-0.5 leading-relaxed">{item.detail}</p>
+                          </div>
+                        ))}
+                      </div>
+                    )}
+                  </div>
+                );
+              })}
+            </div>
+
           </div>
         </div>
       </section>
@@ -203,7 +291,7 @@ const Landing: React.FC = () => {
               <div className="bg-blue-100 w-12 h-12 rounded-lg flex items-center justify-center mb-4">
                 <BookOpen className="w-6 h-6 text-blue-600" />
               </div>
-              <h3 className="text-xl font-semibold mb-3 text-gray-800"><Link to="/index" className="text-xl font-semibold mb-4 hover:underline text-green-600">
+              <h3 className="text-xl font-semibold mb-3 text-gray-800"><Link to="/schools?category=Commerce" className="text-xl font-semibold mb-4 hover:underline text-green-600">
                 Commerce & Gestion ↱
               </Link></h3>
               <p className="text-gray-600">Formations en commerce, marketing, finance et gestion d'entreprise.</p>
@@ -213,7 +301,7 @@ const Landing: React.FC = () => {
               <div className="bg-green-100 w-12 h-12 rounded-lg flex items-center justify-center mb-4">
                 <GraduationCap className="w-6 h-6 text-green-600" />
               </div>
-              <h3 className="text-xl font-semibold mb-3 text-gray-800"><Link to="/index" className="text-xl font-semibold mb-4 hover:underline text-green-600">
+              <h3 className="text-xl font-semibold mb-3 text-gray-800"><Link to="/schools?category=Informatique" className="text-xl font-semibold mb-4 hover:underline text-green-600">
                 Informatique ↱
               </Link></h3>
               <p className="text-gray-600">Développement web, mobile, intelligence artificielle et cybersécurité.</p>
@@ -223,7 +311,7 @@ const Landing: React.FC = () => {
               <div className="bg-purple-100 w-12 h-12 rounded-lg flex items-center justify-center mb-4">
                 <Users className="w-6 h-6 text-purple-600" />
               </div>
-              <h3 className="text-xl font-semibold mb-3 text-gray-800"><Link to="/index" className="text-xl font-semibold mb-4 hover:underline text-green-600">
+              <h3 className="text-xl font-semibold mb-3 text-gray-800"><Link to="/schools?category=Infographie" className="text-xl font-semibold mb-4 hover:underline text-green-600">
                 Design & Arts ↱
               </Link></h3>
               <p className="text-gray-600">Design graphique, architecture, mode et arts appliqués.</p>
@@ -233,7 +321,7 @@ const Landing: React.FC = () => {
               <div className="bg-red-100 w-12 h-12 rounded-lg flex items-center justify-center mb-4">
                 <MapPin className="w-6 h-6 text-red-600" />
               </div>
-              <h3 className="text-xl font-semibold mb-3 text-gray-800"><Link to="/index" className="text-xl font-semibold mb-4 hover:underline text-green-600">
+              <h3 className="text-xl font-semibold mb-3 text-gray-800"><Link to="/schools?category=Sécurité-Informatique" className="text-xl font-semibold mb-4 hover:underline text-green-600">
                 Ingénierie ↱
               </Link></h3>
               <p className="text-gray-600">Génie civil, mécanique, électrique et industriel.</p>
@@ -243,7 +331,7 @@ const Landing: React.FC = () => {
               <div className="bg-yellow-100 w-12 h-12 rounded-lg flex items-center justify-center mb-4">
                 <Phone className="w-6 h-6 text-yellow-600" />
               </div>
-              <h3 className="text-xl font-semibold mb-3 text-gray-800"> <Link to="/index" className="text-xl font-semibold mb-4 hover:underline text-green-600">
+              <h3 className="text-xl font-semibold mb-3 text-gray-800"><Link to="/schools?category=Communication" className="text-xl font-semibold mb-4 hover:underline text-green-600">
                 Communication ↱
               </Link></h3>
               <p className="text-gray-600">Journalisme, relations publiques et communication digitale.</p>
@@ -253,7 +341,7 @@ const Landing: React.FC = () => {
               <div className="bg-indigo-100 w-12 h-12 rounded-lg flex items-center justify-center mb-4">
                 <Star className="w-6 h-6 text-indigo-600" />
               </div>
-              <h3 className="text-xl font-semibold mb-3 text-gray-800"><Link to="/index" className="text-xl font-semibold mb-4 hover:underline text-green-600">
+              <h3 className="text-xl font-semibold mb-3 text-gray-800"><Link to="/schools?category=Santé" className="text-xl font-semibold mb-4 hover:underline text-green-600">
                 Santé ↱
               </Link></h3>
               <p className="text-gray-600">Médecine, pharmacie, soins infirmiers et paramédical.</p>

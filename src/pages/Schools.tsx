@@ -1,4 +1,5 @@
 import React, { useState, useEffect, useCallback, useMemo } from 'react';
+import { useSearchParams } from 'react-router-dom';
 import { schools, categories } from '../data/schools';
 import SchoolCard from '../components/SchoolCard';
 import Header from '../components/Header';
@@ -41,7 +42,10 @@ const SchoolCardSkeleton = () => (
 );
 
 const Index: React.FC = () => {
-  const [selectedCategory, setSelectedCategory] = useState<string | null>(null);
+  const [searchParams] = useSearchParams();
+  const [selectedCategory, setSelectedCategory] = useState<string | null>(
+    searchParams.get('category') || null
+  );
   const [searchQuery, setSearchQuery] = useState<string>("");
   const [isLoading, setIsLoading] = useState<boolean>(false);
   const [showScrollTop, setShowScrollTop] = useState<boolean>(false);

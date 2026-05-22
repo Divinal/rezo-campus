@@ -107,7 +107,7 @@ export const schools: School[] = [
         id: "Groupe-Miage",
         name: "Groupe Miage Etablissement Privé",
         description: "Un établissement d'excellence dédié à l'enseignement technologique avec des programmes innovants et des partenariats industriels.",
-        logo: "Images/images.png", 
+        logo: "Images/miage-casa.jpg", 
         address: "64, Rue Allal Ben Abdellah 20000 Casablanca",
         video: "https://youtu.be/AotfqzZf4oo",
         contact: {
@@ -2036,8 +2036,375 @@ export const schools: School[] = [
         skillsDeveloped: ["Saisie & contrôle comptable", "Déclarations fiscales et sociales", "Utilisation d’ERP comptables", "Reporting financier", "Gestion des documents administratifs"],
         opportunities: ["Assistant comptable", "Gestionnaire administratif", "Technicien paie", "Aide-comptable en entreprise ou cabinet"]
       }
-    
+
+        ]
+      },
+      {
+        id: "MIAGE-Temara",
+        name: "Groupe Miage – Campus de Temara",
+        description: "Le campus de Temara du Groupe Miage, établissement d’excellence dédié à l’enseignement technologique avec des programmes innovants en informatique, gestion et management.",
+        logo: "Images/logo-Miage Temara.png",
+        address: "Temara, Rabat-Salé-Kénitra, Maroc",
+        contact: {
+          phone: "Information non disponible",
+          email: "temara@groupemiage.net",
+          website: "groupemiage.net"
+        },
+        registrationInfo: {
+          "Tous les parcours": {
+            description: "Les inscriptions sont ouvertes à partir du 1er juin jusqu’au 30 septembre. Les dossiers peuvent être soumis en ligne ou directement au bureau des admissions.",
+            procedure: [
+              "Formulaire de candidature en ligne dûment complété",
+              "Baccalauréat original + copies certifiées conformes",
+              "Relevés de notes du baccalauréat",
+              "Copie de la carte d’identité ou passeport",
+              "Lettre de motivation précisant votre projet professionnel",
+              "Entretien de sélection avec le coordinateur pédagogique"
+            ],
+            fees: "Pour toutes informations des inscription veuillez vous adressez à l’école",
+            scholarships: true,
+            contact: {
+              phone: "Information non disponible",
+              email: "temara@groupemiage.net"
+            }
+          }
+        },
+        programs: [
+          {
+            name: "Développement Informatique",
+            description: "Prépare des développeurs polyvalents capables de concevoir, coder et maintenir des applications web, mobiles et desktop en respectant les bonnes pratiques de qualité logicielle.",
+            category: "Informatique",
+            parcours: "Technicien Spécialisé Développement",
+            niveau: "Technicien Spécialisé",
+            cycle: "Technicien Spécialisé",
+            duration: "2 ans",
+            diploma: "Diplôme de Technicien Spécialisé en Développement Informatique",
+            admissionRequirements: ["Baccalauréat scientifique ou technique", "Dossier de candidature", "Test logique & motivation", "Entretien"],
+            objectives: ["Maîtriser les langages front-end et back-end", "Concevoir des bases de données", "Utiliser frameworks MVC & API REST", "Déployer et maintenir des applications"],
+            skillsDeveloped: ["Programmation orientée objet", "Frameworks (Laravel, React)", "SQL / NoSQL", "Versioning (Git)", "Tests unitaires"],
+            opportunities: ["Développeur full-stack", "Intégrateur web", "Testeur logiciel", "Assistant chef de projet IT"]
+          },
+          {
+            name: "Finance & Comptabilité",
+            description: "Prépare des professionnels capables de tenir la comptabilité, de réaliser l’analyse financière et d’appuyer la gestion budgétaire d’une PME.",
+            category: "Gestion-Financière",
+            parcours: "Technicien Spécialisé Finance-Comptabilité",
+            niveau: "Technicien Spécialisé",
+            cycle: "Technicien Spécialisé",
+            duration: "2 ans",
+            diploma: "Diplôme de Technicien Spécialisé en Finance & Comptabilité",
+            admissionRequirements: ["Bac économique ou scientifique", "Dossier scolaire", "Entretien"],
+            objectives: ["Tenir la comptabilité générale et analytique", "Établir bilans et comptes de résultat", "Réaliser déclarations fiscales"],
+            skillsDeveloped: ["Plan comptable marocain", "ERP (Sage…)", "Analyse financière", "Gestion de trésorerie"],
+            opportunities: ["Comptable", "Assistant financier", "Gestionnaire de paie"]
+          },
+          {
+            name: "Management & Gestion des PME",
+            description: "Forme des cadres intermédiaires capables de gérer les fonctions clés et d’accompagner la croissance des petites et moyennes entreprises.",
+            category: "Gestion-Entreprise",
+            parcours: "Management PME",
+            niveau: "Licence",
+            cycle: "Bachelor européen",
+            duration: "3 ans",
+            diploma: "Bachelor Européen Management & Gestion des PME",
+            admissionRequirements: ["Baccalauréat économique ou scientifique", "Dossier + entretien"],
+            objectives: ["Piloter la performance financière d’une PME", "Développer la stratégie marketing", "Superviser la gestion RH"],
+            skillsDeveloped: ["Tableaux de bord", "Marketing opérationnel", "Comptabilité PME", "Gestion de projet"],
+            opportunities: ["Assistant manager", "Adjoint de direction", "Chef de projet PME"]
+          }
+        ]
+      },
+      {
+        id: "INGI-SUP",
+        name: "INGI SUP – Institut Supérieur de Génie Informatique",
+        description: "INGI SUP est un établissement spécialisé dans les formations en ingénierie informatique, développement logiciel et nouvelles technologies, formant des techniciens et ingénieurs adaptés aux besoins du marché.",
+        logo: "Images/LOGO INGI SUP.jfif",
+        address: "Information non disponible",
+        contact: {
+          phone: "Information non disponible",
+          email: "contact@ingisup.ma",
+          website: "ingisup.ma"
+        },
+        registrationInfo: {
+          "Tous les parcours": {
+            description: "Inscriptions ouvertes de juin à septembre. Les dossiers peuvent être soumis en ligne ou directement au bureau des admissions.",
+            procedure: [
+              "Formulaire de candidature",
+              "Copies des diplômes et relevés de notes",
+              "Test technique",
+              "Entretien de motivation"
+            ],
+            fees: "Pour toutes informations des inscription veuillez vous adressez à l’école",
+            scholarships: true,
+            contact: {
+              phone: "Information non disponible",
+              email: "contact@ingisup.ma"
+            }
+          }
+        },
+        programs: [
+          {
+            name: "Développement Web & Mobile",
+            description: "Formation intensive en développement web et mobile, couvrant les technologies modernes front-end et back-end.",
+            category: "Informatique",
+            parcours: "Développement Web & Mobile",
+            niveau: "Technicien Spécialisé",
+            cycle: "Technicien Spécialisé",
+            duration: "2 ans",
+            diploma: "Diplôme de Technicien Spécialisé Développement Web & Mobile",
+            admissionRequirements: ["Baccalauréat", "Test technique", "Entretien"],
+            objectives: ["Développer des applications web", "Créer des apps mobiles", "Maîtriser les API REST"],
+            skillsDeveloped: ["HTML/CSS/JS", "React/Vue", "Flutter", "Node.js"],
+            opportunities: ["Développeur web", "Développeur mobile", "Ingénieur logiciel junior"]
+          },
+          {
+            name: "Systèmes & Réseaux",
+            description: "Formation en administration des systèmes informatiques et réseaux d’entreprise.",
+            category: "Sécurité-Informatique",
+            parcours: "Systèmes & Réseaux",
+            niveau: "Technicien Spécialisé",
+            cycle: "Technicien Spécialisé",
+            duration: "2 ans",
+            diploma: "Diplôme de Technicien Spécialisé Systèmes & Réseaux",
+            admissionRequirements: ["Baccalauréat scientifique", "Entretien"],
+            objectives: ["Administrer des réseaux", "Sécuriser les systèmes", "Gérer des serveurs"],
+            skillsDeveloped: ["TCP/IP", "Linux", "Windows Server", "Cybersécurité"],
+            opportunities: ["Administrateur réseau", "Technicien sécurité", "Support IT"]
+          },
+          {
+            name: "Licence Informatique & Ingénierie Logicielle",
+            description: "Formation approfondie en génie logiciel, architecture des systèmes et gestion de projets informatiques.",
+            category: "Informatique",
+            parcours: "Ingénierie Logicielle",
+            niveau: "Licence",
+            cycle: "Licence Professionnelle",
+            duration: "3 ans",
+            diploma: "Bachelor Européen Informatique & Ingénierie Logicielle",
+            admissionRequirements: ["Bac scientifique ou Bac+2 IT", "Test technique", "Entretien"],
+            objectives: ["Concevoir des architectures logicielles", "Gérer des projets IT", "Développer des solutions complètes"],
+            skillsDeveloped: ["UML", "Agile/Scrum", "Java/Python", "Cloud computing", "DevOps"],
+            opportunities: ["Ingénieur logiciel", "Chef de projet IT", "Consultant technique"]
+          }
+        ]
+      },
+      {
+        id: "Institut-Santinov",
+        name: "Institut Santinov",
+        description: "L’Institut Santinov est un établissement spécialisé dans les formations paramédicales et de santé, formant des professionnels compétents pour répondre aux besoins du secteur de la santé.",
+        logo: "Images/logo-santinov (1).png",
+        address: "Information non disponible",
+        contact: {
+          phone: "Information non disponible",
+          email: "contact@santinov.com",
+          website: "santinov.com"
+        },
+        registrationInfo: {
+          "Tous les parcours": {
+            description: "Inscriptions ouvertes. Contactez l’établissement pour plus d’informations sur les dates et modalités.",
+            procedure: [
+              "Formulaire de candidature",
+              "Copies des diplômes et relevés de notes",
+              "Test de sélection",
+              "Entretien de motivation"
+            ],
+            fees: "Pour toutes informations des inscription veuillez vous adressez à l’école",
+            scholarships: false,
+            contact: {
+              phone: "Information non disponible",
+              email: "contact@santinov.com"
+            }
+          }
+        },
+        programs: [
+          {
+            name: "Soins Infirmiers",
+            description: "Formation complète en soins infirmiers pour exercer dans les hôpitaux, cliniques et structures de santé.",
+            category: "Santé",
+            parcours: "Soins Infirmiers",
+            niveau: "Diplôme d’État",
+            cycle: "Cycle Santé",
+            duration: "3 ans",
+            diploma: "Diplôme de Soins Infirmiers",
+            admissionRequirements: ["Baccalauréat sciences", "Test médical", "Entretien de motivation"],
+            objectives: ["Prodiguer des soins infirmiers de qualité", "Assister les médecins", "Éduquer les patients sur la santé"],
+            skillsDeveloped: ["Soins infirmiers", "Évaluation clinique", "Communication thérapeutique", "Gestion des urgences"],
+            opportunities: ["Infirmier hospitalier", "Infirmier libéral", "Coordinateur de soins", "Infirmier de santé publique"]
+          },
+          {
+            name: "Aide-Soignant",
+            description: "Formation pour devenir aide-soignant et assister les infirmiers dans les soins quotidiens aux patients.",
+            category: "Santé",
+            parcours: "Soins de Base",
+            niveau: "Certificat",
+            cycle: "Cycle Santé",
+            duration: "1 an",
+            diploma: "Certificat d’Aide-Soignant",
+            admissionRequirements: ["Niveau terminale", "Entretien de motivation"],
+            objectives: ["Assurer les soins d’hygiène et de confort", "Veiller au bien-être des patients"],
+            skillsDeveloped: ["Soins de base", "Hygiène hospitalière", "Gestes d’urgence", "Communication bienveillante"],
+            opportunities: ["Aide-soignant", "Auxiliaire de vie", "Agent de santé communautaire"]
+          },
+          {
+            name: "Technicien de Laboratoire",
+            description: "Formation pour réaliser des analyses biologiques et biochimiques au service du diagnostic médical.",
+            category: "Santé",
+            parcours: "Analyses Médicales",
+            niveau: "Technicien Spécialisé",
+            cycle: "Technicien Spécialisé",
+            duration: "2 ans",
+            diploma: "Diplôme de Technicien de Laboratoire",
+            admissionRequirements: ["Baccalauréat sciences (SVT/PC)", "Test scientifique", "Entretien"],
+            objectives: ["Réaliser des analyses biologiques", "Utiliser les équipements de laboratoire", "Interpréter les résultats"],
+            skillsDeveloped: ["Biologie médicale", "Techniques d’analyse", "Qualité & sécurité lab", "Informatique médicale"],
+            opportunities: ["Technicien de laboratoire", "Préparateur en pharmacie", "Assistant analyse médicale"]
+          }
+        ]
+      },
+      {
+        id: "IGIC",
+        name: "IGIC – Institut de Gestion Internationale du Congo",
+        description: "L'IGIC est un établissement congolais de référence spécialisé dans les formations en gestion, commerce international et management, formant les futurs cadres d'Afrique centrale.",
+        logo: "Images/igic.jpg",
+        address: "Brazzaville, République du Congo",
+        contact: {
+          phone: "Information non disponible",
+          email: "contact@igic.cg",
+          website: "igic.cg"
+        },
+        registrationInfo: {
+          "Tous les parcours": {
+            description: "Inscriptions ouvertes. Contactez l'établissement pour plus d'informations sur les dates et conditions d'admission.",
+            procedure: [
+              "Formulaire de candidature",
+              "Copies des diplômes et relevés de notes",
+              "Lettre de motivation",
+              "Entretien de sélection"
+            ],
+            fees: "Pour toutes informations des inscription veuillez vous adressez à l'école",
+            scholarships: true,
+            contact: {
+              phone: "Information non disponible",
+              email: "contact@igic.cg"
+            }
+          }
+        },
+        programs: [
+          {
+            name: "Gestion des Entreprises",
+            description: "Formation en gestion et management d'entreprise pour former des cadres opérationnels aptes à piloter des organisations en Afrique centrale.",
+            category: "Gestion-Entreprise",
+            parcours: "Management des Organisations",
+            niveau: "Licence",
+            cycle: "Licence Professionnelle",
+            duration: "3 ans",
+            diploma: "Bachelor Gestion des Entreprises",
+            admissionRequirements: ["Baccalauréat", "Dossier de candidature", "Entretien de motivation"],
+            objectives: ["Gérer les fonctions clés d'une entreprise", "Piloter la performance", "Manager des équipes"],
+            skillsDeveloped: ["Gestion administrative", "Finance de base", "Marketing", "Leadership"],
+            opportunities: ["Responsable administratif", "Chef de projet", "Assistant manager", "Entrepreneur"]
+          },
+          {
+            name: "Commerce International",
+            description: "Formation aux techniques du commerce international, de la négociation et de la logistique pour opérer sur les marchés africains et mondiaux.",
+            category: "Commerce",
+            parcours: "Commerce International",
+            niveau: "Licence",
+            cycle: "Licence Professionnelle",
+            duration: "3 ans",
+            diploma: "Bachelor Commerce International",
+            admissionRequirements: ["Baccalauréat", "Test d'anglais", "Entretien"],
+            objectives: ["Gérer des opérations import-export", "Négocier des contrats internationaux", "Maîtriser les Incoterms"],
+            skillsDeveloped: ["Négociation internationale", "Incoterms", "Douane", "Anglais des affaires", "Logistique"],
+            opportunities: ["Commercial export", "Agent import-export", "Gestionnaire douane", "Assistant achat international"]
+          },
+          {
+            name: "Management & Stratégie d'Entreprise",
+            description: "Formation avancée en management stratégique pour préparer les futurs dirigeants d'entreprises africaines.",
+            category: "Gestion-Entreprise",
+            parcours: "Stratégie d'Entreprise",
+            niveau: "Master",
+            cycle: "Master",
+            duration: "5 ans",
+            diploma: "Master Management & Stratégie d'Entreprise",
+            admissionRequirements: ["Licence en gestion ou économie", "Dossier", "Entretien"],
+            objectives: ["Élaborer des plans stratégiques", "Piloter la performance globale", "Manager le changement organisationnel"],
+            skillsDeveloped: ["Analyse stratégique", "Leadership", "Contrôle de gestion", "Négociation", "Intelligence économique"],
+            opportunities: ["Directeur général", "Consultant organisation", "Business developer", "Chef d'entreprise"]
+          }
+        ]
+      },
+      {
+        id: "Vatel-Brazzaville",
+        name: "Vatel Brazzaville",
+        description: "Vatel Brazzaville est un établissement de référence en Afrique centrale, spécialisé dans la formation en hôtellerie, restauration et tourisme, affilié au réseau international Vatel.",
+        logo: "Images/Vatel Brazzaville.png",
+        address: "Brazzaville, République du Congo",
+        contact: {
+          phone: "Information non disponible",
+          email: "contact@vatel-brazzaville.com",
+          website: "vatel.fr"
+        },
+        registrationInfo: {
+          "Tous les parcours": {
+            description: "Inscriptions ouvertes. Contactez l’établissement pour plus d’informations sur les dates et conditions d’admission.",
+            procedure: [
+              "Formulaire de candidature",
+              "Copies des diplômes et relevés de notes",
+              "Lettre de motivation",
+              "Entretien de sélection"
+            ],
+            fees: "Pour toutes informations des inscription veuillez vous adressez à l’école",
+            scholarships: true,
+            contact: {
+              phone: "Information non disponible",
+              email: "contact@vatel-brazzaville.com"
+            }
+          }
+        },
+        programs: [
+          {
+            name: "Management Hôtelier & Restauration",
+            description: "Formation complète en management hôtelier, couvrant la gestion des établissements, la restauration, le service et l’accueil client.",
+            category: "Gestion-Entreprise",
+            parcours: "Hôtellerie & Restauration",
+            niveau: "Licence",
+            cycle: "Bachelor européen",
+            duration: "3 ans",
+            diploma: "Bachelor Management Hôtelier & Restauration",
+            admissionRequirements: ["Baccalauréat", "Entretien de motivation", "Niveau correct en anglais"],
+            objectives: ["Gérer un établissement hôtelier", "Maîtriser les arts de la table", "Manager des équipes en restauration", "Optimiser la satisfaction client"],
+            skillsDeveloped: ["Gestion hôtelière", "Service de restauration", "Accueil et hospitalité", "Revenue management", "Food & Beverage management"],
+            opportunities: ["Directeur d’hôtel junior", "Responsable restauration", "Chef de réception", "Revenue manager", "F&B manager"]
+          },
+          {
+            name: "Tourisme & Management de l’Hospitalité",
+            description: "Formation en management du tourisme et de l’hospitalité pour accompagner le développement du secteur touristique africain.",
+            category: "Gestion-Entreprise",
+            parcours: "Tourisme & Hospitalité",
+            niveau: "Master",
+            cycle: "Master",
+            duration: "5 ans",
+            diploma: "Master Management du Tourisme & de l’Hospitalité",
+            admissionRequirements: ["Licence hôtellerie/tourisme ou gestion", "Entretien de motivation", "Niveau B2 anglais"],
+            objectives: ["Développer des stratégies touristiques", "Gérer des projets d’hospitalité", "Manager des équipes internationales"],
+            skillsDeveloped: ["Stratégie touristique", "Management interculturel", "Revenue management", "Marketing hôtelier", "Développement durable"],
+            opportunities: ["Directeur d’hôtel", "Responsable tourisme", "Consultant hospitalité", "General Manager"]
+          },
+          {
+            name: "Technicien en Hôtellerie & Restauration",
+            description: "Formation courte pour acquérir les bases du métier en hôtellerie et restauration.",
+            category: "Commerce",
+            parcours: "Hôtellerie de Base",
+            niveau: "Technicien",
+            cycle: "Technicien",
+            duration: "2 ans",
+            diploma: "Diplôme de Technicien en Hôtellerie & Restauration",
+            admissionRequirements: ["Niveau terminale", "Entretien de motivation"],
+            objectives: ["Maîtriser le service en salle", "Gérer les opérations d’hébergement", "Pratiquer l’accueil client"],
+            skillsDeveloped: ["Service en salle", "Techniques d’accueil", "Gestion des réservations", "Langues étrangères"],
+            opportunities: ["Serveur", "Réceptionniste", "Agent d’hébergement", "Aide-cuisinier"]
+          }
         ]
       }
-  
+
 ];

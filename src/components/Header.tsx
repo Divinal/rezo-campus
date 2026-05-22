@@ -117,6 +117,9 @@ const Header: React.FC = () => {
               <Link to="/immo" className="text-white hover:text-secondary transition-all duration-300 hover-scale story-link">
               🏠 Immo
             </Link>          
+            <Link to="/forum-galerie" className="text-white hover:text-secondary transition-all duration-300 hover-scale story-link">
+              📸 Forum
+            </Link>
             <Link to="/about" className="text-white hover:text-secondary transition-all duration-300 hover-scale story-link">
               About
             </Link>
@@ -306,15 +309,22 @@ const Header: React.FC = () => {
                 </DropdownMenu>
               </div>
 
-              <Link 
-                to="/about" 
+              <Link
+                to="/forum-galerie"
+                className="text-white hover:text-secondary transition-colors block px-3 py-2"
+                onClick={() => setIsMobileMenuOpen(false)}
+              >
+                📸 Forum
+              </Link>
+              <Link
+                to="/about"
                 className="text-white hover:text-secondary transition-colors block px-3 py-2"
                 onClick={() => setIsMobileMenuOpen(false)}
               >
                 About
               </Link>
-              <Link 
-                to="/contact" 
+              <Link
+                to="/contact"
                 className="text-white hover:text-secondary transition-colors block px-3 py-2"
                 onClick={() => setIsMobileMenuOpen(false)}
               >
