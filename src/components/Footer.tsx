@@ -81,10 +81,11 @@ const Footer: React.FC = () => {
           <div>
             <h3 className="text-xl font-semibold mb-4 bg-blue-600 px-2 py-1">Contact</h3>
             <address className="not-italic text-gray-300 mb-4">
-              <p>64, Rue Allal Ben Abdellah Casablanca</p>
-              <p>20000 Casablanca, Morocco </p>
-              <p className="mt-2">Email: campusrezo@gmail.com</p>
-              <p>Tél: +212 617-725867</p>
+              <p>Adress Maroc : 64, Rue Allal Ben Abdellah Casablanca</p>
+              <p className="mt-2">Adress Congo : Av de l'OUA, bloc 88-91, Moukoundzi Ngouaka, Brazzaville <strong>(Marche Total : L'enceinte de Centre d'Accueil)</strong></p>
+              <p className="mt-2"><strong>Email:</strong> contact@rezoconnect.com</p>
+              <p className="mt-2"><strong>Tél Maroc:</strong> +212 617-725867</p>
+              <p><strong>Tél Congo:</strong> +242 06 800 01 99</p>
             </address>
 
             <div>

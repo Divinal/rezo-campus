@@ -76,18 +76,19 @@ const Contact: React.FC = () => {
 
               <div>
                 <h3 className="text-lg font-semibold mb-2">Adresse</h3>
-                <p>64, Rue Allal Ben Abdellah Casablanca</p>
-                <p>20000 Casablanca, Morocco</p>
+                  <p>Adress Maroc : 64, Rue Allal Ben Abdellah Casablanca</p>
+                   <p className="mt-2">Adresse Congo : P67X+554, Brazzaville, Congo-Brazzaville</p>
               </div>
 
               <div>
                 <h3 className="text-lg font-semibold mb-2">Email</h3>
-                <p>campusrezo@gmail.com</p>
+              <p>contact@rezoconnect.com</p>
               </div>
 
               <div>
                 <h3 className="text-lg font-semibold mb-2">Téléphone</h3>
-                <p>+212 617-725867</p>
+                <p className="mt-2"><strong>Tél Maroc:</strong> +212 617-725867</p>
+                <p className="mt-2"><strong>Tél Congo:</strong> +242 06 800 01 99</p>
               </div>
 
               <div>
@@ -200,7 +201,7 @@ const Contact: React.FC = () => {
             <div className="rounded-lg overflow-hidden shadow-lg">
               <iframe
                 title="Google Maps"
-                src="https://www.google.com/maps/embed?pb=!1m28!1m12!1m3!1d3331.281618372732!2d-7.7599322!3d33.5833461!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!4m13!3e0!4m5!1s0xda7d3cf5fde9335%3A0x3e1468f0827ec204!2s444%20Bd%20de%20la%20Grande%20Ceinture%2C%20Casablanca%2020350!3m2!1d33.5833734!2d-7.677531!4m5!1s0xda7d3cf5fde9335%3A0x3e1468f0827ec204!2s444%20Bd%20de%20la%20Grande%20Ceinture%2C%20Casablanca%2020350!3m2!1d33.5833734!2d-7.677531!5e0!3m2!1sfr!2sma!4v1717171717171!5m2!1sfr!2sma"
+                src="https://maps.google.com/maps?q=P67X%2B554,+Brazzaville,+Congo-Brazzaville&output=embed&z=17&hl=fr"
                 width="100%"
                 height="400"
                 style={{ border: 0 }}
