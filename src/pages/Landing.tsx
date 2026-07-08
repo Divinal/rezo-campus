@@ -1,7 +1,7 @@
 
 import React, { useState } from 'react';
 import { Link } from 'react-router-dom';
-import { Search, BookOpen, Users, Star, ArrowRight, GraduationCap, MapPin, Phone, Info, ClipboardList, FileCheck, ChevronDown, ChevronUp } from 'lucide-react';
+import { Monitor, ShoppingCart, Handshake, BookOpen, Users, Star, ArrowRight, GraduationCap, MapPin, Phone, Info, ClipboardList, FileCheck, ChevronDown, ChevronUp, Home } from 'lucide-react';
 import Header from '../components/Header';
 import Footer from '../components/Footer';
 import AvisGoogle from '../components/AvisGoogle';
@@ -55,19 +55,34 @@ const Landing: React.FC = () => {
 
   const features = [
     {
-      icon: Search,
-      title: "Recherche Facile",
-      description: "Trouvez rapidement l'établissement qui correspond à vos critères et aspirations."
+      icon: Monitor,
+      title: "Informatique & Digital",
+      description: "Développement logiciel, cybersécurité, hébergement web et formation en informatique.",
+      link: "/services"
     },
     {
-      icon: BookOpen,  
-      title: "Programmes Détaillés",
-      description: "Consultez tous les détails des formations, diplômes et spécialisations proposés."
+      icon: ShoppingCart,
+      title: "Commerce & Distribution",
+      description: "Achat, vente et importation de matériels informatiques et équipements télécoms.",
+      link: "/services"
     },
     {
-      icon: Users,
-      title: "Accompagnement Personnalisé", 
-      description: "Bénéficiez d'un accompagnement sur mesure dans vos démarches d'inscription."
+      icon: Handshake,
+      title: "Conciergerie",
+      description: "Assistance administrative, organisation de services et mise en relation avec des prestataires.",
+      link: "/services"
+    },
+    {
+      icon: GraduationCap,
+      title: "Accompagnement des Étudiants",
+      description: "Orientation, inscription, mobilité internationale, Visa, AEVM et logement étudiant.",
+      link: "/accompagnement"
+    },
+    {
+      icon: Home,
+      title: "Immobilier",
+      description: "Location, gestion et mise à disposition de biens mobiliers et immobiliers.",
+      link: "/immo"
     }
   ];
 
@@ -76,33 +91,68 @@ const Landing: React.FC = () => {
       <Header />
       
       {/* Hero Section */}
-        <section className="relative bg-[url('/Images/Forum.jpeg')] bg-cover bg-center bg-no-repeat text-white py-20">
-      {/* Superposition sombre semi-transparente */}
-      <div className="absolute inset-0 bg-black bg-opacity-60 z-0"></div>
+    <section
+      className="relative bg-[url('/Images/Forum.jpeg')] bg-cover bg-center bg-no-repeat text-white"
+      style={{ minHeight: '500px' }}
+    >
+      <div className="absolute inset-0 bg-gradient-to-r from-black/85 via-black/65 to-black/25 z-0" />
+      <div className="relative z-10 container mx-auto px-8 py-16 flex items-center gap-10 min-h-[500px]">
 
-      {/* Contenu principal, au-dessus de l'overlay */}
-      <div className="relative z-10 container mx-auto px-4 text-center">
-        <h1 className="text-4xl md:text-6xl font-bold mb-6">
-          Trouvez Votre École Idéale
-        </h1>
-        <p className="text-xl md:text-2xl mb-8 max-w-3xl mx-auto">
-          Découvrez les meilleures écoles et universités, explorez leurs programmes 
-          et simplifiez vos démarches d'inscription.
-        </p>
-        <div className="flex flex-col sm:flex-row gap-4 justify-center">
+        {/* Contenu gauche */}
+        <div className="flex-1">
+          <h1 className="text-4xl md:text-5xl font-bold mb-5 leading-tight">
+            Trouvez Votre École Idéale au Maroc
+          </h1>
+          <p className="text-lg text-white/80 mb-8 max-w-xl">
+            Découvrez les meilleures écoles et universités, explorez leurs programmes
+            et simplifiez vos démarches d'inscription.
+          </p>
+          <div className="flex flex-col sm:flex-row gap-4">
+            <Link
+              to="/schools"
+              className="bg-secondary text-primary px-8 py-4 rounded-lg font-semibold hover:bg-opacity-90 transition-colors flex items-center justify-center gap-2"
+            >
+              Explorer les Écoles <ArrowRight className="w-5 h-5" />
+            </Link>
+            <Link
+              to="/about"
+              className="border-2 border-white text-white px-8 py-4 rounded-lg font-semibold hover:bg-white hover:text-primary transition-colors text-center"
+            >
+              En Savoir Plus
+            </Link>
+          </div>
+        </div>
+
+        {/* Petites bannières cliquables à droite */}
+        <div className="hidden lg:flex flex-col gap-4 w-56 flex-shrink-0">
           <Link
             to="/schools"
-            className="bg-secondary text-primary px-8 py-4 rounded-lg font-semibold hover:bg-opacity-90 transition-colors flex items-center justify-center gap-2"
+            className="relative rounded-xl overflow-hidden group"
+            style={{ height: '155px' }}
           >
-            Explorer les Écoles <ArrowRight className="w-5 h-5" />
+            <div className="absolute inset-0 bg-gradient-to-br from-[#1a365d] to-blue-600 group-hover:brightness-110 transition-all duration-300" />
+            <div className="absolute inset-0 flex flex-col justify-end p-4">
+              <span className="text-3xl mb-1">🎓</span>
+              <span className="text-white font-bold text-sm">Écoles & Formations</span>
+              <span className="text-white/65 text-xs mt-0.5">Nos écoles partenaires au Maroc</span>
+            </div>
+            <ArrowRight className="absolute top-3 right-3 w-4 h-4 text-white opacity-0 group-hover:opacity-100 transition-opacity" />
           </Link>
           <Link
-            to="/about"
-            className="border-2 border-white text-white px-8 py-4 rounded-lg font-semibold hover:bg-white hover:text-primary transition-colors"
+            to="/accompagnement"
+            className="relative rounded-xl overflow-hidden group"
+            style={{ height: '155px' }}
           >
-            En Savoir Plus
+            <div className="absolute inset-0 bg-gradient-to-br from-orange-700 to-red-700 group-hover:brightness-110 transition-all duration-300" />
+            <div className="absolute inset-0 flex flex-col justify-end p-4">
+              <span className="text-3xl mb-1">🤝</span>
+              <span className="text-white font-bold text-sm">Accompagnement</span>
+              <span className="text-white/65 text-xs mt-0.5">Visa, AEVM, logement étudiant</span>
+            </div>
+            <ArrowRight className="absolute top-3 right-3 w-4 h-4 text-white opacity-0 group-hover:opacity-100 transition-opacity" />
           </Link>
         </div>
+
       </div>
     </section>
 
@@ -153,20 +203,25 @@ const Landing: React.FC = () => {
 
           <div className="flex flex-col lg:flex-row gap-8 items-start">
 
-            {/* ─── Colonne gauche : cartes features ─── */}
+            {/* ─── Colonne gauche : cartes services cliquables ─── */}
             <div className="flex-1 space-y-5">
               {features.map((feature, index) => {
                 const IconComponent = feature.icon;
                 return (
-                  <div key={index} className="bg-white rounded-xl p-6 shadow-md hover:shadow-lg transition-shadow flex items-start gap-5">
-                    <div className="bg-primary bg-opacity-10 w-14 h-14 rounded-xl flex items-center justify-center flex-shrink-0">
-                      <IconComponent className="w-7 h-7 text-primary" />
+                  <Link
+                    key={index}
+                    to={feature.link}
+                    className="bg-white rounded-xl p-6 shadow-md hover:shadow-lg transition-shadow flex items-start gap-5 group cursor-pointer"
+                  >
+                    <div className="bg-primary bg-opacity-10 w-14 h-14 rounded-xl flex items-center justify-center flex-shrink-0 group-hover:bg-primary group-hover:bg-opacity-100 transition-colors">
+                      <IconComponent className="w-7 h-7 text-primary group-hover:text-white transition-colors" />
                     </div>
-                    <div>
-                      <h3 className="text-lg font-semibold mb-2 text-gray-800">{feature.title}</h3>
+                    <div className="flex-1">
+                      <h3 className="text-lg font-semibold mb-2 text-gray-800 group-hover:text-primary transition-colors">{feature.title}</h3>
                       <p className="text-gray-600 text-sm leading-relaxed">{feature.description}</p>
                     </div>
-                  </div>
+                    <ArrowRight className="w-5 h-5 text-gray-300 group-hover:text-primary transition-colors flex-shrink-0 mt-1" />
+                  </Link>
                 );
               })}
             </div>
@@ -378,11 +433,11 @@ const Landing: React.FC = () => {
             
             <div className="bg-white bg-opacity-10 rounded-lg p-6">
               <h3 className="text-xl font-semibold mb-4">
-                <Link to="/immo" className="text-xl font-semibold mb-4 hover:underline text-green-300">
-                Logement ↱
+                <Link to="/accompagnement" className="text-xl font-semibold mb-4 hover:underline text-green-300">
+                Accompagnement ↱
               </Link>
               </h3>
-              <p className="mb-4">Trouvez le logement idéal pour vos études.</p>
+              <p className="mb-4">Logement, orientation et suivi complet de votre parcours étudiant.</p>
               <ul className="list-disc list-inside space-y-2 text-sm">
                 <li>Résidences universitaires</li>
                 <li>Appartements privés</li>

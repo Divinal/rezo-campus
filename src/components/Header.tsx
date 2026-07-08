@@ -2,12 +2,6 @@ import React, { useState } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import { Users, LogIn, Menu, X, ChevronDown, Search, Facebook, Instagram, Linkedin, Youtube } from 'lucide-react';
 import {
-  DropdownMenu,
-  DropdownMenuContent,
-  DropdownMenuItem,
-  DropdownMenuTrigger,
-} from "@/components/ui/dropdown-menu";
-import {
   Command,
   CommandDialog,
   CommandEmpty,
@@ -26,10 +20,6 @@ const Header: React.FC = () => {
 
   const toggleMobileMenu = () => {
     setIsMobileMenuOpen(!isMobileMenuOpen);
-  };
-
-  const handleVisaOptionClick = (option: string) => {
-    console.log(`Visa option selected: ${option}`);
   };
 
   const handleSearchSelect = (value: string) => {
@@ -77,49 +67,50 @@ const Header: React.FC = () => {
             <Link to="/blog" className="text-white hover:text-secondary transition-all duration-300 hover-scale story-link">
               Actualités
             </Link>            
-            {/* Menu déroulant Visa */}
-            <DropdownMenu>
-              <DropdownMenuTrigger className="text-white hover:text-secondary transition-all duration-300 hover-scale flex items-center gap-1 group">
-                Visa <ChevronDown className="w-4 h-4 group-hover:rotate-180 transition-transform duration-300" />
-              </DropdownMenuTrigger>
-              <DropdownMenuContent className="bg-white border border-gray-200 shadow-lg z-50 animate-scale-in">
-                <DropdownMenuItem asChild className="hover:bg-gray-100 cursor-pointer transition-colors">
-                  <Link to="/administration">
-                    Administration Visa & AEVM
-                  </Link>
-                </DropdownMenuItem>
-                <DropdownMenuItem 
-                  onClick={() => handleVisaOptionClick('pays-visa')}
-                  className="hover:bg-gray-100 cursor-pointer transition-colors"
-                >
-                 <Link to="/pays-visa">
-                    Pays avec Visa ou AEVM
-                  </Link>
-                </DropdownMenuItem>
-                <DropdownMenuItem 
-                  onClick={() => handleVisaOptionClick('logement')}
-                  className="hover:bg-gray-100 cursor-pointer transition-colors"
-                >
-                   <Link to="/immo">
-                    Trouver un logement
-                  </Link>
-                </DropdownMenuItem>
-                <DropdownMenuItem 
-                  onClick={() => handleVisaOptionClick('carte-sejour')}
-                  className="hover:bg-gray-100 cursor-pointer transition-colors"
-                >
-                 <Link to="/carte-sejour">
-                  Carte de séjour
-                </Link>
-                </DropdownMenuItem>
-              </DropdownMenuContent>
-            </DropdownMenu>
-              <Link to="/immo" className="text-white hover:text-secondary transition-all duration-300 hover-scale story-link">
-              🏠 Immo
-            </Link>          
-            <Link to="/forum-galerie" className="text-white hover:text-secondary transition-all duration-300 hover-scale story-link">
-              📸 Forum
-            </Link>
+            {/* Nos Services — méga-menu au survol */}
+            <div className="relative group">
+              <Link
+                to="/services"
+                className="text-white hover:text-secondary transition-all duration-300 hover-scale flex items-center gap-1"
+              >
+                Nos Services <ChevronDown className="w-4 h-4 transition-transform duration-300 group-hover:rotate-180" />
+              </Link>
+              <div className="absolute top-full left-0 hidden group-hover:block z-50 pt-2">
+                <div className="flex shadow-2xl rounded-md overflow-hidden border border-gray-700" style={{ width: '620px' }}>
+                  {/* Image décorative gauche */}
+                  <div className="w-52 flex-shrink-0">
+                    <img
+                      src="/Images/Forum.jpeg"
+                      alt="Nos services"
+                      className="w-full h-full object-cover object-center"
+                    />
+                  </div>
+                  {/* Liste des services */}
+                  <div className="flex-1 bg-gray-900">
+                    <Link to="/services" className="flex flex-col px-5 py-2.5 border-b border-gray-700 hover:bg-gray-800 transition-colors">
+                      <span className="text-white font-bold text-sm">💻 Informatique & Digital</span>
+                      <span className="text-gray-400 text-xs italic mt-0.5">Développement logiciel, cybersécurité et hébergement web.</span>
+                    </Link>
+                    <Link to="/services" className="flex flex-col px-5 py-2.5 border-b border-gray-700 hover:bg-gray-800 transition-colors">
+                      <span className="text-white font-bold text-sm">🛒 Commerce & Distribution</span>
+                      <span className="text-gray-400 text-xs italic mt-0.5">Achat, vente et importation de matériels informatiques et télécoms.</span>
+                    </Link>
+                    <Link to="/services" className="flex flex-col px-5 py-2.5 border-b border-gray-700 hover:bg-gray-800 transition-colors">
+                      <span className="text-white font-bold text-sm">🤝 Conciergerie</span>
+                      <span className="text-gray-400 text-xs italic mt-0.5">Assistance administrative pour particuliers et entreprises.</span>
+                    </Link>
+                    <Link to="/accompagnement" className="flex flex-col px-5 py-2.5 border-b border-gray-700 hover:bg-gray-800 transition-colors">
+                      <span className="text-white font-bold text-sm">🎓 Accompagnement Étudiants</span>
+                      <span className="text-gray-400 text-xs italic mt-0.5">Orientation, inscription, Visa, AEVM et logement étudiant.</span>
+                    </Link>
+                    <Link to="/immo" className="flex flex-col px-5 py-2.5 hover:bg-gray-800 transition-colors">
+                      <span className="text-white font-bold text-sm">🏠 Immobilier</span>
+                      <span className="text-gray-400 text-xs italic mt-0.5">Location et gestion de biens mobiliers et immobiliers.</span>
+                    </Link>
+                  </div>
+                </div>
+              </div>
+            </div>
             <Link to="/about" className="text-white hover:text-secondary transition-all duration-300 hover-scale story-link">
               About
             </Link>
@@ -251,71 +242,29 @@ const Header: React.FC = () => {
               >
                 Actu
               </Link>
-              <Link 
-                to="/immo" 
-                className="text-white hover:text-secondary transition-colors block px-3 py-2"
-                onClick={() => setIsMobileMenuOpen(false)}
-              >
-                🏠 Immo
-              </Link>
-              {/*Link 
-                to="/can-2025" 
+              {/*Link
+                to="/can-2025"
                 className="text-white hover:text-secondary transition-colors block px-3 py-2 hover-scale"
                 onClick={() => setIsMobileMenuOpen(false)}
               >
                 🏆 CAN 2025
               Link>*/}
-              
-              {/* Menu Visa mobile */}
-              <div className="px-3 py-2">
-                <DropdownMenu>
-                  <DropdownMenuTrigger className="text-white hover:text-secondary transition-colors flex items-center gap-1 w-full text-left">
-                    Visa <ChevronDown className="w-4 h-4" />
-                  </DropdownMenuTrigger>
-                  <DropdownMenuContent className="bg-white border border-gray-200 shadow-lg z-50">
-                    <DropdownMenuItem asChild className="hover:bg-gray-100 cursor-pointer">
-                      <Link to="/administration" onClick={() => setIsMobileMenuOpen(false)}>
-                        Administration Visa & AEVM
-                      </Link>
-                    </DropdownMenuItem>
-                    <DropdownMenuItem 
-                      onClick={() => {
-                        handleVisaOptionClick('pays-visa');
-                        setIsMobileMenuOpen(false);
-                      }}
-                      className="hover:bg-gray-100 cursor-pointer"
-                    >
-                      Pays avec Visa ou AEVM
-                    </DropdownMenuItem>
-                    <DropdownMenuItem 
-                      onClick={() => {
-                        handleVisaOptionClick('logement');
-                        setIsMobileMenuOpen(false);
-                      }}
-                      className="hover:bg-gray-100 cursor-pointer"
-                    >
-                      Trouver un logement
-                    </DropdownMenuItem>
-                    <DropdownMenuItem 
-                      onClick={() => {
-                        handleVisaOptionClick('carte-sejour');
-                        setIsMobileMenuOpen(false);
-                      }}
-                      className="hover:bg-gray-100 cursor-pointer"
-                    >
-                      Carte de séjour
-                    </DropdownMenuItem>
-                  </DropdownMenuContent>
-                </DropdownMenu>
-              </div>
 
+              {/* Nos Services mobile */}
               <Link
-                to="/forum-galerie"
-                className="text-white hover:text-secondary transition-colors block px-3 py-2"
+                to="/services"
+                className="text-white hover:text-secondary transition-colors block px-3 py-2 font-medium"
                 onClick={() => setIsMobileMenuOpen(false)}
               >
-                📸 Forum
+                Nos Services
               </Link>
+              <div className="pl-6 flex flex-col space-y-1">
+                <Link to="/services" className="text-blue-200 hover:text-white transition-colors text-sm px-3 py-1" onClick={() => setIsMobileMenuOpen(false)}>💻 Informatique & Digital</Link>
+                <Link to="/services" className="text-blue-200 hover:text-white transition-colors text-sm px-3 py-1" onClick={() => setIsMobileMenuOpen(false)}>🛒 Commerce & Distribution</Link>
+                <Link to="/services" className="text-blue-200 hover:text-white transition-colors text-sm px-3 py-1" onClick={() => setIsMobileMenuOpen(false)}>🤝 Conciergerie</Link>
+                <Link to="/accompagnement" className="text-blue-200 hover:text-white transition-colors text-sm px-3 py-1" onClick={() => setIsMobileMenuOpen(false)}>🎓 Accompagnement Étudiants</Link>
+                <Link to="/immo" className="text-blue-200 hover:text-white transition-colors text-sm px-3 py-1" onClick={() => setIsMobileMenuOpen(false)}>🏠 Immobilier</Link>
+              </div>
               <Link
                 to="/about"
                 className="text-white hover:text-secondary transition-colors block px-3 py-2"

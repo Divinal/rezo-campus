@@ -32,6 +32,8 @@ import CANMoroccoPackages from "./pages/CANMoroccoPackages";
 import GuideVoyage from "./pages/GuideVoyage";
 import GradesSystem from './pages/GradesSystem';
 import ForumGallery from './pages/ForumGallery';
+import Services from './pages/Services';
+import Accompagnement from './pages/Accompagnement';
 
 
 
@@ -75,6 +77,8 @@ const App = () => (
            <Route path="/Shopify-Training" element={<ShopifyTraining />} />
            <Route path="/notes" element={<GradesSystem />} />
            <Route path="/forum-galerie" element={<ForumGallery />} />
+           <Route path="/services" element={<Services />} />
+           <Route path="/accompagnement" element={<Accompagnement />} />
 
             {/* Route catch-all */}
             <Route path="*" element={<NotFound />} />

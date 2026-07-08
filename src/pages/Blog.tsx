@@ -55,9 +55,16 @@ const Blog: React.FC = () => {
       {
         id: 3,
         title: "Bourse d’Études en Russie 2026 | Programme Open Doors – Étudier gratuitement !",
-        description: "Vous rêvez étudier à l'étranger ? la Russie met à votre disposition une bourse d'étude 100% financier, alors ne cherchez plus ! Le Programme Open Doors (Russian Scholarship Project) offre aux étudiants internationaux la possibilité de rejoindre des cycles Licence, Master, Doctorat, voire Post‑Doctorat dans des universités russes prestigieuses—le tout entièrement gratuit et à distance.",
-        image_url: "/Images/Bourse.png", 
+        description: "Vous rêvez étudier à l’étranger ? la Russie met à votre disposition une bourse d’étude 100% financier, alors ne cherchez plus ! Le Programme Open Doors (Russian Scholarship Project) offre aux étudiants internationaux la possibilité de rejoindre des cycles Licence, Master, Doctorat, voire Post‑Doctorat dans des universités russes prestigieuses—le tout entièrement gratuit et à distance.",
+        image_url: "/Images/Bourse.png",
         link_url: "https://youtu.be/i02klmIgH94"
+      },
+      {
+        id: 4,
+        title: "🏢 Offre de Stage – Assistant(e) en Administration Générale & Finance",
+        description: "Rézo Campus recrute un(e) stagiaire motivé(e) pour rejoindre son équipe ! Poste : Assistant(e) en Administration Générale et Finance. 📍 Lieu : Brazzaville, Congo-Brazzaville. ⏱ Durée : 3 à 6 mois. 🎓 Niveau requis : Bac+2 minimum (Gestion, Finance, Comptabilité ou équivalent). 📅 Prise de poste : Dès que possible. Missions : gestion administrative courante, suivi comptable et financier, coordination avec les partenaires, rédaction de rapports. Envoyez votre CV et lettre de motivation à contact@rezoconnect.com.",
+        image_url: "/Images/offre-stage.svg",
+        link_url: "/contact"
       }
     ];
     setAdvertisements(staticAds);
