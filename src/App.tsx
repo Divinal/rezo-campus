@@ -34,6 +34,7 @@ import GradesSystem from './pages/GradesSystem';
 import ForumGallery from './pages/ForumGallery';
 import Services from './pages/Services';
 import Accompagnement from './pages/Accompagnement';
+import InstructorPage from './pages/InstructorPage';
 
 
 
@@ -79,6 +80,7 @@ const App = () => (
            <Route path="/forum-galerie" element={<ForumGallery />} />
            <Route path="/services" element={<Services />} />
            <Route path="/accompagnement" element={<Accompagnement />} />
+           <Route path="/instructor" element={<InstructorPage />} />
 
             {/* Route catch-all */}
             <Route path="*" element={<NotFound />} />
