@@ -13,8 +13,9 @@ interface Note {
   discipline_id: number;
   note1: number | null;
   note2: number | null;
-  note3: number | null; 
-
+  note3: number | null;
+  note_pratique: number | null;
+  note_theorique: number | null;
 }
 
 interface Student {
@@ -241,7 +242,7 @@ const TeacherPage: React.FC<TeacherPageProps> = ({ isAuthenticated, onAuthentica
     }
   };
 
-  const updateNote = async (disciplineId: number, noteType: 'note1' | 'note2' | 'note3', noteValue: string) => {
+  const updateNote = async (disciplineId: number, noteType: 'note1' | 'note2' | 'note3' | 'note_pratique' | 'note_theorique', noteValue: string) => {
     if (!selectedStudent) return;
 
     const parsedNote = noteValue === '' ? null : parseFloat(noteValue);
@@ -277,10 +278,11 @@ const TeacherPage: React.FC<TeacherPageProps> = ({ isAuthenticated, onAuthentica
       student_id: selectedStudent.id,
       discipline_id: disciplineId,
       [noteType]: parsedNote,
-      // Initialiser les autres notes à null
       ...(noteType !== 'note1' && { note1: null }),
       ...(noteType !== 'note2' && { note2: null }),
-      ...(noteType !== 'note3' && { note3: null })
+      ...(noteType !== 'note3' && { note3: null }),
+      ...(noteType !== 'note_pratique' && { note_pratique: null }),
+      ...(noteType !== 'note_theorique' && { note_theorique: null }),
     };
       const { error } = await supabase
         .from('notes')
@@ -302,22 +304,27 @@ const TeacherPage: React.FC<TeacherPageProps> = ({ isAuthenticated, onAuthentica
     return ((note1 + note2) / 2).toFixed(2);
   };*/}
 
-  const calculateAverage = (note1: number | null, note2: number | null, note3: number | null): string => {
-  // Filtrer les notes non nulles
-  const notes = [note1, note2, note3].filter(n => n !== null) as number[];  
-  // Si aucune note n'est saisie
-  if (notes.length === 0) return '-';  
-  // Calculer la moyenne des notes disponibles
-  const sum = notes.reduce((acc, n) => acc + n, 0);
-  return (sum / notes.length).toFixed(2);
-};
+  const calculateAverage = (
+    note1: number | null,
+    note2: number | null,
+    note3: number | null,
+    notePratique: number | null,
+    noteTheorique: number | null
+  ): string => {
+    const notes = [note1, note2, note3, notePratique, noteTheorique].filter(n => n !== null) as number[];
+    if (notes.length === 0) return '-';
+    return (notes.reduce((acc, n) => acc + n, 0) / notes.length).toFixed(2);
+  };
 
   const calculateGeneralAverage = (): string => {
-    const validNotes = studentNotes.filter(n => n.note1 !== null || n.note2 !== null || n.note3 !== null);
+    const validNotes = studentNotes.filter(n =>
+      n.note1 !== null || n.note2 !== null || n.note3 !== null ||
+      n.note_pratique !== null || n.note_theorique !== null
+    );
     if (validNotes.length === 0) return '0.00';
 
     const sum = validNotes.reduce((acc, n) => {
-      const avg = calculateAverage(n.note1, n.note2, n.note3);
+      const avg = calculateAverage(n.note1, n.note2, n.note3, n.note_pratique, n.note_theorique);
       return acc + (avg !== '-' ? parseFloat(avg) : 0);
     }, 0);
 
@@ -607,64 +614,81 @@ const TeacherPage: React.FC<TeacherPageProps> = ({ isAuthenticated, onAuthentica
                     <div className="overflow-x-auto">
                       <table className="w-full">
                         <thead>
-                          <tr className="border-b-2 border-gray-200">
-                            <th className="text-left py-3 px-4 font-semibold text-gray-700">Discipline</th>
-                            <th className="text-center py-3 px-4 font-semibold text-gray-700">Contrôle 1</th>
-                            <th className="text-center py-3 px-4 font-semibold text-gray-700">Contrôle 2</th>
-                            <th className="text-center py-3 px-4 font-semibold text-gray-700">Contrôle 3</th>
-                            <th className="text-center py-3 px-4 font-semibold text-gray-700">Moyenne</th>
+                          <tr className="border-b-2 border-gray-200 bg-gray-50">
+                            <th className="text-left py-3 px-3 font-semibold text-gray-700 text-sm">Discipline</th>
+                            <th className="text-center py-3 px-3 font-semibold text-gray-700 text-sm">Contrôle 1</th>
+                            <th className="text-center py-3 px-3 font-semibold text-gray-700 text-sm">Contrôle 2</th>
+                            <th className="text-center py-3 px-3 font-semibold text-gray-700 text-sm">Contrôle 3</th>
+                            <th className="text-center py-3 px-3 font-semibold text-blue-700 text-sm bg-blue-50">Exam. Pratique</th>
+                            <th className="text-center py-3 px-3 font-semibold text-purple-700 text-sm bg-purple-50">Exam. Théorique</th>
+                            <th className="text-center py-3 px-3 font-semibold text-gray-700 text-sm">Moyenne</th>
                           </tr>
                         </thead>
                         <tbody>
                           {disciplines.map((disc) => {
                             const note = studentNotes.find(n => n.discipline_id === disc.id);
-                            const moyenne = calculateAverage(note?.note1 || null, note?.note2 || null, note?.note3 || null);
+                            const moyenne = calculateAverage(
+                              note?.note1 ?? null,
+                              note?.note2 ?? null,
+                              note?.note3 ?? null,
+                              note?.note_pratique ?? null,
+                              note?.note_theorique ?? null
+                            );
 
                             return (
                               <tr key={disc.id} className="border-b border-gray-100 hover:bg-gray-50">
-                                <td className="py-3 px-4 font-medium">{disc.nom}</td>
-                                <td className="py-3 px-4">
+                                <td className="py-2 px-3 font-medium text-sm">{disc.nom}</td>
+                                <td className="py-2 px-2">
                                   <input
-                                    type="number"
-                                    min="0"
-                                    max="20"
-                                    step="0.25"
+                                    type="number" min="0" max="20" step="0.25"
                                     value={note?.note1 ?? ''}
                                     onChange={(e) => updateNote(disc.id, 'note1', e.target.value)}
-                                    placeholder="Note 1"
-                                    className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-purple-500 text-center"
+                                    placeholder="-"
+                                    className="w-20 px-2 py-1.5 border border-gray-300 rounded-lg focus:ring-2 focus:ring-purple-500 text-center text-sm"
                                   />
                                 </td>
-                                <td className="py-3 px-4">
+                                <td className="py-2 px-2">
                                   <input
-                                    type="number"
-                                    min="0"
-                                    max="20"
-                                    step="0.25"
+                                    type="number" min="0" max="20" step="0.25"
                                     value={note?.note2 ?? ''}
                                     onChange={(e) => updateNote(disc.id, 'note2', e.target.value)}
-                                    placeholder="Note 2"
-                                    className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-purple-500 text-center"
+                                    placeholder="-"
+                                    className="w-20 px-2 py-1.5 border border-gray-300 rounded-lg focus:ring-2 focus:ring-purple-500 text-center text-sm"
                                   />
                                 </td>
-                                  <td className="py-3 px-4">
+                                <td className="py-2 px-2">
                                   <input
-                                    type="number"
-                                    min="0"
-                                    max="20"
-                                    step="0.25"
+                                    type="number" min="0" max="20" step="0.25"
                                     value={note?.note3 ?? ''}
                                     onChange={(e) => updateNote(disc.id, 'note3', e.target.value)}
-                                    placeholder="Note 3"
-                                    className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-purple-500 text-center"
+                                    placeholder="-"
+                                    className="w-20 px-2 py-1.5 border border-gray-300 rounded-lg focus:ring-2 focus:ring-purple-500 text-center text-sm"
                                   />
                                 </td>
-                                <td className="py-3 px-4 text-center">
-                                  <span className={`font-bold text-lg ${
-                                    moyenne !== '-' && parseFloat(moyenne) >= 10 
-                                      ? 'text-green-600' 
-                                      : moyenne !== '-' 
-                                      ? 'text-red-600' 
+                                <td className="py-2 px-2 bg-blue-50/40">
+                                  <input
+                                    type="number" min="0" max="20" step="0.25"
+                                    value={note?.note_pratique ?? ''}
+                                    onChange={(e) => updateNote(disc.id, 'note_pratique', e.target.value)}
+                                    placeholder="-"
+                                    className="w-20 px-2 py-1.5 border border-blue-300 rounded-lg focus:ring-2 focus:ring-blue-500 text-center text-sm"
+                                  />
+                                </td>
+                                <td className="py-2 px-2 bg-purple-50/40">
+                                  <input
+                                    type="number" min="0" max="20" step="0.25"
+                                    value={note?.note_theorique ?? ''}
+                                    onChange={(e) => updateNote(disc.id, 'note_theorique', e.target.value)}
+                                    placeholder="-"
+                                    className="w-20 px-2 py-1.5 border border-purple-300 rounded-lg focus:ring-2 focus:ring-purple-500 text-center text-sm"
+                                  />
+                                </td>
+                                <td className="py-2 px-3 text-center">
+                                  <span className={`font-bold text-base ${
+                                    moyenne !== '-' && parseFloat(moyenne) >= 10
+                                      ? 'text-green-600'
+                                      : moyenne !== '-'
+                                      ? 'text-red-600'
                                       : 'text-gray-400'
                                   }`}>
                                     {moyenne}

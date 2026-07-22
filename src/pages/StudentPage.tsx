@@ -16,6 +16,8 @@ interface Note {
   note1: number | null;
   note2: number | null;
   note3: number | null;
+  note_pratique: number | null;
+  note_theorique: number | null;
 }
 
 interface Student {
@@ -135,19 +137,27 @@ const StudentPage: React.FC<StudentPageProps> = ({ onAccessTeacher }) => {
     setShowResults(false);
   };
 
-  const calculateAverage = (note1: number | null, note2: number | null, note3: number | null): string => {
-    const notes = [note1, note2, note3].filter(n => n !== null) as number[];  
-    if (notes.length === 0) return '-';  
-    const sum = notes.reduce((acc, n) => acc + n, 0);
-    return (sum / notes.length).toFixed(2);
+  const calculateAverage = (
+    note1: number | null,
+    note2: number | null,
+    note3: number | null,
+    notePratique: number | null,
+    noteTheorique: number | null
+  ): string => {
+    const notes = [note1, note2, note3, notePratique, noteTheorique].filter(n => n !== null) as number[];
+    if (notes.length === 0) return '-';
+    return (notes.reduce((acc, n) => acc + n, 0) / notes.length).toFixed(2);
   };
 
   const calculateGeneralAverage = (): string => {
-    const validNotes = studentNotes.filter(n => n.note1 !== null || n.note2 !== null || n.note3 !== null);
+    const validNotes = studentNotes.filter(n =>
+      n.note1 !== null || n.note2 !== null || n.note3 !== null ||
+      n.note_pratique !== null || n.note_theorique !== null
+    );
     if (validNotes.length === 0) return '0.00';
 
     const sum = validNotes.reduce((acc, n) => {
-      const avg = calculateAverage(n.note1, n.note2, n.note3);
+      const avg = calculateAverage(n.note1, n.note2, n.note3, n.note_pratique, n.note_theorique);
       return acc + (avg !== '-' ? parseFloat(avg) : 0);
     }, 0);
 
@@ -156,7 +166,7 @@ const StudentPage: React.FC<StudentPageProps> = ({ onAccessTeacher }) => {
 
   const getValidatedSubjects = (): number => {
     return studentNotes.filter(n => {
-      const avg = calculateAverage(n.note1, n.note2, n.note3);
+      const avg = calculateAverage(n.note1, n.note2, n.note3, n.note_pratique, n.note_theorique);
       return avg !== '-' && parseFloat(avg) >= 10;
     }).length;
   };
@@ -362,13 +372,15 @@ const StudentPage: React.FC<StudentPageProps> = ({ onAccessTeacher }) => {
                                   <th className="text-center px-5 py-4 font-semibold text-gray-700 border-b-2 border-gray-200">Contrôle 1</th>
                                   <th className="text-center px-5 py-4 font-semibold text-gray-700 border-b-2 border-gray-200">Contrôle 2</th>
                                   <th className="text-center px-5 py-4 font-semibold text-gray-700 border-b-2 border-gray-200">Contrôle 3</th>
+                                  <th className="text-center px-5 py-4 font-semibold text-blue-700 border-b-2 border-gray-200 bg-blue-50">Exam. Pratique</th>
+                                  <th className="text-center px-5 py-4 font-semibold text-purple-700 border-b-2 border-gray-200 bg-purple-50">Exam. Théorique</th>
                                   <th className="text-center px-5 py-4 font-semibold text-gray-700 border-b-2 border-gray-200">Moyenne</th>
                                 </tr>
                               </thead>
                               <tbody className="divide-y divide-gray-100">
                                 {studentNotes.map((note) => {
                                   const disc = disciplines.find(d => d.id === note.discipline_id);
-                                  const moyenne = calculateAverage(note.note1, note.note2, note.note3);
+                                  const moyenne = calculateAverage(note.note1, note.note2, note.note3, note.note_pratique, note.note_theorique);
                                   const isValidated = moyenne !== '-' && parseFloat(moyenne) >= 10;
 
                                   return disc ? (
@@ -394,6 +406,16 @@ const StudentPage: React.FC<StudentPageProps> = ({ onAccessTeacher }) => {
                                           {note.note3 !== null ? note.note3.toFixed(2) : '-'}
                                         </span>
                                       </td>
+                                      <td className="px-5 py-4 text-center bg-blue-50/40">
+                                        <span className={`inline-block px-3 py-1 rounded-lg font-semibold ${getNoteBg(note.note_pratique)} ${getNoteColor(note.note_pratique)}`}>
+                                          {note.note_pratique !== null ? note.note_pratique.toFixed(2) : '-'}
+                                        </span>
+                                      </td>
+                                      <td className="px-5 py-4 text-center bg-purple-50/40">
+                                        <span className={`inline-block px-3 py-1 rounded-lg font-semibold ${getNoteBg(note.note_theorique)} ${getNoteColor(note.note_theorique)}`}>
+                                          {note.note_theorique !== null ? note.note_theorique.toFixed(2) : '-'}
+                                        </span>
+                                      </td>
                                       <td className="px-5 py-4 text-center">
                                         <span className={`inline-block px-4 py-1.5 rounded-lg font-bold text-lg ${
                                           moyenne !== '-' && parseFloat(moyenne) >= 10
@@ -417,7 +439,7 @@ const StudentPage: React.FC<StudentPageProps> = ({ onAccessTeacher }) => {
                         <div className="md:hidden space-y-3">
                           {studentNotes.map((note) => {
                             const disc = disciplines.find(d => d.id === note.discipline_id);
-                            const moyenne = calculateAverage(note.note1, note.note2, note.note3);
+                            const moyenne = calculateAverage(note.note1, note.note2, note.note3, note.note_pratique, note.note_theorique);
                             const isValidated = moyenne !== '-' && parseFloat(moyenne) >= 10;
 
                             return disc ? (
@@ -438,8 +460,8 @@ const StudentPage: React.FC<StudentPageProps> = ({ onAccessTeacher }) => {
                                     Moy: {moyenne}
                                   </span>
                                 </div>
-                                {/* Notes */}
-                                <div className="grid grid-cols-2 divide-x divide-gray-100">
+                                {/* Notes contrôles */}
+                                <div className="grid grid-cols-3 divide-x divide-gray-100 border-b border-gray-100">
                                   <div className="p-3 text-center">
                                     <div className="text-xs text-gray-500 mb-1">Contrôle 1</div>
                                     <div className={`font-bold text-lg ${getNoteColor(note.note1)}`}>
@@ -452,10 +474,25 @@ const StudentPage: React.FC<StudentPageProps> = ({ onAccessTeacher }) => {
                                       {note.note2 !== null ? note.note2.toFixed(2) : '-'}
                                     </div>
                                   </div>
-                                   <div className="p-3 text-center">
+                                  <div className="p-3 text-center">
                                     <div className="text-xs text-gray-500 mb-1">Contrôle 3</div>
                                     <div className={`font-bold text-lg ${getNoteColor(note.note3)}`}>
                                       {note.note3 !== null ? note.note3.toFixed(2) : '-'}
+                                    </div>
+                                  </div>
+                                </div>
+                                {/* Notes examens */}
+                                <div className="grid grid-cols-2 divide-x divide-gray-100">
+                                  <div className="p-3 text-center bg-blue-50/40">
+                                    <div className="text-xs text-blue-600 font-medium mb-1">Exam. Pratique</div>
+                                    <div className={`font-bold text-lg ${getNoteColor(note.note_pratique)}`}>
+                                      {note.note_pratique !== null ? note.note_pratique.toFixed(2) : '-'}
+                                    </div>
+                                  </div>
+                                  <div className="p-3 text-center bg-purple-50/40">
+                                    <div className="text-xs text-purple-600 font-medium mb-1">Exam. Théorique</div>
+                                    <div className={`font-bold text-lg ${getNoteColor(note.note_theorique)}`}>
+                                      {note.note_theorique !== null ? note.note_theorique.toFixed(2) : '-'}
                                     </div>
                                   </div>
                                 </div>
