@@ -47,6 +47,7 @@ const InstructorPage: React.FC = () => {
   const [selectedDiscipline, setSelectedDiscipline] = useState<Discipline | null>(null);
   const [classStudents, setClassStudents] = useState<Student[]>([]);
   const [notes, setNotes] = useState<Record<number, Note | null>>({});
+  const [nameEdits, setNameEdits] = useState<Record<number, { nom: string; prenom: string }>>({});
   const [loading, setLoading] = useState(false);
   const [teacherName, setTeacherName] = useState('MVOUAMA Divin Aldriche');
 
@@ -67,6 +68,12 @@ const InstructorPage: React.FC = () => {
     setNotes({});
     setSelectedDiscipline(null);
   }, [selectedClasse, students]);
+
+  useEffect(() => {
+    const edits: Record<number, { nom: string; prenom: string }> = {};
+    classStudents.forEach(s => { edits[s.id] = { nom: s.nom, prenom: s.prenom }; });
+    setNameEdits(edits);
+  }, [classStudents]);
 
   useEffect(() => {
     if (classStudents.length > 0 && selectedDiscipline) {
@@ -142,12 +149,38 @@ const InstructorPage: React.FC = () => {
     }
   };
 
-  const classes = [...new Set(students.map(s => s.classe))].sort();
+  const handleNameChange = (studentId: number, field: 'nom' | 'prenom', value: string) => {
+    setNameEdits(prev => ({
+      ...prev,
+      [studentId]: { ...prev[studentId], [field]: value },
+    }));
+  };
 
-  const hasExamNotes = classStudents.length > 0 && classStudents.some(s => {
-    const n = notes[s.id];
-    return n && (n.note_pratique !== null || n.note_theorique !== null);
-  });
+  const handleNameSave = async (studentId: number) => {
+    const edit = nameEdits[studentId];
+    const original = classStudents.find(s => s.id === studentId);
+    if (!edit || !original) return;
+    if (edit.nom === original.nom && edit.prenom === original.prenom) return;
+
+    const { error } = await supabase
+      .from('students')
+      .update({ nom: edit.nom.trim(), prenom: edit.prenom.trim() })
+      .eq('id', studentId);
+
+    if (error) {
+      toast.error('Erreur lors de la mise à jour du nom');
+    } else {
+      toast.success('Nom mis à jour');
+      setStudents(prev => prev.map(s =>
+        s.id === studentId ? { ...s, nom: edit.nom.trim(), prenom: edit.prenom.trim() } : s
+      ));
+      setClassStudents(prev => prev.map(s =>
+        s.id === studentId ? { ...s, nom: edit.nom.trim(), prenom: edit.prenom.trim() } : s
+      ));
+    }
+  };
+
+  const classes = [...new Set(students.map(s => s.classe))].sort();
 
   // ── Login ─────────────────────────────────────────────────────────────────
   if (!isAuth) {
@@ -169,7 +202,6 @@ const InstructorPage: React.FC = () => {
                 value={usernameInput}
                 onChange={e => setUsernameInput(e.target.value)}
                 className="w-full px-4 py-2.5 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-primary"
-                placeholder="instructeur"
                 required
               />
             </div>
@@ -200,7 +232,6 @@ const InstructorPage: React.FC = () => {
   // ── Main ──────────────────────────────────────────────────────────────────
   return (
     <div className="min-h-screen bg-gray-50">
-      {/* Print styles */}
       <style>{`
         @media print {
           .no-print { display: none !important; }
@@ -263,7 +294,6 @@ const InstructorPage: React.FC = () => {
                 type="text"
                 value={teacherName}
                 onChange={e => setTeacherName(e.target.value)}
-                placeholder="Pour l'impression..."
                 className="w-full px-3 py-2.5 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-primary"
               />
             </div>
@@ -273,26 +303,21 @@ const InstructorPage: React.FC = () => {
         {/* Notes table */}
         {selectedClasse && selectedDiscipline && (
           <div className="bg-white rounded-xl shadow-sm border border-gray-200 overflow-hidden">
-            <div className="px-5 py-3 border-b border-gray-200 flex items-center justify-between gap-4">
+            <div className="px-5 py-3 border-b border-gray-200 flex items-center justify-between">
               <div>
                 <h3 className="font-semibold text-gray-800">{selectedClasse} – {selectedDiscipline.nom}</h3>
-                <p className="text-xs text-gray-500 mt-0.5">{classStudents.length} étudiant(s) • Modification directe</p>
+                <p className="text-xs text-gray-500 mt-0.5">
+                  {classStudents.length} étudiant(s) • Cliquez sur un champ pour modifier
+                </p>
               </div>
-              <div className="flex items-center gap-3 flex-shrink-0">
-                {!loading && !hasExamNotes && classStudents.length > 0 && (
-                  <p className="text-sm text-amber-600 bg-amber-50 border border-amber-200 rounded-lg px-3 py-2 max-w-xs text-right">
-                    Cette classe n'a pas de notes d'examen et ne peut donc pas être imprimée.
-                  </p>
-                )}
-                <button
-                  onClick={() => window.print()}
-                  disabled={!hasExamNotes || loading}
-                  className="flex items-center gap-2 bg-primary hover:bg-primary/90 text-white px-4 py-2 rounded-lg text-sm font-medium transition-colors disabled:opacity-40 disabled:cursor-not-allowed"
-                >
-                  <Printer className="w-4 h-4" />
-                  Imprimer la liste
-                </button>
-              </div>
+              <button
+                onClick={() => window.print()}
+                disabled={loading}
+                className="flex items-center gap-2 bg-primary hover:bg-primary/90 text-white px-4 py-2 rounded-lg text-sm font-medium transition-colors disabled:opacity-40 disabled:cursor-not-allowed"
+              >
+                <Printer className="w-4 h-4" />
+                Imprimer la liste
+              </button>
             </div>
 
             {loading ? (
@@ -305,7 +330,8 @@ const InstructorPage: React.FC = () => {
                 <table className="w-full text-sm">
                   <thead>
                     <tr className="bg-gray-50 text-xs uppercase tracking-wide">
-                      <th className="text-left px-4 py-3 font-semibold text-gray-600 border-b border-gray-200">Nom et Prénom</th>
+                      <th className="text-left px-4 py-3 font-semibold text-gray-600 border-b border-gray-200">Nom</th>
+                      <th className="text-left px-2 py-3 font-semibold text-gray-600 border-b border-gray-200">Prénom</th>
                       <th className="text-center px-3 py-3 font-semibold text-gray-600 border-b border-gray-200">C1</th>
                       <th className="text-center px-3 py-3 font-semibold text-gray-600 border-b border-gray-200">C2</th>
                       <th className="text-center px-3 py-3 font-semibold text-gray-600 border-b border-gray-200">N.P</th>
@@ -320,14 +346,29 @@ const InstructorPage: React.FC = () => {
                       const note = notes[student.id];
                       const mc = note ? calcMC(note.note1, note.note2, note.note3) : '';
                       const mg = note ? calcMG(note.note1, note.note2, note.note3, note.note_pratique, note.note_theorique) : '';
+                      const edit = nameEdits[student.id] ?? { nom: student.nom, prenom: student.prenom };
 
                       return (
                         <tr key={student.id} className="hover:bg-gray-50 transition-colors">
-                          <td className="px-4 py-2.5 font-medium text-gray-800">
-                            {student.nom} {student.prenom}
-                            {!note && (
-                              <span className="ml-2 text-xs text-gray-400 font-normal italic">(pas de note)</span>
-                            )}
+                          {/* Nom éditable */}
+                          <td className="px-2 py-2">
+                            <input
+                              type="text"
+                              value={edit.nom}
+                              onChange={e => handleNameChange(student.id, 'nom', e.target.value)}
+                              onBlur={() => handleNameSave(student.id)}
+                              className="w-28 border border-gray-300 rounded px-2 py-1 text-sm font-medium focus:outline-none focus:ring-2 focus:ring-primary uppercase"
+                            />
+                          </td>
+                          {/* Prénom éditable */}
+                          <td className="px-2 py-2">
+                            <input
+                              type="text"
+                              value={edit.prenom}
+                              onChange={e => handleNameChange(student.id, 'prenom', e.target.value)}
+                              onBlur={() => handleNameSave(student.id)}
+                              className="w-28 border border-gray-300 rounded px-2 py-1 text-sm focus:outline-none focus:ring-2 focus:ring-primary"
+                            />
                           </td>
                           {note ? (
                             <>
@@ -401,7 +442,7 @@ const InstructorPage: React.FC = () => {
         )}
       </div>
 
-      {/* ── Print view (examens uniquement) ────────────────────────────────── */}
+      {/* ── Print view ────────────────────────────────────────────────────────── */}
       <div className="print-only" style={{ fontFamily: 'Arial, sans-serif', padding: '0' }}>
         {/* Title block */}
         <div style={{ textAlign: 'center', marginBottom: '14px', border: '2px solid black', padding: '10px' }}>
@@ -431,7 +472,7 @@ const InstructorPage: React.FC = () => {
           </tbody>
         </table>
 
-        {/* Notes table */}
+        {/* Notes table – toutes les colonnes remplies */}
         <table style={{ width: '100%', borderCollapse: 'collapse', fontSize: '12px' }}>
           <thead>
             <tr style={{ backgroundColor: '#e8e8e8' }}>
@@ -459,25 +500,37 @@ const InstructorPage: React.FC = () => {
           <tbody>
             {classStudents.map((student, idx) => {
               const note = notes[student.id];
+              const edit = nameEdits[student.id];
+              const displayNom = edit ? edit.nom : student.nom;
+              const displayPrenom = edit ? edit.prenom : student.prenom;
+              const mc = note ? calcMC(note.note1, note.note2, note.note3) : '';
+              const mg = note ? calcMG(note.note1, note.note2, note.note3, note.note_pratique, note.note_theorique) : '';
               return (
                 <tr key={student.id} style={{ backgroundColor: idx % 2 === 0 ? '#fff' : '#fafafa' }}>
                   <td style={{ border: '1px solid black', padding: '5px 10px', fontSize: '12px' }}>
-                    {student.nom} {student.prenom}
+                    {displayNom} {displayPrenom}
                   </td>
-                  {/* C1, C2, N.P, MC, M.G : colonnes vides */}
-                  <td style={{ border: '1px solid black', padding: '5px 8px' }} />
-                  <td style={{ border: '1px solid black', padding: '5px 8px' }} />
-                  <td style={{ border: '1px solid black', padding: '5px 8px' }} />
-                  <td style={{ border: '1px solid black', padding: '5px 8px' }} />
-                  {/* N.PRAT et N.THEO : remplies */}
+                  <td style={{ border: '1px solid black', padding: '5px 8px', textAlign: 'center' }}>
+                    {note ? fmt(note.note1) : ''}
+                  </td>
+                  <td style={{ border: '1px solid black', padding: '5px 8px', textAlign: 'center' }}>
+                    {note ? fmt(note.note2) : ''}
+                  </td>
+                  <td style={{ border: '1px solid black', padding: '5px 8px', textAlign: 'center' }}>
+                    {note ? fmt(note.note3) : ''}
+                  </td>
+                  <td style={{ border: '1px solid black', padding: '5px 8px', textAlign: 'center', fontWeight: '500' }}>
+                    {mc}
+                  </td>
                   <td style={{ border: '1px solid black', padding: '5px 8px', textAlign: 'center' }}>
                     {note ? fmt(note.note_pratique) : ''}
                   </td>
                   <td style={{ border: '1px solid black', padding: '5px 8px', textAlign: 'center' }}>
                     {note ? fmt(note.note_theorique) : ''}
                   </td>
-                  {/* M.G : vide */}
-                  <td style={{ border: '1px solid black', padding: '5px 8px' }} />
+                  <td style={{ border: '1px solid black', padding: '5px 8px', textAlign: 'center', fontWeight: 'bold' }}>
+                    {mg}
+                  </td>
                 </tr>
               );
             })}
@@ -488,7 +541,7 @@ const InstructorPage: React.FC = () => {
         <div style={{ marginTop: '40px', display: 'flex', justifyContent: 'flex-end' }}>
           <div style={{ textAlign: 'center', minWidth: '220px' }}>
             <div style={{ fontSize: '12px', marginBottom: '4px' }}>
-              Fait à Mohammedia, le {new Date().toLocaleDateString('fr-FR')}
+              Fait à Brazzaville, le {new Date().toLocaleDateString('fr-FR')}
             </div>
             <div style={{ fontSize: '12px', fontWeight: 'bold', marginBottom: '60px' }}>
               L'Enseignant(e)
