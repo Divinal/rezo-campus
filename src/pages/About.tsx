@@ -39,7 +39,7 @@ const About: React.FC = () => {
       role: "Assistant en Administration de Direction & Finance",
       description: "Passionné par la gestion, la comptabilité et l’administration, je développe mes compétences en suivi des dossiers, gestion financière et appui à la direction. Rigoureux, organisé et motivé, mon parcours en Comptabilité et Gestion Financière m’a permis d’acquérir une première expérience en gestion de comptes clients et en administration. Je souhaite mettre mes compétences au service d’une organisation tout en poursuivant mon développement professionnel.",
       image: "/Images/Chance.jpeg",
-      email: "chancemouyoki71@gmail.com",
+      email: "chancemouyoki79@gmail.com",
       phone: "+242 06 432 83 93"
     }  
   ];
