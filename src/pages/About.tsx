@@ -6,12 +6,21 @@ import { Users, Mail, Phone } from 'lucide-react';
 
 const About: React.FC = () => {
   const teamMembers = [
+      {
+      id: 3,
+      name: "MVOUAMA Divin Aldriche",
+      role: "Fondateur Rézo Campus - R&D ",
+      description: "Développeur freelance Full-Stack, passionné par les technologies, l’innovation numérique et le développement logiciel. Fondateur de la plateforme éducative Rézo Campus, j’œuvre à rendre l’orientation scolaire et universitaire plus accessible grâce à des outils digitaux performants. Mon parcours est marqué par l'entrepreneuriat, la curiosité intellectuelle et la persévérance",
+      image: "/Images/MonProfil.jpeg",
+      email: "mvouamad@gmail.com",
+      phone: "+212 617-725867 / +242 06 497 36 25"
+    },
     {
       id: 1,
       name: "YAYE OUMOU KEBA",
       role: "Responsable Comptable & Financier",
       description: "Je mets ma passion pour les mots, les marques et l’impact au service des entreprises et projets qui souhaitent se démarquer, fédérer et croître. Forte d’une approche à la fois stratégique et créative.",
-      image: "/Images/Imageoumou.png",
+      image: "/Images/silhouette-thumbnail.png",
       email: "Bboumou02@gmail.com",
       phone: "+212 612-683569"
     },
@@ -24,15 +33,15 @@ const About: React.FC = () => {
       email: "elouafiabderrahmen@gmail.com",
       phone: "+212 767-187983"
     },
-    {
+      {
       id: 3,
-      name: "MVOUAMA Divin Aldriche",
-      role: "Fondateur Rézo Campus - R&D ",
-      description: "Développeur freelance Full-Stack, passionné par les technologies, l’innovation numérique et le développement logiciel. Fondateur de la plateforme éducative Rézo Campus, j’œuvre à rendre l’orientation scolaire et universitaire plus accessible grâce à des outils digitaux performants. Mon parcours est marqué par l'entrepreneuriat, la curiosité intellectuelle et la persévérance",
-      image: "/Images/DivinProf.jpg",
-      email: "mvouamad@gmail.com",
-      phone: "+212 617-725867 / +242 06 497 36 25"
-    }
+      name: "MOUYOKI Chance Géraldin",
+      role: "Assistant en Administration de Direction & Finance",
+      description: "Passionné par la gestion, la comptabilité et l’administration, je développe mes compétences en suivi des dossiers, gestion financière et appui à la direction. Rigoureux, organisé et motivé, mon parcours en Comptabilité et Gestion Financière m’a permis d’acquérir une première expérience en gestion de comptes clients et en administration. Je souhaite mettre mes compétences au service d’une organisation tout en poursuivant mon développement professionnel.",
+      image: "/Images/Chance.jpeg",
+      email: "chancemouyoki71@gmail.com",
+      phone: "+242 06 432 83 93"
+    }  
   ];
 
   return (
