@@ -15,6 +15,15 @@ const About: React.FC = () => {
       email: "mvouamad@gmail.com",
       phone: "+212 617-725867 / +242 06 497 36 25"
     },
+      {
+      id: 4,
+      name: "NDALA Julien Médard",
+      role: "Directeur des Affaires Exterieures",
+      description: "Passionné par l’administration, les sciences et les relations extérieures, Mr l'Inspecteur NDALA Julien Médard, contribue au rayonnement de Rézo Campus et au développement de ses relations avec les partenaires, institutions et entreprises. Il met son sens de l’organisation, son esprit d’analyse et ses qualités relationnelles au service du développement des partenariats et des opportunités de l’entreprise.",
+      image: "/Images/Inspecteur.jpeg",
+      email: "julienndala4@gmail.com",
+      phone: "+242 06 668 5543"
+    },
     {
       id: 1,
       name: "YAYE OUMOU KEBA",
