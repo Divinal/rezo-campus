@@ -25,6 +25,15 @@ const About: React.FC = () => {
       phone: "+242 06 668 5543"
     },
     {
+      id: 5,
+      name: "Kevine KALA VOUEMBE",
+      role: "Secrétaire Particulière",
+      description: "Formée en finance et administration, Mme Kevine KALA VOUEMBE assure avec rigueur et discrétion les missions de secrétariat et d’assistance auprès de la direction. Organisée, dynamique et attentive aux détails, elle contribue à la bonne gestion administrative, au suivi des dossiers et à la coordination des activités. Son sens de l’organisation, ses compétences en gestion et ses qualités relationnelles lui permettent d’accompagner efficacement la direction et de participer au bon fonctionnement de Rézo Campus.",
+      image: "/Images/Secretaire.jpeg",
+      email: "kevinekalavouembe@gmail.com",
+      phone: "+242 06 595 7019"
+    },
+    {
       id: 1,
       name: "YAYE OUMOU KEBA",
       role: "Responsable Comptable & Financier",
