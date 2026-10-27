@@ -35,6 +35,7 @@ import ForumGallery from './pages/ForumGallery';
 import Services from './pages/Services';
 import Accompagnement from './pages/Accompagnement';
 import InstructorPage from './pages/InstructorPage';
+import RezoEdu from './pages/RezoEdu';
 
 
 
@@ -81,6 +82,7 @@ const App = () => (
            <Route path="/services" element={<Services />} />
            <Route path="/accompagnement" element={<Accompagnement />} />
            <Route path="/instructor" element={<InstructorPage />} />
+           <Route path="/rezo-edu" element={<RezoEdu />} />
 
             {/* Route catch-all */}
             <Route path="*" element={<NotFound />} />

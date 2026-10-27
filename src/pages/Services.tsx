@@ -1,7 +1,7 @@
 
 import React from 'react';
 import { Link } from 'react-router-dom';
-import { Monitor, ShoppingCart, Handshake, GraduationCap, Home, ArrowRight } from 'lucide-react';
+import { Monitor, ShoppingCart, Handshake, GraduationCap, Home, ArrowRight, School } from 'lucide-react';
 import Header from '../components/Header';
 import Footer from '../components/Footer';
 
@@ -25,6 +25,13 @@ const servicesList = [
     cta: 'Nous contacter',
     ctaLink: '/contact',
     ctaClass: 'bg-blue-700 hover:bg-blue-800',
+    products: [
+      {
+        name: 'Rezo Edu',
+        description: "Application de gestion scolaire : élèves, notes, emplois du temps, finances et gouvernance. 5 modules de 25 000 à 150 000 FCFA.",
+        link: '/rezo-edu',
+      },
+    ],
   },
   {
     id: 'commerce',
@@ -78,6 +85,7 @@ const servicesList = [
       "Aide à l'inscription dans les établissements",
       "Accompagnement à la mobilité nationale et internationale",
       "Démarches Visa, AEVM et titre de séjour",
+      "Études à l'étranger : France (Campus France), Espagne, Russie, Brésil, Azerbaïdjan, USA et autres pays",
       "Recherche de logement étudiant",
       "Forum d'orientation et événements étudiants"
     ],
@@ -124,7 +132,7 @@ const Services: React.FC = () => {
       <section className="py-16 bg-gray-50 flex-grow">
         <div className="container mx-auto px-4">
           <div className="grid md:grid-cols-2 gap-8">
-            {servicesList.map(({ id, Icon, bgHeader, bgDot, title, subtitle, description, items, cta, ctaLink, ctaClass }) => (
+            {servicesList.map(({ id, Icon, bgHeader, bgDot, title, subtitle, description, items, cta, ctaLink, ctaClass, products }) => (
               <div
                 key={id}
                 id={id}
@@ -149,6 +157,31 @@ const Services: React.FC = () => {
                       </li>
                     ))}
                   </ul>
+                  {products && products.length > 0 && (
+                    <div className="mb-6">
+                      <p className="text-xs font-semibold text-gray-500 uppercase tracking-wider mb-2">Nos applications</p>
+                      <div className="space-y-2">
+                        {products.map(p => (
+                          <Link
+                            key={p.name}
+                            to={p.link}
+                            className="flex items-start gap-3 border border-blue-100 bg-blue-50 hover:bg-blue-100 rounded-xl p-3 transition-colors group"
+                          >
+                            <div className="bg-blue-700 w-9 h-9 rounded-lg flex items-center justify-center flex-shrink-0">
+                              <School className="w-5 h-5 text-white" />
+                            </div>
+                            <div className="flex-1">
+                              <p className="font-semibold text-gray-800 text-sm">{p.name}</p>
+                              <p className="text-xs text-gray-600 leading-relaxed">{p.description}</p>
+                              <span className="inline-flex items-center gap-1 text-xs font-semibold text-blue-700 mt-1 group-hover:underline">
+                                En savoir plus <ArrowRight className="w-3 h-3" />
+                              </span>
+                            </div>
+                          </Link>
+                        ))}
+                      </div>
+                    </div>
+                  )}
                   <Link
                     to={ctaLink}
                     className={`inline-flex items-center gap-2 ${ctaClass} text-white px-5 py-2.5 rounded-lg transition-colors font-semibold text-sm self-start`}

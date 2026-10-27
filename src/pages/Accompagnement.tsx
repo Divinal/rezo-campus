@@ -25,6 +25,112 @@ const miniCards = [
   { icon: '🏠', label: 'Logement', sub: 'Résidences & appartements', target: 'logement', bg: 'from-purple-800 to-purple-600' },
 ];
 
+interface Destination {
+  flag: string;
+  country: string;
+  tag: string;
+  tagClass: string;
+  desc: string;
+  steps: string[];
+  videoId?: string;
+}
+
+const destinations: Destination[] = [
+  {
+    flag: '🇫🇷',
+    country: 'France',
+    tag: 'Campus France + écoles privées',
+    tagClass: 'bg-blue-100 text-blue-800',
+    desc: "Nous gérons toute la procédure « Études en France » jusqu'à la demande de visa, et nous vous aidons si possible à intégrer une école privée.",
+    steps: [
+      "Création du compte et du dossier Études en France",
+      "Choix des formations et rédaction des lettres de motivation",
+      "Préparation de l'entretien Campus France",
+      "Suivi des réponses des établissements",
+      "Demande de visa étudiant (justificatif de ressources, logement, assurance)",
+      "Inscription directe en école privée lorsque c'est possible",
+    ],
+  },
+  {
+    flag: '🇪🇸',
+    country: 'Espagne',
+    tag: 'Écoles privées',
+    tagClass: 'bg-yellow-100 text-yellow-800',
+    desc: "Accompagnement vers les écoles privées espagnoles, de l'admission jusqu'au visa d'études.",
+    steps: [
+      "Choix de l'école et de la formation",
+      "Obtention de la lettre d'admission",
+      "Dossier de visa d'études au consulat d'Espagne (ressources, assurance santé, casier judiciaire, certificat médical)",
+      "Demande de la carte de séjour étudiant (TIE) à l'arrivée",
+    ],
+  },
+  {
+    flag: '🇷🇺',
+    country: 'Russie',
+    tag: 'Bourses du gouvernement',
+    tagClass: 'bg-red-100 text-red-800',
+    desc: "Chaque année, le gouvernement russe attribue des bourses aux étudiants étrangers qui couvrent les frais de scolarité.",
+    steps: [
+      "Candidature dans le cadre du quota de bourses du gouvernement russe",
+      "Dépôt du dossier et sélection (Maison russe / Rossotrudnichestvo)",
+      "Année préparatoire de langue russe si nécessaire",
+      "Visa d'études et départ",
+    ],
+    videoId: 'sdqIxorTLqk',
+  },
+  {
+    flag: '🇧🇷',
+    country: 'Brésil',
+    tag: 'Bourses PEC-G / PEC-PG',
+    tagClass: 'bg-green-100 text-green-800',
+    desc: "Le programme PEC-G (licence) et le PEC-PG (master et doctorat) permettent d'étudier gratuitement dans les universités publiques brésiliennes.",
+    steps: [
+      "Candidature au programme via l'ambassade du Brésil",
+      "Certificat de portugais Celpe-Bras (exigé pour le PEC-G)",
+      "Justificatif de ressources pour la vie sur place",
+      "Visa étudiant et installation",
+    ],
+    videoId: '6ruRy17ApPg',
+  },
+  {
+    flag: '🇦🇿',
+    country: 'Azerbaïdjan',
+    tag: 'Bourses du gouvernement',
+    tagClass: 'bg-cyan-100 text-cyan-800',
+    desc: "L'Azerbaïdjan propose des bourses gouvernementales aux étudiants étrangers dans ses universités, avec des cursus en anglais, en russe ou en azéri.",
+    steps: [
+      "Choix de l'université et du programme",
+      "Candidature à la bourse et constitution du dossier",
+      "Année préparatoire de langue selon le cursus",
+      "Visa d'études et accueil",
+    ],
+    videoId: 'T5JqZB5c9Do',
+  },
+  {
+    flag: '🇺🇸',
+    country: 'États-Unis',
+    tag: 'Universités & bourses',
+    tagClass: 'bg-indigo-100 text-indigo-800',
+    desc: "Accompagnement vers les universités américaines et les bourses d'excellence, sportives ou d'établissement.",
+    steps: [
+      "Choix des universités et tests requis (TOEFL / IELTS, SAT selon l'école)",
+      "Dossier d'admission et demandes de bourses",
+      "Réception du formulaire I-20 et paiement des frais SEVIS",
+      "Demande de visa F-1 et préparation de l'entretien à l'ambassade",
+    ],
+    videoId: 'g-1jcG9UDEk',
+  },
+];
+
+const otherDestinations = [
+  { flag: '🇨🇦', country: 'Canada', info: "Admission, CAQ pour le Québec et permis d'études" },
+  { flag: '🇧🇪', country: 'Belgique', info: "Inscription en université ou haute école et visa d'études" },
+  { flag: '🇹🇷', country: 'Turquie', info: 'Bourses du gouvernement turc (Türkiye Bursları)' },
+  { flag: '🇨🇳', country: 'Chine', info: 'Bourses du gouvernement chinois (CSC) et universités' },
+  { flag: '🇲🇦', country: 'Maroc', info: "Écoles partenaires, AEVM et carte de séjour" },
+  { flag: '🌍', country: 'Votre choix', info: 'Nous faisons les recherches et vous accompagnons dans les procédures' },
+];
+
 const Accompagnement: React.FC = () => {
   return (
     <div className="min-h-screen flex flex-col">
@@ -82,6 +188,7 @@ const Accompagnement: React.FC = () => {
               { id: 'ecoles', label: '🎓 Écoles & Formations' },
               { id: 'forum', label: '📸 Forum & Événements' },
               { id: 'visa', label: '🛂 Visa & AEVM' },
+              { id: 'etranger', label: "🌍 Études à l'étranger" },
               { id: 'logement', label: '🏠 Logement' },
             ].map(({ id, label }) => (
               <button
@@ -370,8 +477,91 @@ const Accompagnement: React.FC = () => {
         </div>
       </section>
 
+      {/* Section Études à l'étranger */}
+      <section id="etranger" className="py-16 bg-gray-50">
+        <div className="container mx-auto px-4">
+          <div className="text-center mb-10">
+            <div className="inline-flex items-center justify-center w-14 h-14 bg-[#ff7f50]/15 rounded-2xl mb-4">
+              <Globe className="w-8 h-8 text-[#ff7f50]" />
+            </div>
+            <h2 className="text-3xl font-bold text-gray-800 mb-3">Études à l'étranger</h2>
+            <p className="text-gray-600 max-w-2xl mx-auto">
+              Au-delà du Maroc, Rézo Campus vous oriente vers d'autres pays : admissions, bourses
+              et démarches de visa, nous vous accompagnons à chaque étape.
+            </p>
+          </div>
+
+          <div className="grid md:grid-cols-2 gap-6 max-w-6xl mx-auto">
+            {destinations.map(({ flag, country, tag, tagClass, desc, steps, videoId }) => (
+              <div key={country} className="bg-white rounded-2xl shadow-md border border-gray-100 overflow-hidden flex flex-col">
+                {videoId && (
+                  <div className="relative w-full bg-black" style={{ paddingTop: '56.25%' }}>
+                    <iframe
+                      className="absolute inset-0 w-full h-full"
+                      src={`https://www.youtube.com/embed/${videoId}`}
+                      title={`Études en ${country}`}
+                      loading="lazy"
+                      allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
+                      allowFullScreen
+                    />
+                  </div>
+                )}
+                <div className="p-6 flex flex-col flex-grow">
+                  <div className="flex items-center gap-3 mb-3 flex-wrap">
+                    <span className="text-3xl">{flag}</span>
+                    <h3 className="text-xl font-bold text-gray-800">{country}</h3>
+                    <span className={`text-xs font-semibold px-2.5 py-1 rounded-full ${tagClass}`}>{tag}</span>
+                  </div>
+                  <p className="text-gray-600 text-sm mb-4">{desc}</p>
+                  <ol className="space-y-2 mb-5 flex-grow">
+                    {steps.map((s, i) => (
+                      <li key={i} className="flex gap-2 text-sm text-gray-700">
+                        <span className="w-5 h-5 bg-[#1a365d] text-white rounded-full flex items-center justify-center text-xs font-bold flex-shrink-0 mt-0.5">
+                          {i + 1}
+                        </span>
+                        {s}
+                      </li>
+                    ))}
+                  </ol>
+                  <Link
+                    to="/contact"
+                    className="inline-flex items-center gap-2 bg-[#1a365d] text-white px-5 py-2.5 rounded-lg hover:bg-[#1a365d]/90 transition-colors font-semibold text-sm self-start"
+                  >
+                    Être accompagné <ArrowRight className="w-4 h-4" />
+                  </Link>
+                </div>
+              </div>
+            ))}
+          </div>
+
+          {/* Autres destinations */}
+          <div className="max-w-6xl mx-auto mt-10 bg-[#1a365d] rounded-2xl p-6 md:p-8 text-white">
+            <h3 className="text-xl font-bold mb-2">Et d'autres pays de votre choix</h3>
+            <p className="text-blue-100 text-sm mb-6">
+              Vous visez une autre destination ? Nous faisons les recherches pour vous et vous aidons
+              à réaliser toutes les procédures.
+            </p>
+            <div className="grid sm:grid-cols-2 lg:grid-cols-3 gap-3">
+              {otherDestinations.map(({ flag, country, info }) => (
+                <div key={country} className="bg-white/10 rounded-xl p-4 flex gap-3 items-start">
+                  <span className="text-2xl">{flag}</span>
+                  <div>
+                    <p className="font-semibold text-sm">{country}</p>
+                    <p className="text-blue-100 text-xs leading-relaxed">{info}</p>
+                  </div>
+                </div>
+              ))}
+            </div>
+            <p className="text-blue-200/80 text-xs mt-6">
+              Les conditions, calendriers et montants des bourses changent chaque année : nous vérifions
+              avec vous les informations à jour avant chaque démarche.
+            </p>
+          </div>
+        </div>
+      </section>
+
       {/* Section Logement */}
-      <section id="logement" className="py-16 bg-gray-50">
+      <section id="logement" className="py-16 bg-white">
         <div className="container mx-auto px-4">
           <div className="flex flex-col md:flex-row gap-8 items-center">
             <div className="w-full md:w-72 flex-shrink-0">
