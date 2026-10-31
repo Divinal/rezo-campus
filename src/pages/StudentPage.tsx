@@ -1,6 +1,9 @@
 import React, { useState, useEffect } from 'react';
-import { Search, Users, Lock, BookOpen, Trophy, TrendingUp, RotateCcw, UserCheck } from 'lucide-react';
+import { Search, Users, Lock, BookOpen, Trophy, TrendingUp, RotateCcw, UserCheck, KeyRound, ArrowRight } from 'lucide-react';
 import { supabase } from '../lib/supabaseClient';
+import { STUDENT_COLUMNS, currentAcademicYear } from '../lib/notesShared';
+import AcademicYearSelect from '../components/notes/AcademicYearSelect';
+import { fetchInscription, fetchYearStudents } from '../lib/inscriptions';
 import { toast } from '../components/ui/sonner';
 import Header from '../components/Header';
 import Footer from '../components/Footer';
@@ -31,9 +34,10 @@ interface Student {
 
 interface StudentPageProps {
   onAccessTeacher: () => void;
+  onAccessSpace: () => void;
 }
 
-const StudentPage: React.FC<StudentPageProps> = ({ onAccessTeacher }) => {
+const StudentPage: React.FC<StudentPageProps> = ({ onAccessTeacher, onAccessSpace }) => {
   const [disciplines, setDisciplines] = useState<Discipline[]>([]);
   const [searchNumero, setSearchNumero] = useState('');
   const [selectedStudent, setSelectedStudent] = useState<Student | null>(null);
@@ -41,10 +45,33 @@ const StudentPage: React.FC<StudentPageProps> = ({ onAccessTeacher }) => {
   const [groupMembers, setGroupMembers] = useState<Student[]>([]);
   const [showResults, setShowResults] = useState(false);
   const [loading, setLoading] = useState(false);
+  const [annee, setAnnee] = useState(currentAcademicYear);
 
   useEffect(() => {
     loadDisciplines();
   }, []);
+
+  useEffect(() => {
+    if (selectedStudent) loadYearData(selectedStudent);
+  }, [annee]);
+
+  const loadYearData = async (student: Student) => {
+    const [inscription] = await Promise.all([fetchInscription(student.id, annee), loadNotes(student.id)]);
+    const withYear = { ...student, classe: inscription?.classe ?? '', groupe: inscription?.groupe ?? null };
+    setSelectedStudent(withYear);
+    if (inscription?.groupe) await loadGroupMembers(inscription.classe, inscription.groupe, student.id);
+    else setGroupMembers([]);
+  };
+
+  const loadNotes = async (studentId: number) => {
+    const { data, error } = await supabase
+      .from('notes')
+      .select('*')
+      .eq('student_id', studentId)
+      .eq('annee_academique', annee);
+    if (error) console.error('Erreur lors du chargement des notes:', error);
+    setStudentNotes(error ? [] : data || []);
+  };
 
   const loadDisciplines = async () => {
     const { data, error } = await supabase
@@ -59,25 +86,13 @@ const StudentPage: React.FC<StudentPageProps> = ({ onAccessTeacher }) => {
     }
   };
 
-  const loadGroupMembers = async (groupe: string, currentStudentId: number) => {
-    if (!groupe) {
+  const loadGroupMembers = async (classe: string, groupe: string, currentStudentId: number) => {
+    const { data, error } = await fetchYearStudents(annee);
+    if (error) {
       setGroupMembers([]);
       return;
     }
-
-    const { data, error } = await supabase
-      .from('students')
-      .select('*')
-      .eq('groupe', groupe)
-      .neq('id', currentStudentId)
-      .order('nom');
-
-    if (error) {
-      console.error('Erreur lors du chargement des membres du groupe:', error);
-      setGroupMembers([]);
-    } else {
-      setGroupMembers(data || []);
-    }
+    setGroupMembers(data.filter(s => s.classe === classe && s.groupe === groupe && s.id !== currentStudentId));
   };
 
   const searchStudent = async () => {
@@ -90,7 +105,7 @@ const StudentPage: React.FC<StudentPageProps> = ({ onAccessTeacher }) => {
 
     const { data: studentData, error: studentError } = await supabase
       .from('students')
-      .select('*')
+      .select(STUDENT_COLUMNS)
       .eq('numero', searchNumero.trim())
       .single();
 
@@ -103,28 +118,7 @@ const StudentPage: React.FC<StudentPageProps> = ({ onAccessTeacher }) => {
       return;
     }
 
-    setSelectedStudent(studentData);
-
-    // Charger les notes
-    const { data: notesData, error: notesError } = await supabase
-      .from('notes')
-      .select('*')
-      .eq('student_id', studentData.id);
-
-    if (notesError) {
-      console.error('Erreur lors du chargement des notes:', notesError);
-      setStudentNotes([]);
-    } else {
-      setStudentNotes(notesData || []);
-    }
-
-    // Charger les membres du groupe si l'étudiant en a un
-    if (studentData.groupe) {
-      await loadGroupMembers(studentData.groupe, studentData.id);
-    } else {
-      setGroupMembers([]);
-    }
-
+    await loadYearData(studentData);
     setShowResults(true);
     setLoading(false);
   };
@@ -215,14 +209,35 @@ const StudentPage: React.FC<StudentPageProps> = ({ onAccessTeacher }) => {
             </div>
           </div>
 
+          {/* Accès à l'espace étudiant */}
+          <button
+            onClick={onAccessSpace}
+            className="w-full text-left bg-gradient-to-r from-teal-600 to-green-600 hover:from-teal-700 hover:to-green-700 rounded-xl md:rounded-2xl shadow-lg p-4 sm:p-6 text-white flex items-center gap-4 transition"
+          >
+            <div className="bg-white/20 p-3 rounded-xl flex-shrink-0">
+              <KeyRound size={26} />
+            </div>
+            <div className="flex-1">
+              <p className="text-lg md:text-xl font-bold">Accéder à mon espace étudiant</p>
+              <p className="text-sm text-white/85">
+                Rendez-vous d'examens et de contrôles, cours de vos enseignants, notes et code de vérification.
+                Connectez-vous avec les informations envoyées par votre enseignant.
+              </p>
+            </div>
+            <ArrowRight size={22} className="flex-shrink-0" />
+          </button>
+
           {/* Zone de recherche */}
           <div className="bg-white rounded-xl md:rounded-2xl shadow-lg p-4 sm:p-6 md:p-8">
             <div className="bg-gradient-to-r from-green-50 to-teal-50 border border-green-100 p-4 sm:p-5 md:p-6 rounded-lg md:rounded-xl">
-              <div className="flex items-center gap-2 mb-3 md:mb-4">
-                <Search className="text-green-600" size={20} />
-                <h2 className="text-base sm:text-lg md:text-xl font-semibold text-gray-800">
-                  Rechercher mes notes
-                </h2>
+              <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 mb-3 md:mb-4">
+                <div className="flex items-center gap-2">
+                  <Search className="text-green-600" size={20} />
+                  <h2 className="text-base sm:text-lg md:text-xl font-semibold text-gray-800">
+                    Rechercher mes notes
+                  </h2>
+                </div>
+                <AcademicYearSelect value={annee} onChange={setAnnee} />
               </div>
 
               <div className="flex flex-col sm:flex-row gap-2 sm:gap-3">
@@ -289,7 +304,7 @@ const StudentPage: React.FC<StudentPageProps> = ({ onAccessTeacher }) => {
                           <div className="flex flex-wrap gap-x-3 gap-y-1 mt-1 text-sm text-gray-600">
                             <span className="flex items-center gap-1">
                               <BookOpen size={14} />
-                              Classe: <strong>{selectedStudent.classe}</strong>
+                              Classe: <strong>{selectedStudent.classe || `non inscrit en ${annee}`}</strong>
                             </span>
                             <span className="hidden sm:inline">•</span>
                             <span>
@@ -537,7 +552,7 @@ const StudentPage: React.FC<StudentPageProps> = ({ onAccessTeacher }) => {
                       /* Aucune note */
                       <div className="text-center py-10 bg-gray-50 rounded-lg">
                         <BookOpen size={48} className="mx-auto text-gray-300 mb-3" />
-                        <p className="text-gray-500 text-base">Aucune note enregistrée pour le moment</p>
+                        <p className="text-gray-500 text-base">Aucune note enregistrée pour l'année {annee}</p>
                         <p className="text-gray-400 text-sm mt-1">Vos notes apparaîtront ici une fois saisies par votre enseignant</p>
                       </div>
                     )}

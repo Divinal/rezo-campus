@@ -2,6 +2,9 @@ import React, { useState, useEffect } from 'react';
 import { supabase } from '../lib/supabaseClient';
 import { Printer, Lock, LogOut, BookOpen } from 'lucide-react';
 import { toast } from '../components/ui/sonner';
+import { currentAcademicYear } from '../lib/notesShared';
+import { fetchYearStudents } from '../lib/inscriptions';
+import AcademicYearSelect from '../components/notes/AcademicYearSelect';
 
 interface Discipline { id: number; nom: string; }
 interface Student { id: number; nom: string; prenom: string; classe: string; numero: string; groupe: string | null; }
@@ -50,6 +53,7 @@ const InstructorPage: React.FC = () => {
   const [nameEdits, setNameEdits] = useState<Record<number, { nom: string; prenom: string }>>({});
   const [loading, setLoading] = useState(false);
   const [teacherName, setTeacherName] = useState('MVOUAMA Divin Aldriche');
+  const [annee, setAnnee] = useState(currentAcademicYear);
 
   useEffect(() => {
     if (localStorage.getItem('instructorAuth') === 'true') setIsAuth(true);
@@ -57,7 +61,11 @@ const InstructorPage: React.FC = () => {
 
   useEffect(() => {
     if (isAuth) loadData();
-  }, [isAuth]);
+  }, [isAuth, annee]);
+
+  useEffect(() => {
+    setSelectedClasse('');
+  }, [annee]);
 
   useEffect(() => {
     if (selectedClasse) {
@@ -79,15 +87,16 @@ const InstructorPage: React.FC = () => {
     if (classStudents.length > 0 && selectedDiscipline) {
       loadNotes();
     }
-  }, [classStudents, selectedDiscipline]);
+  }, [classStudents, selectedDiscipline, annee]);
 
   const loadData = async () => {
-    const [{ data: disc }, { data: stud }] = await Promise.all([
+    const [{ data: disc }, yearStudents] = await Promise.all([
       supabase.from('disciplines').select('*').order('nom'),
-      supabase.from('students').select('*').order('nom'),
+      fetchYearStudents(annee),
     ]);
+    if (yearStudents.error) toast.error('Erreur lors du chargement des étudiants');
     setDisciplines(disc || []);
-    setStudents(stud || []);
+    setStudents(yearStudents.data);
   };
 
   const loadNotes = async () => {
@@ -98,7 +107,8 @@ const InstructorPage: React.FC = () => {
       .from('notes')
       .select('*')
       .in('student_id', ids)
-      .eq('discipline_id', selectedDiscipline.id);
+      .eq('discipline_id', selectedDiscipline.id)
+      .eq('annee_academique', annee);
 
     const map: Record<number, Note | null> = {};
     classStudents.forEach(s => { map[s.id] = null; });
@@ -162,12 +172,12 @@ const InstructorPage: React.FC = () => {
     if (!edit || !original) return;
     if (edit.nom === original.nom && edit.prenom === original.prenom) return;
 
-    const { error } = await supabase
+    const { error, count } = await supabase
       .from('students')
-      .update({ nom: edit.nom.trim(), prenom: edit.prenom.trim() })
+      .update({ nom: edit.nom.trim(), prenom: edit.prenom.trim() }, { count: 'exact' })
       .eq('id', studentId);
 
-    if (error) {
+    if (error || count === 0) {
       toast.error('Erreur lors de la mise à jour du nom');
     } else {
       toast.success('Nom mis à jour');
@@ -260,7 +270,10 @@ const InstructorPage: React.FC = () => {
       {/* Selectors */}
       <div className="no-print max-w-6xl mx-auto px-6 py-6 space-y-6">
         <div className="bg-white rounded-xl shadow-sm border border-gray-200 p-5">
-          <h2 className="font-semibold text-gray-700 mb-4 text-lg">Sélection</h2>
+          <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 mb-4">
+            <h2 className="font-semibold text-gray-700 text-lg">Sélection</h2>
+            <AcademicYearSelect value={annee} onChange={setAnnee} />
+          </div>
           <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
             <div>
               <label className="block text-sm font-medium text-gray-600 mb-1">Classe</label>
@@ -448,6 +461,7 @@ const InstructorPage: React.FC = () => {
         <div style={{ textAlign: 'center', marginBottom: '14px', border: '2px solid black', padding: '10px' }}>
           <div style={{ fontSize: '20px', fontWeight: 'bold', letterSpacing: '1px' }}>LISTE DES NOTES</div>
           <div style={{ fontSize: '14px', marginTop: '4px' }}>{selectedClasse}</div>
+          <div style={{ fontSize: '12px', marginTop: '2px' }}>Année académique {annee}</div>
         </div>
 
         {/* Info block */}

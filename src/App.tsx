@@ -36,6 +36,7 @@ import Services from './pages/Services';
 import Accompagnement from './pages/Accompagnement';
 import InstructorPage from './pages/InstructorPage';
 import RezoEdu from './pages/RezoEdu';
+import InscriptionEtudiant from './pages/InscriptionEtudiant';
 
 
 
@@ -83,6 +84,7 @@ const App = () => (
            <Route path="/accompagnement" element={<Accompagnement />} />
            <Route path="/instructor" element={<InstructorPage />} />
            <Route path="/rezo-edu" element={<RezoEdu />} />
+           <Route path="/inscription-etudiant" element={<InscriptionEtudiant />} />
 
             {/* Route catch-all */}
             <Route path="*" element={<NotFound />} />

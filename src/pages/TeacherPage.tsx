@@ -1,7 +1,14 @@
 import React, { useState, useEffect } from 'react';
-import { Plus, Trash2, BookOpen, ArrowLeft, Lock, ChevronDown, Users } from 'lucide-react';
+import { Plus, Trash2, BookOpen, ArrowLeft, Lock, ChevronDown, Users, KeyRound, ShieldCheck, Phone } from 'lucide-react';
 import { supabase } from '../lib/supabaseClient';
 import { toast } from '../components/ui/sonner';
+import { STUDENT_COLUMNS, generateAccessCode, currentAcademicYear, normalizePhone } from '../lib/notesShared';
+import StudentAccessModal, { GeneratedAccess } from '../components/notes/StudentAccessModal';
+import TeacherSharing from '../components/notes/TeacherSharing';
+import AcademicYearSelect from '../components/notes/AcademicYearSelect';
+import ReinscriptionPanel from '../components/notes/ReinscriptionPanel';
+import OnlineRegistrationPanel from '../components/notes/OnlineRegistrationPanel';
+import { fetchYearStudents, classesOf } from '../lib/inscriptions';
 
 interface Discipline {
   id: number;
@@ -24,7 +31,10 @@ interface Student {
   prenom: string;
   classe: string;
   numero: string;
-   groupe: string | null; 
+  groupe: string | null;
+  telephone: string | null;
+  code_verification: string | null;
+  acces_genere_le: string | null;
 }
 
 interface NewStudent {
@@ -33,7 +43,10 @@ interface NewStudent {
   classe: string;
   numero: string;
   groupe: string;
+  telephone: string;
 }
+
+const emptyNewStudent: NewStudent = { nom: '', prenom: '', classe: '', numero: '', groupe: '', telephone: '' };
 
 interface TeacherPageProps {
   isAuthenticated: boolean;
@@ -47,19 +60,17 @@ const TeacherPage: React.FC<TeacherPageProps> = ({ isAuthenticated, onAuthentica
   const [selectedStudent, setSelectedStudent] = useState<Student | null>(null);
   const [studentNotes, setStudentNotes] = useState<Note[]>([]);
   const [newDiscipline, setNewDiscipline] = useState('');
-  const [newStudent, setNewStudent] = useState<NewStudent>({ 
-    nom: '', 
-    prenom: '', 
-    classe: '', 
-    numero: '',
-    groupe: ''
-  });
+  const [newStudent, setNewStudent] = useState<NewStudent>(emptyNewStudent);
+  const [annee, setAnnee] = useState(currentAcademicYear);
+  const [phoneDraft, setPhoneDraft] = useState('');
   const [passwordInput, setPasswordInput] = useState('');
   const [showPasswordError, setShowPasswordError] = useState(false);
   const [teacherPassword, setTeacherPassword] = useState('enseignant2025');
   const [loading, setLoading] = useState(false);
   const [selectedClasse, setSelectedClasse] = useState<string>('');
   const [filteredStudents, setFilteredStudents] = useState<Student[]>([]);
+  const [generatedAccesses, setGeneratedAccesses] = useState<GeneratedAccess[] | null>(null);
+  const [generating, setGenerating] = useState(false);
 
   useEffect(() => {
     const savedPassword = localStorage.getItem('teacherPassword');
@@ -101,25 +112,35 @@ const TeacherPage: React.FC<TeacherPageProps> = ({ isAuthenticated, onAuthentica
   };
 
   const loadStudents = async () => {
-    const { data, error } = await supabase
-      .from('students')
-      .select('*')
-      .order('nom', { ascending: true });
-
-    if (error) {
-      console.error('Erreur:', error);
-      toast.error("Erreur lors du chargement des étudiants");
-    } else {
-      setStudents(data || []);
-    }
+    const { data, error } = await fetchYearStudents(annee);
+    if (error) toast.error("Erreur lors du chargement des étudiants");
+    else setStudents(data);
   };
+
+  // Class names from the previous year, suggested when opening classes for online registration.
+  const [previousClasses, setPreviousClasses] = useState<string[]>([]);
+  useEffect(() => {
+    const y = parseInt(annee, 10);
+    fetchYearStudents(`${y - 1}-${y}`).then(r => setPreviousClasses(classesOf(r.data)));
+  }, [annee]);
+
+  useEffect(() => {
+    if (!isAuthenticated) return;
+    handleClasseSelect('');
+    loadStudents();
+  }, [annee]);
+
+  useEffect(() => {
+    setPhoneDraft(selectedStudent?.telephone ?? '');
+  }, [selectedStudent?.id]);
 
   const loadStudentNotes = async (studentId: number) => {
     setLoading(true);
     const { data, error } = await supabase
       .from('notes')
       .select('*')
-      .eq('student_id', studentId);
+      .eq('student_id', studentId)
+      .eq('annee_academique', annee);
 
     if (error) {
       console.error('Erreur:', error);
@@ -204,41 +225,119 @@ const TeacherPage: React.FC<TeacherPageProps> = ({ isAuthenticated, onAuthentica
       return;
     }
 
-    const { error } = await supabase
+    const classe = newStudent.classe.trim();
+    const groupe = newStudent.groupe.trim() || null;
+
+    const { data: created, error } = await supabase
       .from('students')
-      .insert([newStudent])
-      .select();
+      .insert([{ ...newStudent, classe, groupe, telephone: newStudent.telephone.trim() || null }])
+      .select('id')
+      .single();
+
+    let studentId: number | null = created?.id ?? null;
 
     if (error) {
-      if (error.code === '23505') {
-        toast.error("Ce numéro est déjà utilisé");
-      } else {
+      if (error.code !== '23505') {
         console.error('Erreur:', error);
         toast.error("Erreur lors de l'ajout de l'étudiant");
+        return;
       }
-    } else {
-      toast.success("Étudiant ajouté avec succès");
-      setNewStudent({ nom: '', prenom: '', classe: '', numero: '', groupe: ''});
-      loadStudents();
+      // The numero already exists: this is a returning student, so only add this year's inscription.
+      const { data: existing } = await supabase
+        .from('students')
+        .select(STUDENT_COLUMNS)
+        .eq('numero', newStudent.numero.trim())
+        .maybeSingle();
+      if (!existing) {
+        toast.error('Ce numéro est déjà utilisé');
+        return;
+      }
+      if (!confirm(`Le numéro ${existing.numero} appartient déjà à ${existing.nom} ${existing.prenom}. L'inscrire en ${classe} pour ${annee} ?`)) return;
+      studentId = existing.id;
     }
+
+    const { error: inscError } = await supabase
+      .from('inscriptions')
+      .upsert([{ student_id: studentId, annee_academique: annee, classe, groupe }], { onConflict: 'student_id,annee_academique' });
+
+    if (inscError) {
+      console.error('Erreur:', inscError);
+      toast.error("L'étudiant n'a pas pu être inscrit pour cette année");
+      return;
+    }
+    toast.success(`Étudiant inscrit en ${classe} pour ${annee}`);
+    setNewStudent(emptyNewStudent);
+    loadStudents();
   };
 
-  const deleteStudent = async (id: number) => {
+  const removeFromYear = async (id: number) => {
+    if (!confirm(`Retirer cet étudiant de l'année ${annee} ? Ses notes et ses autres années sont conservées.`)) return;
     const { error } = await supabase
-      .from('students')
+      .from('inscriptions')
       .delete()
-      .eq('id', id);
+      .eq('student_id', id)
+      .eq('annee_academique', annee);
 
     if (error) {
       console.error('Erreur:', error);
-      toast.error("Erreur lors de la suppression");
-    } else {
-      toast.success("Étudiant supprimé");
-      if (selectedStudent?.id === id) {
-        setSelectedStudent(null);
-        setStudentNotes([]);
-      }
-      loadStudents();
+      toast.error("Erreur lors du retrait");
+      return;
+    }
+    toast.success(`Étudiant retiré de ${annee}`);
+    if (selectedStudent?.id === id) {
+      setSelectedStudent(null);
+      setStudentNotes([]);
+    }
+    loadStudents();
+  };
+
+  const generateAccess = async (targets: Student[]) => {
+    if (targets.length === 0) return;
+    setGenerating(true);
+    const results: GeneratedAccess[] = [];
+    let failures = 0;
+    for (const s of targets) {
+      const code = generateAccessCode();
+      // RLS can silently skip the update, so a zero row count is a failure too.
+      const { error, count } = await supabase
+        .from('students')
+        .update({ code_acces: code, acces_genere_le: new Date().toISOString() }, { count: 'exact' })
+        .eq('id', s.id);
+      if (error || count === 0) failures++;
+      else results.push({ id: s.id, nom: s.nom, prenom: s.prenom, numero: s.numero, telephone: s.telephone, code });
+    }
+    setGenerating(false);
+    if (failures) toast.error(`${failures} accès n'ont pas pu être générés`);
+    if (results.length) setGeneratedAccesses(results);
+    await loadStudents();
+  };
+
+  const savePhone = async () => {
+    if (!selectedStudent) return;
+    const value = phoneDraft.trim();
+    if (value && !normalizePhone(value)) {
+      toast.error('Numéro invalide : indiquez l\'indicatif du pays, ex. +212 1 23 456 789');
+      return;
+    }
+    const { error, count } = await supabase
+      .from('students')
+      .update({ telephone: value || null }, { count: 'exact' })
+      .eq('id', selectedStudent.id);
+    if (error || count === 0) {
+      toast.error("Le numéro n'a pas pu être enregistré");
+      return;
+    }
+    toast.success('Numéro enregistré');
+    setSelectedStudent({ ...selectedStudent, telephone: value || null });
+    loadStudents();
+  };
+
+  const generateClassAccess = () => {
+    const withoutAccess = filteredStudents.filter(s => !s.acces_genere_le);
+    if (withoutAccess.length > 0) {
+      generateAccess(withoutAccess);
+    } else if (confirm('Tous les étudiants de cette classe ont déjà un accès. Régénérer tous les codes ? Les anciens codes ne fonctionneront plus.')) {
+      generateAccess(filteredStudents);
     }
   };
 
@@ -277,6 +376,7 @@ const TeacherPage: React.FC<TeacherPageProps> = ({ isAuthenticated, onAuthentica
      const insertData = {
       student_id: selectedStudent.id,
       discipline_id: disciplineId,
+      annee_academique: annee,
       [noteType]: parsedNote,
       ...(noteType !== 'note1' && { note1: null }),
       ...(noteType !== 'note2' && { note2: null }),
@@ -420,12 +520,20 @@ const TeacherPage: React.FC<TeacherPageProps> = ({ isAuthenticated, onAuthentica
         </div>
 
         <div className="bg-white rounded-2xl shadow-xl p-8">
-          <div className="flex items-center gap-3 mb-8">
-            <div className="bg-indigo-100 p-3 rounded-lg">
-              <BookOpen size={32} className="text-indigo-600" />
+          <div className="flex flex-col md:flex-row md:items-center justify-between gap-4 mb-8">
+            <div className="flex items-center gap-3">
+              <div className="bg-indigo-100 p-3 rounded-lg">
+                <BookOpen size={32} className="text-indigo-600" />
+              </div>
+              <h1 className="text-3xl font-bold text-gray-800">Espace Enseignant</h1>
             </div>
-            <h1 className="text-3xl font-bold text-gray-800">Espace Enseignant</h1>
+            <AcademicYearSelect value={annee} onChange={setAnnee} />
           </div>
+          {annee !== currentAcademicYear() && (
+            <p className="text-sm text-amber-700 bg-amber-50 border border-amber-200 rounded-lg px-3 py-2 mb-6">
+              Vous travaillez sur l'année {annee} : classes, inscriptions, notes et partages concernent cette année.
+            </p>
+          )}
 
           <div className="grid grid-cols-1 lg:grid-cols-3 gap-6 mb-8">
             {/* Gestion des disciplines */}
@@ -467,7 +575,10 @@ const TeacherPage: React.FC<TeacherPageProps> = ({ isAuthenticated, onAuthentica
 
             {/* Gestion des étudiants */}
             <div className="bg-green-50 p-6 rounded-lg lg:col-span-2">
-              <h2 className="text-xl font-semibold mb-4 text-gray-800">Ajouter un étudiant</h2>
+              <h2 className="text-xl font-semibold mb-1 text-gray-800">Inscrire un étudiant en {annee}</h2>
+              <p className="text-xs text-gray-500 mb-4">
+                Si le numéro existe déjà, l'étudiant est simplement inscrit dans cette classe pour {annee}.
+              </p>
               <div className="grid grid-cols-2 gap-3 mb-4">
                 <input
                   type="text"
@@ -503,7 +614,14 @@ const TeacherPage: React.FC<TeacherPageProps> = ({ isAuthenticated, onAuthentica
                   value={newStudent.groupe}
                   onChange={(e) => setNewStudent({...newStudent, groupe: e.target.value})}
                   placeholder="Groupe (optionnel)"
-                  className="px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-green-500 focus:border-transparent col-span-2"
+                  className="px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-green-500 focus:border-transparent"
+                />
+                <input
+                  type="tel"
+                  value={newStudent.telephone}
+                  onChange={(e) => setNewStudent({...newStudent, telephone: e.target.value})}
+                  placeholder="WhatsApp avec indicatif, ex. +212 1 23 456 789"
+                  className="px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-green-500 focus:border-transparent"
                 />
               </div>
               <button
@@ -511,15 +629,21 @@ const TeacherPage: React.FC<TeacherPageProps> = ({ isAuthenticated, onAuthentica
                 className="w-full bg-green-600 text-white px-6 py-2 rounded-lg hover:bg-green-700 flex items-center justify-center gap-2"
               >
                 <Plus size={20} />
-                Ajouter l'étudiant
+                Inscrire l'étudiant
               </button>
             </div>
           </div>
 
+          {annee === currentAcademicYear() && (
+            <OnlineRegistrationPanel annee={annee} suggestions={[...new Set([...getClasses(), ...previousClasses])].sort()} />
+          )}
+
+          <ReinscriptionPanel annee={annee} currentStudents={students} onDone={loadStudents} />
+
           {/* Sélection d'étudiant et saisie des notes */}
           <div className="bg-purple-50 p-6 rounded-lg">
-            <h2 className="text-xl font-semibold mb-4 text-gray-800">Saisie des notes</h2>
-            
+            <h2 className="text-xl font-semibold text-gray-800 mb-4">Saisie des notes — {annee}</h2>
+
          {/* Sélection de la classe puis de l'étudiant */}
             <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mb-6">
               {/* Sélection de la classe */}
@@ -578,6 +702,24 @@ const TeacherPage: React.FC<TeacherPageProps> = ({ isAuthenticated, onAuthentica
               </div>
             </div>
 
+            {selectedClasse && filteredStudents.length > 0 && (
+              <div className="bg-white border border-indigo-100 rounded-lg px-4 py-3 mb-6 flex flex-col sm:flex-row sm:items-center justify-between gap-3">
+                <p className="text-sm text-gray-700">
+                  <KeyRound size={16} className="inline text-indigo-600 mr-1.5 -mt-0.5" />
+                  Accès à l'espace étudiant :{' '}
+                  <strong>{filteredStudents.filter(s => s.acces_genere_le).length}/{filteredStudents.length}</strong>{' '}
+                  étudiants de la classe ont un accès
+                </p>
+                <button
+                  onClick={generateClassAccess}
+                  disabled={generating}
+                  className="text-sm bg-indigo-600 hover:bg-indigo-700 text-white px-4 py-2 rounded-lg font-medium disabled:opacity-50 whitespace-nowrap"
+                >
+                  {generating ? 'Génération…' : 'Générer les accès de la classe'}
+                </button>
+              </div>
+            )}
+
             {/* Affichage des champs de notes pour l'étudiant sélectionné */}
             {selectedStudent && (
             <div className="bg-white p-6 rounded-lg shadow">
@@ -594,14 +736,64 @@ const TeacherPage: React.FC<TeacherPageProps> = ({ isAuthenticated, onAuthentica
                       </span>
                     )}
                   </p>
+                  {(() => {
+                    const current = students.find(s => s.id === selectedStudent.id) ?? selectedStudent;
+                    return (
+                      <p className="text-sm text-gray-600 mt-1 flex flex-wrap items-center gap-x-3 gap-y-1">
+                        <span className="flex items-center gap-1 text-teal-700">
+                          <ShieldCheck size={14} /> Code de vérification :{' '}
+                          <strong className="font-mono tracking-wider">{current.code_verification ?? '—'}</strong>
+                        </span>
+                        <span className="text-gray-500">
+                          {current.acces_genere_le
+                            ? `Accès créé le ${new Date(current.acces_genere_le).toLocaleDateString('fr-FR')}`
+                            : 'Pas encore d\'accès à l\'espace étudiant'}
+                        </span>
+                      </p>
+                    );
+                  })()}
+                  <div className="flex items-center gap-2 mt-2">
+                    <Phone size={15} className="text-green-600" />
+                    <input
+                      type="tel"
+                      value={phoneDraft}
+                      onChange={e => setPhoneDraft(e.target.value)}
+                      placeholder="WhatsApp, ex. +212 1 23 456 789"
+                      className="w-60 px-3 py-1.5 border border-gray-300 rounded-lg text-sm focus:ring-2 focus:ring-green-500"
+                    />
+                    {phoneDraft.trim() !== (selectedStudent.telephone ?? '') && (
+                      <button
+                        onClick={savePhone}
+                        className="text-sm bg-green-600 hover:bg-green-700 text-white px-3 py-1.5 rounded-lg"
+                      >
+                        Enregistrer
+                      </button>
+                    )}
+                  </div>
                 </div>
+                <div className="flex items-center gap-4">
                   <button
-                    onClick={() => deleteStudent(selectedStudent.id)}
+                    onClick={() => {
+                      const current = students.find(s => s.id === selectedStudent.id) ?? selectedStudent;
+                      if (current.acces_genere_le && !confirm("Régénérer le code ? L'ancien code ne fonctionnera plus.")) return;
+                      generateAccess([current]);
+                    }}
+                    disabled={generating}
+                    className="text-indigo-600 hover:text-indigo-800 flex items-center gap-2 disabled:opacity-50"
+                  >
+                    <KeyRound size={18} />
+                    {(students.find(s => s.id === selectedStudent.id) ?? selectedStudent).acces_genere_le
+                      ? 'Nouveau code d\'accès'
+                      : 'Créer l\'accès'}
+                  </button>
+                  <button
+                    onClick={() => removeFromYear(selectedStudent.id)}
                     className="text-red-500 hover:text-red-700 flex items-center gap-2"
                   >
                     <Trash2 size={18} />
-                    Supprimer
+                    Retirer de {annee}
                   </button>
+                </div>
                 </div>
 
                 {loading ? (
@@ -734,8 +926,14 @@ const TeacherPage: React.FC<TeacherPageProps> = ({ isAuthenticated, onAuthentica
               </div>
             )}
           </div>
+
+          <TeacherSharing classes={getClasses()} disciplines={disciplines} annee={annee} />
         </div>
       </div>
+
+      {generatedAccesses && (
+        <StudentAccessModal accesses={generatedAccesses} onClose={() => setGeneratedAccesses(null)} />
+      )}
     </div>
   );
 };
