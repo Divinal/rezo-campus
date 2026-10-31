@@ -20,6 +20,32 @@ interface Result {
 
 const inputClass = 'w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-teal-500 focus:border-transparent';
 
+interface UsedRegistration {
+  prenom: string;
+  numero: string;
+  classe: string;
+}
+
+// One registration per browser and per academic year. The access code is never stored here.
+const usedKey = (annee: string) => `inscriptionUtilisee-${annee}`;
+
+const readUsed = (annee: string): UsedRegistration | null => {
+  try {
+    const raw = localStorage.getItem(usedKey(annee));
+    return raw ? JSON.parse(raw) : null;
+  } catch {
+    return null;
+  }
+};
+
+const markUsed = (annee: string, used: UsedRegistration) => {
+  try {
+    localStorage.setItem(usedKey(annee), JSON.stringify(used));
+  } catch {
+    // Storage unavailable (private mode): the registration itself is already saved.
+  }
+};
+
 // Returns the first free identifier: IGICBO2026, then IGICBO2026-2, IGICBO2026-3…
 const nextFreeNumero = async (prefix: string): Promise<string> => {
   const { data } = await supabase.from('students').select('numero').ilike('numero', `${prefix}%`);
@@ -39,6 +65,12 @@ const InscriptionEtudiant: React.FC = () => {
   const [saving, setSaving] = useState(false);
   const [result, setResult] = useState<Result | null>(null);
   const [copied, setCopied] = useState(false);
+  const [alreadyUsed] = useState(() => readUsed(annee));
+
+  const finish = (r: Result) => {
+    markUsed(annee, { prenom: r.prenom, numero: r.numero, classe: r.classe });
+    setResult(r);
+  };
 
   useEffect(() => {
     supabase
@@ -86,7 +118,7 @@ const InscriptionEtudiant: React.FC = () => {
 
       const { error: inscError } = await inscrire(data.id, form.classe);
       if (inscError) return setError('Votre compte est créé mais l\'inscription en classe a échoué. Contactez l\'établissement.');
-      setResult({ prenom, numero, code, classe: form.classe, telephone });
+      finish({ prenom, numero, code, classe: form.classe, telephone });
       return;
     }
     setError('L\'inscription n\'a pas pu être enregistrée. Réessayez.');
@@ -133,7 +165,7 @@ const InscriptionEtudiant: React.FC = () => {
 
     const { error: inscError } = await inscrire(student.id, form.classe);
     if (inscError) return setError('La réinscription n\'a pas pu être enregistrée. Réessayez.');
-    setResult({ prenom: student.prenom, numero: student.numero, code, classe: form.classe, telephone: telephone || student.telephone });
+    finish({ prenom: student.prenom, numero: student.numero, code, classe: form.classe, telephone: telephone || student.telephone });
   };
 
   const submit = async (e: React.FormEvent) => {
@@ -215,6 +247,24 @@ const InscriptionEtudiant: React.FC = () => {
               </div>
 
               <Link to="/notes" className="inline-flex items-center gap-1 text-teal-700 hover:underline mt-6 text-sm">
+                Aller à l'espace étudiant
+              </Link>
+            </div>
+          ) : alreadyUsed ? (
+            <div className="bg-white rounded-2xl shadow-xl p-7 text-center">
+              <CheckCircle2 size={52} className="text-teal-500 mx-auto mb-3" />
+              <h2 className="text-xl font-bold text-gray-800">Lien déjà utilisé sur cet appareil</h2>
+              <p className="text-gray-600 mt-2">
+                {alreadyUsed.prenom}, votre inscription en <strong>{alreadyUsed.classe}</strong> pour {annee} est
+                déjà enregistrée sous l'identifiant <strong className="font-mono">{alreadyUsed.numero}</strong>.
+              </p>
+              <p className="text-sm text-gray-500 mt-3">
+                Code d'accès perdu ou erreur dans l'inscription ? Contactez votre établissement.
+              </p>
+              <Link
+                to="/notes"
+                className="inline-flex items-center justify-center gap-2 bg-gradient-to-r from-green-600 to-teal-600 text-white px-6 py-3 rounded-lg font-medium mt-6"
+              >
                 Aller à l'espace étudiant
               </Link>
             </div>
