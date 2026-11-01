@@ -25,12 +25,13 @@ export default {
 				ring: 'hsl(var(--ring))',
 				background: 'hsl(var(--background))',
 				foreground: 'hsl(var(--foreground))',
+				// Rezo Edu palette: teal for actions, amber for highlights (see src/styles/rezo-dark.css)
 				primary: {
-					DEFAULT: '#1a365d',
+					DEFAULT: '#0d9488',
 					foreground: '#ffffff'
 				},
 				secondary: {
-					DEFAULT: '#ff7f50',
+					DEFAULT: '#d97706',
 					foreground: '#ffffff'
 				},
 				destructive: {

@@ -74,8 +74,8 @@ const servicesList = [
   {
     id: 'accompagnement',
     Icon: GraduationCap,
-    bgHeader: 'bg-[#1a365d]',
-    bgDot: 'bg-[#1a365d]',
+    bgHeader: 'bg-primary',
+    bgDot: 'bg-primary',
     title: 'Accompagnement des Étudiants',
     subtitle: "Orientation, inscription et mobilité internationale",
     description: "Nous guidons chaque étudiant de la sélection de l'école jusqu'à l'intégration.",
@@ -91,7 +91,7 @@ const servicesList = [
     ],
     cta: 'Découvrir',
     ctaLink: '/accompagnement',
-    ctaClass: 'bg-[#1a365d] hover:bg-[#1a365d]/90',
+    ctaClass: 'bg-primary hover:bg-primary/90',
   },
   {
     id: 'immobilier',
@@ -119,7 +119,7 @@ const Services: React.FC = () => {
     <div className="min-h-screen flex flex-col">
       <Header />
 
-      <section className="bg-[#1a365d] text-white py-16">
+      <section className="bg-primary text-white py-16">
         <div className="container mx-auto px-4 text-center">
           <h1 className="text-4xl md:text-5xl font-bold mb-4">Nos Services</h1>
           <p className="text-xl max-w-3xl mx-auto text-blue-100">

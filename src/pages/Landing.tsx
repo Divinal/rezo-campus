@@ -130,7 +130,7 @@ const Landing: React.FC = () => {
             className="relative rounded-xl overflow-hidden group"
             style={{ height: '155px' }}
           >
-            <div className="absolute inset-0 bg-gradient-to-br from-[#1a365d] to-blue-600 group-hover:brightness-110 transition-all duration-300" />
+            <div className="absolute inset-0 bg-gradient-to-br from-primary to-blue-600 group-hover:brightness-110 transition-all duration-300" />
             <div className="absolute inset-0 flex flex-col justify-end p-4">
               <span className="text-3xl mb-1">🎓</span>
               <span className="text-white font-bold text-sm">Écoles & Formations</span>
@@ -406,7 +406,7 @@ const Landing: React.FC = () => {
       </section>
 
       {/* Visa Information Section */}
-      <section className="py-20 bg-primary text-white">
+      <section className="py-20 bg-gradient-to-br from-gray-900 via-gray-900 to-teal-950 border-y border-gray-800 text-white">
         <div className="container mx-auto px-4">
           <div className="text-center mb-16">
             <h2 className="text-3xl md:text-4xl font-bold mb-4">
@@ -463,7 +463,7 @@ const Landing: React.FC = () => {
       </section>
 
       {/* CTA Section */}
-      <section className="py-20 bg-secondary">
+      <section className="py-20 bg-teal-900/40 border-t border-teal-800/40">
         <div className="container mx-auto px-4 text-center">
           <h2 className="text-3xl md:text-4xl font-bold text-primary mb-6">
             Prêt à Commencer Votre Parcours ?

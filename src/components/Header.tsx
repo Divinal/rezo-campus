@@ -52,7 +52,7 @@ const Header: React.FC = () => {
   ];
 
   return (
-    <header className="bg-primary shadow-md animate-fade-in">
+    <header className="bg-gray-950 border-b border-gray-800 shadow-md animate-fade-in">
       {/* Navigation principale en haut */}
       <div className="container mx-auto px-4 py-2">
         <div className="flex justify-between items-center">

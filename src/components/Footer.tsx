@@ -7,7 +7,7 @@ const Footer: React.FC = () => {
   const currentYear = new Date().getFullYear();
   
   return (
-    <footer className="bg-primary text-white py-8">
+    <footer className="bg-gray-950 border-t border-gray-800 text-white py-8">
       <div className="container mx-auto px-4">
         <div className="grid grid-cols-1 md:grid-cols-4 gap-8">
           <div>
@@ -22,7 +22,7 @@ const Footer: React.FC = () => {
           </div>
           
           <div>
-            <h3 className="text-xl font-semibold mb-4 bg-blue-600 px-2 py-1">Liens rapides</h3>
+            <h3 className="text-xl font-semibold mb-4 text-teal-400 border-b border-gray-800 pb-2">Liens rapides</h3>
             <ul className="space-y-2">
               <li>
                 <Link to="/" className="text-gray-300 hover:text-secondary transition-colors">
@@ -58,7 +58,7 @@ const Footer: React.FC = () => {
           </div>
 
           <div>
-            <h3 className="text-xl font-semibold mb-4 bg-blue-600 px-2 py-1">Légal</h3>
+            <h3 className="text-xl font-semibold mb-4 text-teal-400 border-b border-gray-800 pb-2">Légal</h3>
             <ul className="space-y-2">
               <li>
                 <Link to="/privacy-policy" className="text-gray-300 hover:text-secondary transition-colors">
@@ -79,7 +79,7 @@ const Footer: React.FC = () => {
           </div>
           
           <div>
-            <h3 className="text-xl font-semibold mb-4 bg-blue-600 px-2 py-1">Contact</h3>
+            <h3 className="text-xl font-semibold mb-4 text-teal-400 border-b border-gray-800 pb-2">Contact</h3>
             <address className="not-italic text-gray-300 mb-4">
               <p>Adress Maroc : 64, Rue Allal Ben Abdellah Casablanca</p>
               <p className="mt-2">Adress Congo : Av de l'OUA, bloc 88-91, Moukoundzi Ngouaka, Brazzaville <strong>(Marche Total : L'enceinte de Centre d'Accueil)</strong></p>

@@ -19,7 +19,7 @@ const scrollTo = (id: string) => {
 };
 
 const miniCards = [
-  { icon: '🎓', label: 'Écoles & Formations', sub: 'Écoles partenaires au Maroc', target: 'ecoles', bg: 'from-[#1a365d] to-blue-700' },
+  { icon: '🎓', label: 'Écoles & Formations', sub: 'Écoles partenaires au Maroc', target: 'ecoles', bg: 'from-primary to-blue-700' },
   { icon: '📸', label: 'Forum & Événements', sub: 'Galerie photos et vidéos', target: 'forum', bg: 'from-gray-800 to-gray-700' },
   { icon: '🛂', label: 'Visa & AEVM', sub: 'Démarches administratives', target: 'visa', bg: 'from-green-800 to-green-600' },
   { icon: '🏠', label: 'Logement', sub: 'Résidences & appartements', target: 'logement', bg: 'from-purple-800 to-purple-600' },
@@ -155,7 +155,7 @@ const Accompagnement: React.FC = () => {
             </p>
             <button
               onClick={() => scrollTo('ecoles')}
-              className="inline-flex items-center gap-2 bg-[#ff7f50] text-white px-7 py-3.5 rounded-lg font-semibold hover:bg-[#ff7f50]/90 transition-colors"
+              className="inline-flex items-center gap-2 bg-secondary text-white px-7 py-3.5 rounded-lg font-semibold hover:bg-secondary/90 transition-colors"
             >
               Commencer <ArrowRight className="w-5 h-5" />
             </button>
@@ -194,7 +194,7 @@ const Accompagnement: React.FC = () => {
               <button
                 key={id}
                 onClick={() => scrollTo(id)}
-                className="whitespace-nowrap px-4 py-2 rounded-full text-sm font-medium bg-gray-100 hover:bg-[#1a365d] hover:text-white transition-colors"
+                className="whitespace-nowrap px-4 py-2 rounded-full text-sm font-medium bg-gray-100 hover:bg-primary hover:text-white transition-colors"
               >
                 {label}
               </button>
@@ -213,7 +213,7 @@ const Accompagnement: React.FC = () => {
                 title: 'Écoles & Formations',
                 desc: 'Parcourez notre sélection d\'écoles partenaires au Maroc et trouvez la formation qui correspond à vos ambitions.',
                 target: 'ecoles',
-                bg: 'from-[#1a365d] to-blue-700',
+                bg: 'from-primary to-blue-700',
               },
               {
                 icon: '📸',
@@ -272,8 +272,8 @@ const Accompagnement: React.FC = () => {
       <section id="ecoles" className="py-16 bg-white">
         <div className="container mx-auto px-4">
           <div className="text-center mb-10">
-            <div className="inline-flex items-center justify-center w-14 h-14 bg-[#1a365d]/10 rounded-2xl mb-4">
-              <GraduationCap className="w-8 h-8 text-[#1a365d]" />
+            <div className="inline-flex items-center justify-center w-14 h-14 bg-primary/10 rounded-2xl mb-4">
+              <GraduationCap className="w-8 h-8 text-primary" />
             </div>
             <h2 className="text-3xl font-bold text-gray-800 mb-3">Écoles & Formations</h2>
             <p className="text-gray-600 max-w-2xl mx-auto">
@@ -296,11 +296,11 @@ const Accompagnement: React.FC = () => {
                         alt={`Logo ${school.name}`}
                         className="w-full h-28 object-contain bg-gray-50 rounded-lg mb-3"
                       />
-                      <h3 className="text-base font-bold text-[#1a365d] mb-2 line-clamp-2">{school.name}</h3>
+                      <h3 className="text-base font-bold text-primary mb-2 line-clamp-2">{school.name}</h3>
                       <p className="text-gray-600 text-sm line-clamp-2 flex-grow mb-3">{school.description}</p>
                       <Link
                         to={`/school/${school.id}`}
-                        className="bg-[#1a365d] text-white text-sm py-2 px-3 rounded-md text-center hover:bg-[#1a365d]/90 transition-colors"
+                        className="bg-primary text-white text-sm py-2 px-3 rounded-md text-center hover:bg-primary/90 transition-colors"
                       >
                         Voir les formations
                       </Link>
@@ -316,7 +316,7 @@ const Accompagnement: React.FC = () => {
           <div className="text-center">
             <Link
               to="/schools"
-              className="inline-flex items-center gap-2 bg-[#1a365d] text-white px-6 py-3 rounded-lg hover:bg-[#1a365d]/90 transition-colors font-semibold"
+              className="inline-flex items-center gap-2 bg-primary text-white px-6 py-3 rounded-lg hover:bg-primary/90 transition-colors font-semibold"
             >
               Voir toutes les écoles <ArrowRight className="w-5 h-5" />
             </Link>
@@ -358,7 +358,7 @@ const Accompagnement: React.FC = () => {
               </Link>
             </div>
             <div className="w-full md:w-72 flex-shrink-0">
-              <div className="bg-[#1a365d] rounded-2xl p-8 text-center text-white">
+              <div className="bg-primary rounded-2xl p-8 text-center text-white">
                 <div className="text-6xl mb-4">📸</div>
                 <h3 className="text-xl font-bold mb-2">Forum 2026</h3>
                 <p className="text-blue-200 text-sm mb-4">
@@ -366,7 +366,7 @@ const Accompagnement: React.FC = () => {
                 </p>
                 <Link
                   to="/forum-galerie"
-                  className="inline-flex items-center gap-2 bg-[#ff7f50] text-white px-5 py-2 rounded-lg hover:bg-[#ff7f50]/90 transition-colors font-semibold text-sm"
+                  className="inline-flex items-center gap-2 bg-secondary text-white px-5 py-2 rounded-lg hover:bg-secondary/90 transition-colors font-semibold text-sm"
                 >
                   Ouvrir la galerie →
                 </Link>
@@ -392,16 +392,16 @@ const Accompagnement: React.FC = () => {
           <div className="grid md:grid-cols-3 gap-6 mb-10">
             <Link
               to="/administration"
-              className="group bg-white rounded-xl border-2 border-gray-100 hover:border-[#1a365d] p-6 shadow-sm hover:shadow-md transition-all"
+              className="group bg-white rounded-xl border-2 border-gray-100 hover:border-primary p-6 shadow-sm hover:shadow-md transition-all"
             >
-              <div className="w-12 h-12 bg-[#1a365d]/10 rounded-xl flex items-center justify-center mb-4 group-hover:bg-[#1a365d]/20 transition-colors">
-                <FileCheck className="w-6 h-6 text-[#1a365d]" />
+              <div className="w-12 h-12 bg-primary/10 rounded-xl flex items-center justify-center mb-4 group-hover:bg-primary/20 transition-colors">
+                <FileCheck className="w-6 h-6 text-primary" />
               </div>
               <h3 className="font-bold text-gray-800 mb-2">Administration Visa & AEVM</h3>
               <p className="text-gray-600 text-sm">
                 Constitution du dossier, dépôt et suivi de votre demande d'AEVM.
               </p>
-              <span className="text-[#1a365d] text-sm font-semibold mt-3 inline-flex items-center gap-1">
+              <span className="text-primary text-sm font-semibold mt-3 inline-flex items-center gap-1">
                 En savoir plus <ArrowRight className="w-3 h-3" />
               </span>
             </Link>
@@ -440,8 +440,8 @@ const Accompagnement: React.FC = () => {
           </div>
 
           {/* AEVM Steps */}
-          <div className="bg-[#1a365d]/5 rounded-2xl p-6 border border-[#1a365d]/20">
-            <h3 className="font-bold text-[#1a365d] text-lg mb-4">
+          <div className="bg-primary/5 rounded-2xl p-6 border border-primary/20">
+            <h3 className="font-bold text-primary text-lg mb-4">
               Les 3 étapes pour obtenir votre AEVM
             </h3>
             <div className="grid md:grid-cols-3 gap-6">
@@ -463,7 +463,7 @@ const Accompagnement: React.FC = () => {
                 },
               ].map(({ step, title, desc }) => (
                 <div key={step} className="flex gap-3">
-                  <div className="w-8 h-8 bg-[#1a365d] text-white rounded-full flex items-center justify-center font-bold text-sm flex-shrink-0">
+                  <div className="w-8 h-8 bg-primary text-white rounded-full flex items-center justify-center font-bold text-sm flex-shrink-0">
                     {step}
                   </div>
                   <div>
@@ -481,8 +481,8 @@ const Accompagnement: React.FC = () => {
       <section id="etranger" className="py-16 bg-gray-50">
         <div className="container mx-auto px-4">
           <div className="text-center mb-10">
-            <div className="inline-flex items-center justify-center w-14 h-14 bg-[#ff7f50]/15 rounded-2xl mb-4">
-              <Globe className="w-8 h-8 text-[#ff7f50]" />
+            <div className="inline-flex items-center justify-center w-14 h-14 bg-secondary/15 rounded-2xl mb-4">
+              <Globe className="w-8 h-8 text-secondary" />
             </div>
             <h2 className="text-3xl font-bold text-gray-800 mb-3">Études à l'étranger</h2>
             <p className="text-gray-600 max-w-2xl mx-auto">
@@ -516,7 +516,7 @@ const Accompagnement: React.FC = () => {
                   <ol className="space-y-2 mb-5 flex-grow">
                     {steps.map((s, i) => (
                       <li key={i} className="flex gap-2 text-sm text-gray-700">
-                        <span className="w-5 h-5 bg-[#1a365d] text-white rounded-full flex items-center justify-center text-xs font-bold flex-shrink-0 mt-0.5">
+                        <span className="w-5 h-5 bg-primary text-white rounded-full flex items-center justify-center text-xs font-bold flex-shrink-0 mt-0.5">
                           {i + 1}
                         </span>
                         {s}
@@ -525,7 +525,7 @@ const Accompagnement: React.FC = () => {
                   </ol>
                   <Link
                     to="/contact"
-                    className="inline-flex items-center gap-2 bg-[#1a365d] text-white px-5 py-2.5 rounded-lg hover:bg-[#1a365d]/90 transition-colors font-semibold text-sm self-start"
+                    className="inline-flex items-center gap-2 bg-primary text-white px-5 py-2.5 rounded-lg hover:bg-primary/90 transition-colors font-semibold text-sm self-start"
                   >
                     Être accompagné <ArrowRight className="w-4 h-4" />
                   </Link>
@@ -535,7 +535,7 @@ const Accompagnement: React.FC = () => {
           </div>
 
           {/* Autres destinations */}
-          <div className="max-w-6xl mx-auto mt-10 bg-[#1a365d] rounded-2xl p-6 md:p-8 text-white">
+          <div className="max-w-6xl mx-auto mt-10 bg-primary rounded-2xl p-6 md:p-8 text-white">
             <h3 className="text-xl font-bold mb-2">Et d'autres pays de votre choix</h3>
             <p className="text-blue-100 text-sm mb-6">
               Vous visez une autre destination ? Nous faisons les recherches pour vous et vous aidons

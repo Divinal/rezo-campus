@@ -8,7 +8,7 @@ const AvisGoogle = () => {
         href="https://g.page/r/CQTCfoLwaBQ-EAE/review"
         target="_blank"
         rel="noopener noreferrer"
-        className="inline-block px-6 py-3 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition"
+        className="inline-block px-6 py-3 bg-primary text-white rounded-lg hover:bg-teal-700 transition"
       >
        Laissez un avis 👉    ⭐  ⭐  ⭐  ⭐  ⭐ 
       </a>
