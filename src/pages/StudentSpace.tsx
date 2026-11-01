@@ -6,7 +6,7 @@ import { supabase } from '../lib/supabaseClient';
 import { toast } from '../components/ui/sonner';
 import Header from '../components/Header';
 import Footer from '../components/Footer';
-import { fetchParcours, YearInscription } from '../lib/inscriptions';
+import { YearInscription } from '../lib/inscriptions';
 import {
   Evaluation, Cours, Creneau, JOURS, evaluationType, formatDateTime, formatHeure, safeUrl, currentAcademicYear,
 } from '../lib/notesShared';
@@ -19,6 +19,8 @@ interface SpaceStudent {
   numero: string;
   groupe: string | null;
   code_verification: string | null;
+  // Notes and enrolments are only returned by the database for the right numero + access code.
+  code: string;
 }
 
 interface Discipline { id: number; nom: string; }
@@ -38,7 +40,9 @@ const SESSION_KEY = 'studentSpaceSession';
 const readSession = (): SpaceStudent | null => {
   try {
     const raw = localStorage.getItem(SESSION_KEY);
-    return raw ? JSON.parse(raw) : null;
+    const session = raw ? JSON.parse(raw) : null;
+    // Sessions saved before the access code was required cannot load notes anymore: log in again.
+    return session?.code ? session : null;
   } catch {
     return null;
   }
@@ -84,13 +88,13 @@ const StudentSpace: React.FC<Props> = ({ onBack }) => {
 
   // The same login gives access to every year the student was enrolled in; the latest year opens first.
   const loadParcours = async (s: SpaceStudent) => {
-    const [years, disc] = await Promise.all([
-      fetchParcours(s.id),
+    const [{ data: years }, disc] = await Promise.all([
+      supabase.rpc('student_parcours', { p_numero: s.numero, p_code: s.code }),
       supabase.from('disciplines').select('*').order('nom'),
     ]);
-    setParcours(years);
+    setParcours(years || []);
     setDisciplines(disc.data || []);
-    setAnnee(years[0]?.annee_academique ?? currentAcademicYear());
+    setAnnee(years?.[0]?.annee_academique ?? currentAcademicYear());
   };
 
   const loadYear = async (s: SpaceStudent, year: string) => {
@@ -105,7 +109,7 @@ const StudentSpace: React.FC<Props> = ({ onBack }) => {
         .order('created_at', { ascending: false }),
       supabase.from('emploi_du_temps').select('*').eq('classe', classe).eq('annee_academique', year)
         .order('jour').order('heure_debut'),
-      supabase.from('notes').select('*').eq('student_id', s.id).eq('annee_academique', year),
+      supabase.rpc('student_notes', { p_numero: s.numero, p_code: s.code, p_annee: year }),
     ]);
     if (ev.error || cr.error || edt.error || nt.error) toast.error('Certaines informations n\'ont pas pu être chargées');
     setEvaluations(ev.data || []);
@@ -119,10 +123,8 @@ const StudentSpace: React.FC<Props> = ({ onBack }) => {
     e.preventDefault();
     setLoginError('');
     setLoggingIn(true);
-    const { data, error } = await supabase.rpc('student_login', {
-      p_numero: numero.trim(),
-      p_code: code.trim().toUpperCase(),
-    });
+    const credentials = { p_numero: numero.trim(), p_code: code.trim().toUpperCase() };
+    const { data, error } = await supabase.rpc('student_login', credentials);
     setLoggingIn(false);
     if (error) {
       setLoginError('Connexion impossible pour le moment. Réessayez plus tard.');
@@ -132,8 +134,9 @@ const StudentSpace: React.FC<Props> = ({ onBack }) => {
       setLoginError('Identifiant ou code d\'accès incorrect.');
       return;
     }
-    localStorage.setItem(SESSION_KEY, JSON.stringify(data));
-    setStudent(data as SpaceStudent);
+    const session: SpaceStudent = { ...data, code: credentials.p_code };
+    localStorage.setItem(SESSION_KEY, JSON.stringify(session));
+    setStudent(session);
     setCode('');
   };
 

@@ -129,10 +129,7 @@ const Immo: React.FC = () => {
       const currentViews = currentProperty?.vues || 0;
       const newViews = currentViews + 1;
 
-      const { error } = await supabase
-        .from('proprietes')
-        .update({ vues: newViews })
-        .eq('id', propertyId);
+      const { error } = await supabase.rpc('increment_vues', { p_id: propertyId });
 
       if (!error) {
         setProperties(prev => 

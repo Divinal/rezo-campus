@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { Plus, Trash2, BookOpen, ArrowLeft, Lock, ChevronDown, Users, KeyRound, ShieldCheck, Phone } from 'lucide-react';
+import { Plus, Trash2, BookOpen, ArrowLeft, ChevronDown, Users, KeyRound, ShieldCheck, Phone } from 'lucide-react';
 import { supabase } from '../lib/supabaseClient';
 import { toast } from '../components/ui/sonner';
 import { STUDENT_COLUMNS, generateAccessCode, currentAcademicYear, normalizePhone } from '../lib/notesShared';
@@ -49,12 +49,10 @@ interface NewStudent {
 const emptyNewStudent: NewStudent = { nom: '', prenom: '', classe: '', numero: '', groupe: '', telephone: '' };
 
 interface TeacherPageProps {
-  isAuthenticated: boolean;
-  onAuthenticate: (auth: boolean) => void;
   onBack: () => void;
 }
 
-const TeacherPage: React.FC<TeacherPageProps> = ({ isAuthenticated, onAuthenticate, onBack }) => {
+const TeacherPage: React.FC<TeacherPageProps> = ({ onBack }) => {
   const [disciplines, setDisciplines] = useState<Discipline[]>([]);
   const [students, setStudents] = useState<Student[]>([]);
   const [selectedStudent, setSelectedStudent] = useState<Student | null>(null);
@@ -63,39 +61,23 @@ const TeacherPage: React.FC<TeacherPageProps> = ({ isAuthenticated, onAuthentica
   const [newStudent, setNewStudent] = useState<NewStudent>(emptyNewStudent);
   const [annee, setAnnee] = useState(currentAcademicYear);
   const [phoneDraft, setPhoneDraft] = useState('');
-  const [passwordInput, setPasswordInput] = useState('');
-  const [showPasswordError, setShowPasswordError] = useState(false);
-  const [teacherPassword, setTeacherPassword] = useState('enseignant2025');
   const [loading, setLoading] = useState(false);
   const [selectedClasse, setSelectedClasse] = useState<string>('');
   const [filteredStudents, setFilteredStudents] = useState<Student[]>([]);
   const [generatedAccesses, setGeneratedAccesses] = useState<GeneratedAccess[] | null>(null);
   const [generating, setGenerating] = useState(false);
 
+  // The old teacher password was kept in plain text in the browser: remove it.
   useEffect(() => {
-    const savedPassword = localStorage.getItem('teacherPassword');
-    if (savedPassword) setTeacherPassword(savedPassword);
-    else localStorage.setItem('teacherPassword', teacherPassword);
+    localStorage.removeItem('teacherPassword');
+    loadDisciplines();
   }, []);
-
-  useEffect(() => {
-    if (isAuthenticated) {
-      loadAllData();
-    }
-  }, [isAuthenticated]);
 
     useEffect(() => {
     if (selectedClasse) {
       setFilteredStudents(students.filter(s => s.classe === selectedClasse));
     }
   }, [students, selectedClasse]);
-
-  const loadAllData = async () => {
-    await Promise.all([
-      loadDisciplines(),
-      loadStudents()
-    ]);
-  };
 
   const loadDisciplines = async () => {
     const { data, error } = await supabase
@@ -124,8 +106,8 @@ const TeacherPage: React.FC<TeacherPageProps> = ({ isAuthenticated, onAuthentica
     fetchYearStudents(`${y - 1}-${y}`).then(r => setPreviousClasses(classesOf(r.data)));
   }, [annee]);
 
+  // Runs on mount too: the page is only rendered once AuthGuard has confirmed a staff session.
   useEffect(() => {
-    if (!isAuthenticated) return;
     handleClasseSelect('');
     loadStudents();
   }, [annee]);
@@ -173,17 +155,6 @@ const TeacherPage: React.FC<TeacherPageProps> = ({ isAuthenticated, onAuthentica
   const handleStudentSelect = (student: Student) => {
     setSelectedStudent(student);
     loadStudentNotes(student.id);
-  };
-
-  const checkTeacherPassword = () => {
-    if (passwordInput === teacherPassword) {
-      onAuthenticate(true);
-      setPasswordInput('');
-      setShowPasswordError(false);
-    } else {
-      setShowPasswordError(true);
-      setTimeout(() => setShowPasswordError(false), 3000);
-    }
   };
 
   const addDiscipline = async () => {
@@ -431,69 +402,6 @@ const TeacherPage: React.FC<TeacherPageProps> = ({ isAuthenticated, onAuthentica
     return (sum / validNotes.length).toFixed(2);
   };
 
-  const changePassword = (newPassword: string) => {
-    if (newPassword && newPassword.length >= 6) {
-      setTeacherPassword(newPassword);
-      localStorage.setItem('teacherPassword', newPassword);
-      toast.success('Mot de passe modifié avec succès !');
-    } else {
-      toast.error('Le mot de passe doit contenir au moins 6 caractères');
-    }
-  };
-
-  // Page de connexion
-  if (!isAuthenticated) {
-    return (
-      <div className="min-h-screen bg-gradient-to-br from-indigo-50 to-purple-100 flex items-center justify-center p-6">
-        <div className="max-w-md w-full">
-          <div className="mb-6">
-            <button
-              onClick={onBack}
-              className="flex items-center gap-2 text-indigo-700 hover:text-indigo-900 font-medium"
-            >
-              <ArrowLeft size={20} />
-              Retour
-            </button>
-          </div>
-
-          <div className="bg-white rounded-2xl shadow-xl p-8">
-            <div className="flex flex-col items-center mb-6">
-              <div className="bg-indigo-100 p-4 rounded-full mb-4">
-                <BookOpen size={40} className="text-indigo-600" />
-              </div>
-              <h1 className="text-2xl font-bold text-gray-800">Accès Enseignant</h1>
-              <p className="text-gray-600 text-sm mt-2">Entrez votre mot de passe</p>
-            </div>
-
-            <div className="space-y-4">
-              <input
-                type="password"
-                value={passwordInput}
-                onChange={(e) => setPasswordInput(e.target.value)}
-                onKeyPress={(e) => e.key === 'Enter' && checkTeacherPassword()}
-                placeholder="Mot de passe"
-                className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-indigo-500 focus:border-transparent"
-              />
-              
-              {showPasswordError && (
-                <div className="bg-red-50 border border-red-200 text-red-700 p-3 rounded-lg text-sm text-center">
-                  Mot de passe incorrect
-                </div>
-              )}
-
-              <button
-                onClick={checkTeacherPassword}
-                className="w-full bg-indigo-600 text-white px-6 py-3 rounded-lg hover:bg-indigo-700 font-medium"
-              >
-                Se connecter
-              </button>
-            </div>
-          </div>
-        </div>
-      </div>
-    );
-  }
-
   // Page enseignant authentifié
   return (
     <div className="min-h-screen bg-gradient-to-br from-indigo-50 to-purple-100 p-6">
@@ -505,17 +413,6 @@ const TeacherPage: React.FC<TeacherPageProps> = ({ isAuthenticated, onAuthentica
           >
             <ArrowLeft size={20} />
             Retour à la page étudiants
-          </button>
-          
-          <button
-            onClick={() => {
-              const newPass = prompt('Nouveau mot de passe (min. 6 caractères):');
-              if (newPass) changePassword(newPass);
-            }}
-            className="text-sm text-indigo-600 hover:text-indigo-800 flex items-center gap-1"
-          >
-            <Lock size={16} />
-            Changer le mot de passe
           </button>
         </div>
 

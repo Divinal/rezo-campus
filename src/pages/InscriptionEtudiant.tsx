@@ -4,9 +4,7 @@ import { UserPlus, RefreshCcw, CheckCircle2, Copy, MessageCircle, ArrowLeft } fr
 import { supabase } from '../lib/supabaseClient';
 import Header from '../components/Header';
 import Footer from '../components/Footer';
-import {
-  currentAcademicYear, generateAccessCode, numeroPrefix, accessMessage, normalizePhone, whatsappLink, STUDENT_COLUMNS,
-} from '../lib/notesShared';
+import { currentAcademicYear, accessMessage, normalizePhone, whatsappLink } from '../lib/notesShared';
 
 type Mode = 'nouveau' | 'ancien';
 
@@ -46,16 +44,6 @@ const markUsed = (annee: string, used: UsedRegistration) => {
   }
 };
 
-// Returns the first free identifier: IGICBO2026, then IGICBO2026-2, IGICBO2026-3…
-const nextFreeNumero = async (prefix: string): Promise<string> => {
-  const { data } = await supabase.from('students').select('numero').ilike('numero', `${prefix}%`);
-  const taken = new Set((data || []).map((r: { numero: string }) => r.numero.toUpperCase()));
-  if (!taken.has(prefix)) return prefix;
-  let n = 2;
-  while (taken.has(`${prefix}-${n}`)) n++;
-  return `${prefix}-${n}`;
-};
-
 const InscriptionEtudiant: React.FC = () => {
   const annee = currentAcademicYear();
   const [mode, setMode] = useState<Mode>('nouveau');
@@ -84,44 +72,19 @@ const InscriptionEtudiant: React.FC = () => {
   const set = (field: keyof typeof form) => (e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement>) =>
     setForm({ ...form, [field]: e.target.value });
 
-  const inscrire = async (studentId: number, classe: string) =>
-    supabase
-      .from('inscriptions')
-      .upsert([{ student_id: studentId, annee_academique: annee, classe, groupe: null }], {
-        onConflict: 'student_id,annee_academique',
-      });
-
+  // The database creates the student, its numero and its access code (see register_student in supabase/securite.sql).
   const registerNew = async () => {
     const nom = form.nom.trim().toUpperCase();
     const prenom = form.prenom.trim();
     const telephone = form.telephone.trim();
     if (!nom || !prenom || !form.classe) return setError('Remplissez votre nom, votre prénom et votre classe.');
-    if (!normalizePhone(telephone)) return setError('Numéro WhatsApp invalide : indiquez l\'indicatif, ex. +212 1 23 456 789.');
+    if (!normalizePhone(telephone)) return setError("Numéro WhatsApp invalide : indiquez l'indicatif, ex. +212 1 23 456 789.");
 
-    const code = generateAccessCode();
-    const prefix = numeroPrefix(nom, annee);
-
-    // Another registration can take the same identifier at the same time: retry on a unique violation.
-    for (let attempt = 0; attempt < 5; attempt++) {
-      const numero = await nextFreeNumero(prefix);
-      const { data, error: insertError } = await supabase
-        .from('students')
-        .insert([{
-          nom, prenom, numero, telephone, classe: form.classe, groupe: null,
-          code_acces: code, acces_genere_le: new Date().toISOString(),
-        }])
-        .select('id')
-        .single();
-
-      if (insertError?.code === '23505') continue;
-      if (insertError || !data) return setError('L\'inscription n\'a pas pu être enregistrée. Réessayez.');
-
-      const { error: inscError } = await inscrire(data.id, form.classe);
-      if (inscError) return setError('Votre compte est créé mais l\'inscription en classe a échoué. Contactez l\'établissement.');
-      finish({ prenom, numero, code, classe: form.classe, telephone });
-      return;
-    }
-    setError('L\'inscription n\'a pas pu être enregistrée. Réessayez.');
+    const { data, error: rpcError } = await supabase.rpc('register_student', {
+      p_nom: nom, p_prenom: prenom, p_telephone: telephone, p_classe: form.classe, p_annee: annee,
+    });
+    if (rpcError || !data) return setError("L'inscription n'a pas pu être enregistrée. Réessayez.");
+    finish({ prenom, numero: data.numero, code: data.code, classe: form.classe, telephone });
   };
 
   const registerReturning = async () => {
@@ -129,43 +92,18 @@ const InscriptionEtudiant: React.FC = () => {
     const nom = form.nom.trim();
     if (!numero || !nom || !form.classe) return setError('Remplissez votre numéro, votre nom et votre classe.');
 
-    const { data: student } = await supabase
-      .from('students')
-      .select(STUDENT_COLUMNS)
-      .eq('numero', numero)
-      .maybeSingle();
-
-    const sameName = (a: string, b: string) =>
-      a.normalize('NFD').replace(/[^A-Za-z]/g, '').toUpperCase() === b.normalize('NFD').replace(/[^A-Za-z]/g, '').toUpperCase();
-
-    if (!student || !sameName(student.nom, nom)) {
-      return setError('Aucun étudiant ne correspond à ce numéro et à ce nom.');
-    }
-
     const telephone = form.telephone.trim();
     if (telephone && !normalizePhone(telephone)) {
-      return setError('Numéro WhatsApp invalide : indiquez l\'indicatif, ex. +212 1 23 456 789.');
+      return setError("Numéro WhatsApp invalide : indiquez l'indicatif, ex. +212 1 23 456 789.");
     }
 
-    // A code is only issued to students who never had one, so a known numero cannot take over an existing account.
-    const code = student.acces_genere_le ? null : generateAccessCode();
-    const update: Record<string, string> = {};
-    if (telephone) update.telephone = telephone;
-    if (code) {
-      update.code_acces = code;
-      update.acces_genere_le = new Date().toISOString();
-    }
-    if (Object.keys(update).length) {
-      const { error: updError, count } = await supabase
-        .from('students')
-        .update(update, { count: 'exact' })
-        .eq('id', student.id);
-      if (updError || count === 0) return setError('Vos informations n\'ont pas pu être mises à jour. Réessayez.');
-    }
-
-    const { error: inscError } = await inscrire(student.id, form.classe);
-    if (inscError) return setError('La réinscription n\'a pas pu être enregistrée. Réessayez.');
-    finish({ prenom: student.prenom, numero: student.numero, code, classe: form.classe, telephone: telephone || student.telephone });
+    // The database checks the numero against the name and only issues a code to students who never had one.
+    const { data, error: rpcError } = await supabase.rpc('reregister_student', {
+      p_numero: numero, p_nom: nom, p_telephone: telephone, p_classe: form.classe, p_annee: annee,
+    });
+    if (rpcError) return setError("La réinscription n'a pas pu être enregistrée. Réessayez.");
+    if (!data) return setError('Aucun étudiant ne correspond à ce numéro et à ce nom.');
+    finish({ prenom: data.prenom, numero: data.numero, code: data.code, classe: form.classe, telephone: data.telephone });
   };
 
   const submit = async (e: React.FormEvent) => {

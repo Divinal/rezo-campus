@@ -2,12 +2,12 @@ import React, { useState } from 'react';
 import StudentPage from './StudentPage';
 import TeacherPage from './TeacherPage';
 import StudentSpace from './StudentSpace';
+import AuthGuard from '../components/AuthGuard';
 
 const GradesSystem: React.FC = () => {
   const [currentPage, setCurrentPage] = useState<'student' | 'teacher' | 'space'>(
     () => (localStorage.getItem('studentSpaceSession') ? 'space' : 'student')
   );
-  const [isTeacherAuthenticated, setIsTeacherAuthenticated] = useState(false);
 
   return (
     <>
@@ -21,14 +21,9 @@ const GradesSystem: React.FC = () => {
         <StudentSpace onBack={() => setCurrentPage('student')} />
       )}
       {currentPage === 'teacher' && (
-        <TeacherPage
-          isAuthenticated={isTeacherAuthenticated}
-          onAuthenticate={(auth) => setIsTeacherAuthenticated(auth)}
-          onBack={() => {
-            setCurrentPage('student');
-            setIsTeacherAuthenticated(false);
-          }}
-        />
+        <AuthGuard title="Accès Enseignant" onBack={() => setCurrentPage('student')}>
+          <TeacherPage onBack={() => setCurrentPage('student')} />
+        </AuthGuard>
       )}
     </>
   );

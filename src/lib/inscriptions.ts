@@ -35,28 +35,9 @@ export const fetchYearStudents = async (annee: string): Promise<{ data: YearStud
   return { data: rows, error: false };
 };
 
-export const fetchInscription = async (studentId: number, annee: string): Promise<Inscription | null> => {
-  const { data } = await supabase
-    .from('inscriptions')
-    .select('classe, groupe')
-    .eq('student_id', studentId)
-    .eq('annee_academique', annee)
-    .maybeSingle();
-  return data ?? null;
-};
-
 export interface YearInscription extends Inscription {
   annee_academique: string;
 }
-
-export const fetchParcours = async (studentId: number): Promise<YearInscription[]> => {
-  const { data } = await supabase
-    .from('inscriptions')
-    .select('annee_academique, classe, groupe')
-    .eq('student_id', studentId)
-    .order('annee_academique', { ascending: false });
-  return data ?? [];
-};
 
 export const classesOf = (students: { classe: string }[]): string[] =>
   [...new Set(students.map(s => s.classe))].sort();

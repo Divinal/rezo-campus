@@ -39,11 +39,8 @@ const PropertyComments: React.FC<PropertyCommentsProps> = ({ propertyId }) => {
   const fetchComments = async () => {
     try {
       setLoading(true);
-      const { data, error } = await supabase
-        .from('commentaires_proprietes')
-        .select('*')
-        .eq('propriete_id', propertyId)
-        .order('cree_le', { ascending: false });
+      // The author's email is reserved for the team: this function returns every column except it.
+      const { data, error } = await supabase.rpc('property_comments', { p_propriete_id: propertyId });
 
       if (error) {
         console.error('Erreur lors du chargement des commentaires:', error);

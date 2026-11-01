@@ -1,10 +1,11 @@
 import React, { useState, useEffect } from 'react';
 import { supabase } from '../lib/supabaseClient';
-import { Printer, Lock, LogOut, BookOpen } from 'lucide-react';
+import { Printer, LogOut, BookOpen } from 'lucide-react';
 import { toast } from '../components/ui/sonner';
 import { currentAcademicYear } from '../lib/notesShared';
 import { fetchYearStudents } from '../lib/inscriptions';
 import AcademicYearSelect from '../components/notes/AcademicYearSelect';
+import AuthGuard from '../components/AuthGuard';
 
 interface Discipline { id: number; nom: string; }
 interface Student { id: number; nom: string; prenom: string; classe: string; numero: string; groupe: string | null; }
@@ -21,9 +22,6 @@ interface Note {
 
 type NoteField = 'note1' | 'note2' | 'note3' | 'note_pratique' | 'note_theorique';
 
-const INSTRUCTOR_USER = 'Direction';
-const INSTRUCTOR_PASS = 'DirectionIGIC12';
-
 const fmt = (n: number | null): string => (n !== null ? n.toFixed(2) : '');
 
 const calcMC = (n1: number | null, n2: number | null, n3: number | null): string => {
@@ -38,12 +36,7 @@ const calcMG = (n1: number | null, n2: number | null, n3: number | null, np: num
   return (vals.reduce((a, b) => a + b, 0) / vals.length).toFixed(2);
 };
 
-const InstructorPage: React.FC = () => {
-  const [isAuth, setIsAuth] = useState(false);
-  const [usernameInput, setUsernameInput] = useState('');
-  const [passwordInput, setPasswordInput] = useState('');
-  const [loginError, setLoginError] = useState('');
-
+const InstructorNotes: React.FC = () => {
   const [students, setStudents] = useState<Student[]>([]);
   const [disciplines, setDisciplines] = useState<Discipline[]>([]);
   const [selectedClasse, setSelectedClasse] = useState('');
@@ -56,12 +49,8 @@ const InstructorPage: React.FC = () => {
   const [annee, setAnnee] = useState(currentAcademicYear);
 
   useEffect(() => {
-    if (localStorage.getItem('instructorAuth') === 'true') setIsAuth(true);
-  }, []);
-
-  useEffect(() => {
-    if (isAuth) loadData();
-  }, [isAuth, annee]);
+    loadData();
+  }, [annee]);
 
   useEffect(() => {
     setSelectedClasse('');
@@ -117,20 +106,9 @@ const InstructorPage: React.FC = () => {
     setLoading(false);
   };
 
-  const handleLogin = (e: React.FormEvent) => {
-    e.preventDefault();
-    if (usernameInput === INSTRUCTOR_USER && passwordInput === INSTRUCTOR_PASS) {
-      setIsAuth(true);
-      localStorage.setItem('instructorAuth', 'true');
-      setLoginError('');
-    } else {
-      setLoginError('Identifiants incorrects. Veuillez réessayer.');
-    }
-  };
-
+  // AuthGuard listens to the sign-out and shows the login form again.
   const handleLogout = () => {
-    setIsAuth(false);
-    localStorage.removeItem('instructorAuth');
+    supabase.auth.signOut();
     setSelectedClasse('');
     setSelectedDiscipline(null);
     setNotes({});
@@ -191,53 +169,6 @@ const InstructorPage: React.FC = () => {
   };
 
   const classes = [...new Set(students.map(s => s.classe))].sort();
-
-  // ── Login ─────────────────────────────────────────────────────────────────
-  if (!isAuth) {
-    return (
-      <div className="min-h-screen flex items-center justify-center bg-gray-100">
-        <div className="bg-white p-8 rounded-xl shadow-lg w-full max-w-sm">
-          <div className="flex items-center justify-center mb-6">
-            <div className="bg-primary/10 rounded-full p-4">
-              <Lock className="w-8 h-8 text-primary" />
-            </div>
-          </div>
-          <h2 className="text-2xl font-bold text-center text-primary mb-1">Accès Instructeur</h2>
-          <p className="text-gray-500 text-sm text-center mb-6">Modification et impression des notes</p>
-          <form onSubmit={handleLogin} className="space-y-4">
-            <div>
-              <label className="block text-sm font-medium text-gray-700 mb-1">Nom d'utilisateur</label>
-              <input
-                type="text"
-                value={usernameInput}
-                onChange={e => setUsernameInput(e.target.value)}
-                className="w-full px-4 py-2.5 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-primary"
-                required
-              />
-            </div>
-            <div>
-              <label className="block text-sm font-medium text-gray-700 mb-1">Mot de passe</label>
-              <input
-                type="password"
-                value={passwordInput}
-                onChange={e => setPasswordInput(e.target.value)}
-                className="w-full px-4 py-2.5 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-primary"
-                placeholder="••••••••"
-                required
-              />
-            </div>
-            {loginError && <p className="text-red-600 text-sm">{loginError}</p>}
-            <button
-              type="submit"
-              className="w-full bg-primary hover:bg-primary/90 text-white py-2.5 rounded-lg font-semibold transition-colors"
-            >
-              Se connecter
-            </button>
-          </form>
-        </div>
-      </div>
-    );
-  }
 
   // ── Main ──────────────────────────────────────────────────────────────────
   return (
@@ -575,5 +506,11 @@ const InstructorPage: React.FC = () => {
     </div>
   );
 };
+
+const InstructorPage: React.FC = () => (
+  <AuthGuard title="Accès Instructeur" showLogoutBar={false}>
+    <InstructorNotes />
+  </AuthGuard>
+);
 
 export default InstructorPage;

@@ -164,10 +164,10 @@ const FoireOrientationForm: React.FC = () => {
 
       console.log("Données à insérer:", insertData);
 
-      const { data, error } = await supabase
+      // Visitors can send the form but not read registrations back.
+      const { error } = await supabase
         .from("foire_inscriptions")
-        .insert([insertData])
-        .select();
+        .insert([insertData]);
 
       if (error) {
         console.error("Erreur Supabase:", error);
@@ -176,7 +176,6 @@ const FoireOrientationForm: React.FC = () => {
         return;
       }
 
-      console.log("Données insérées avec succès:", data);
 
       try {
         await emailjs.send(

@@ -1,9 +1,8 @@
 import React, { useState, useEffect } from 'react';
 import { Search, Users, Lock, BookOpen, Trophy, TrendingUp, RotateCcw, UserCheck, KeyRound, ArrowRight } from 'lucide-react';
 import { supabase } from '../lib/supabaseClient';
-import { STUDENT_COLUMNS, currentAcademicYear } from '../lib/notesShared';
+import { currentAcademicYear } from '../lib/notesShared';
 import AcademicYearSelect from '../components/notes/AcademicYearSelect';
-import { fetchInscription, fetchYearStudents } from '../lib/inscriptions';
 import { toast } from '../components/ui/sonner';
 import Header from '../components/Header';
 import Footer from '../components/Footer';
@@ -52,25 +51,17 @@ const StudentPage: React.FC<StudentPageProps> = ({ onAccessTeacher, onAccessSpac
   }, []);
 
   useEffect(() => {
-    if (selectedStudent) loadYearData(selectedStudent);
+    if (selectedStudent) loadResults(selectedStudent.numero);
   }, [annee]);
 
-  const loadYearData = async (student: Student) => {
-    const [inscription] = await Promise.all([fetchInscription(student.id, annee), loadNotes(student.id)]);
-    const withYear = { ...student, classe: inscription?.classe ?? '', groupe: inscription?.groupe ?? null };
-    setSelectedStudent(withYear);
-    if (inscription?.groupe) await loadGroupMembers(inscription.classe, inscription.groupe, student.id);
-    else setGroupMembers([]);
-  };
-
-  const loadNotes = async (studentId: number) => {
-    const { data, error } = await supabase
-      .from('notes')
-      .select('*')
-      .eq('student_id', studentId)
-      .eq('annee_academique', annee);
+  // Notes are looked up by numero without an account; the database only returns this student's record
+  // (see public_student_results in supabase/securite.sql), never the whole students or notes tables.
+  const loadResults = async (numero: string) => {
+    const { data, error } = await supabase.rpc('public_student_results', { p_numero: numero, p_annee: annee });
     if (error) console.error('Erreur lors du chargement des notes:', error);
-    setStudentNotes(error ? [] : data || []);
+    setSelectedStudent(data?.student ?? null);
+    setStudentNotes(data?.notes ?? []);
+    setGroupMembers(data?.groupe_membres ?? []);
   };
 
   const loadDisciplines = async () => {
@@ -86,15 +77,6 @@ const StudentPage: React.FC<StudentPageProps> = ({ onAccessTeacher, onAccessSpac
     }
   };
 
-  const loadGroupMembers = async (classe: string, groupe: string, currentStudentId: number) => {
-    const { data, error } = await fetchYearStudents(annee);
-    if (error) {
-      setGroupMembers([]);
-      return;
-    }
-    setGroupMembers(data.filter(s => s.classe === classe && s.groupe === groupe && s.id !== currentStudentId));
-  };
-
   const searchStudent = async () => {
     if (!searchNumero.trim()) {
       toast.error("Veuillez entrer un numéro");
@@ -103,22 +85,7 @@ const StudentPage: React.FC<StudentPageProps> = ({ onAccessTeacher, onAccessSpac
 
     setLoading(true);
 
-    const { data: studentData, error: studentError } = await supabase
-      .from('students')
-      .select(STUDENT_COLUMNS)
-      .eq('numero', searchNumero.trim())
-      .single();
-
-    if (studentError || !studentData) {
-      setSelectedStudent(null);
-      setStudentNotes([]);
-      setGroupMembers([]);
-      setShowResults(true);
-      setLoading(false);
-      return;
-    }
-
-    await loadYearData(studentData);
+    await loadResults(searchNumero.trim());
     setShowResults(true);
     setLoading(false);
   };

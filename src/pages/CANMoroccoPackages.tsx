@@ -9,7 +9,7 @@ import Footer from '../components/Footer';
 import { Textarea } from '@/components/ui/textarea';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { Plane, FileText, MapPin, Bed, Car, Shield, Star, Check, X, CreditCard, Users, Calendar, Globe, Phone, Mail, Clock, Award, Camera, Utensils, Navigation, Heart, Crown, ChevronDown, ChevronUp} from 'lucide-react';
-import { supabase } from '@/integrations/supabase/client';
+import { supabase } from '@/lib/supabaseClient';
 import { toast } from 'sonner';
 
 const CANMoroccoPackages = () => {
