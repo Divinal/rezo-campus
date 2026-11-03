@@ -2,7 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { supabase } from '../lib/supabaseClient';
 import { Printer, LogOut, BookOpen } from 'lucide-react';
 import { toast } from '../components/ui/sonner';
-import { currentAcademicYear } from '../lib/notesShared';
+import { currentAcademicYear, Bonus, applyBonuses } from '../lib/notesShared';
 import { fetchYearStudents } from '../lib/inscriptions';
 import AcademicYearSelect from '../components/notes/AcademicYearSelect';
 import AuthGuard from '../components/AuthGuard';
@@ -43,6 +43,13 @@ const InstructorNotes: React.FC = () => {
   const [selectedDiscipline, setSelectedDiscipline] = useState<Discipline | null>(null);
   const [classStudents, setClassStudents] = useState<Student[]>([]);
   const [notes, setNotes] = useState<Record<number, Note | null>>({});
+  const [bonusByStudent, setBonusByStudent] = useState<Record<number, Bonus[]>>({});
+
+  // Control grades include participation points (capped at 20); the inputs still edit the raw grade.
+  const finalNote = (studentId: number): Note | null => {
+    const note = notes[studentId];
+    return note ? applyBonuses(note, bonusByStudent[studentId] ?? []) : null;
+  };
   const [nameEdits, setNameEdits] = useState<Record<number, { nom: string; prenom: string }>>({});
   const [loading, setLoading] = useState(false);
   const [teacherName, setTeacherName] = useState('MVOUAMA Divin Aldriche');
@@ -92,17 +99,31 @@ const InstructorNotes: React.FC = () => {
     if (!selectedDiscipline || classStudents.length === 0) return;
     setLoading(true);
     const ids = classStudents.map(s => s.id);
-    const { data } = await supabase
-      .from('notes')
-      .select('*')
-      .in('student_id', ids)
-      .eq('discipline_id', selectedDiscipline.id)
-      .eq('annee_academique', annee);
+    const [{ data }, { data: bonusRows }] = await Promise.all([
+      supabase
+        .from('notes')
+        .select('*')
+        .in('student_id', ids)
+        .eq('discipline_id', selectedDiscipline.id)
+        .eq('annee_academique', annee),
+      supabase
+        .from('bonus_notes')
+        .select('id, student_id, discipline_id, controle, points, justification, created_at')
+        .in('student_id', ids)
+        .eq('discipline_id', selectedDiscipline.id)
+        .eq('annee_academique', annee),
+    ]);
 
     const map: Record<number, Note | null> = {};
     classStudents.forEach(s => { map[s.id] = null; });
     (data || []).forEach(n => { map[n.student_id] = n; });
     setNotes(map);
+
+    const byStudent: Record<number, Bonus[]> = {};
+    (bonusRows || []).forEach((b: Bonus & { student_id: number }) => {
+      (byStudent[b.student_id] ??= []).push(b);
+    });
+    setBonusByStudent(byStudent);
     setLoading(false);
   };
 
@@ -288,8 +309,9 @@ const InstructorNotes: React.FC = () => {
                   <tbody className="divide-y divide-gray-100">
                     {classStudents.map(student => {
                       const note = notes[student.id];
-                      const mc = note ? calcMC(note.note1, note.note2, note.note3) : '';
-                      const mg = note ? calcMG(note.note1, note.note2, note.note3, note.note_pratique, note.note_theorique) : '';
+                      const fin = finalNote(student.id);
+                      const mc = fin ? calcMC(fin.note1, fin.note2, fin.note3) : '';
+                      const mg = fin ? calcMG(fin.note1, fin.note2, fin.note3, fin.note_pratique, fin.note_theorique) : '';
                       const edit = nameEdits[student.id] ?? { nom: student.nom, prenom: student.prenom };
 
                       return (
@@ -448,21 +470,22 @@ const InstructorNotes: React.FC = () => {
               const edit = nameEdits[student.id];
               const displayNom = edit ? edit.nom : student.nom;
               const displayPrenom = edit ? edit.prenom : student.prenom;
-              const mc = note ? calcMC(note.note1, note.note2, note.note3) : '';
-              const mg = note ? calcMG(note.note1, note.note2, note.note3, note.note_pratique, note.note_theorique) : '';
+              const fin = finalNote(student.id);
+              const mc = fin ? calcMC(fin.note1, fin.note2, fin.note3) : '';
+              const mg = fin ? calcMG(fin.note1, fin.note2, fin.note3, fin.note_pratique, fin.note_theorique) : '';
               return (
                 <tr key={student.id} style={{ backgroundColor: idx % 2 === 0 ? '#fff' : '#fafafa' }}>
                   <td style={{ border: '1px solid black', padding: '5px 10px', fontSize: '12px' }}>
                     {displayNom} {displayPrenom}
                   </td>
                   <td style={{ border: '1px solid black', padding: '5px 8px', textAlign: 'center' }}>
-                    {note ? fmt(note.note1) : ''}
+                    {fin ? fmt(fin.note1) : ''}
                   </td>
                   <td style={{ border: '1px solid black', padding: '5px 8px', textAlign: 'center' }}>
-                    {note ? fmt(note.note2) : ''}
+                    {fin ? fmt(fin.note2) : ''}
                   </td>
                   <td style={{ border: '1px solid black', padding: '5px 8px', textAlign: 'center' }}>
-                    {note ? fmt(note.note3) : ''}
+                    {fin ? fmt(fin.note3) : ''}
                   </td>
                   <td style={{ border: '1px solid black', padding: '5px 8px', textAlign: 'center', fontWeight: '500' }}>
                     {mc}

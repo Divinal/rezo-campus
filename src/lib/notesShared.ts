@@ -16,6 +16,44 @@ export const ACADEMIC_YEARS: string[] = (() => {
   return years;
 })();
 
+export type ControleField = 'note1' | 'note2' | 'note3';
+
+export const CONTROLES: { value: ControleField; label: string }[] = [
+  { value: 'note1', label: 'Contrôle 1' },
+  { value: 'note2', label: 'Contrôle 2' },
+  { value: 'note3', label: 'Contrôle 3' },
+];
+
+export const controleLabel = (c: string) => CONTROLES.find(x => x.value === c)?.label ?? c;
+
+export interface Bonus {
+  id: number;
+  discipline_id: number;
+  controle: ControleField;
+  points: number;
+  justification: string;
+  created_at: string;
+}
+
+export const bonusTotal = (bonuses: Bonus[], disciplineId: number, controle: ControleField): number =>
+  bonuses
+    .filter(b => b.discipline_id === disciplineId && b.controle === controle)
+    .reduce((sum, b) => sum + Number(b.points), 0);
+
+// A bonus waits until the control grade is entered; the total is capped at 20 and the excess is dropped.
+export const withBonus = (raw: number | null, bonus: number): number | null =>
+  raw === null ? null : Math.min(20, raw + bonus);
+
+export const applyBonuses = <T extends { discipline_id: number; note1: number | null; note2: number | null; note3: number | null }>(
+  note: T,
+  bonuses: Bonus[]
+): T => ({
+  ...note,
+  note1: withBonus(note.note1, bonusTotal(bonuses, note.discipline_id, 'note1')),
+  note2: withBonus(note.note2, bonusTotal(bonuses, note.discipline_id, 'note2')),
+  note3: withBonus(note.note3, bonusTotal(bonuses, note.discipline_id, 'note3')),
+});
+
 export interface Creneau {
   id: number;
   classe: string;

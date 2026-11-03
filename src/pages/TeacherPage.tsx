@@ -2,7 +2,11 @@ import React, { useState, useEffect } from 'react';
 import { Plus, Trash2, BookOpen, ArrowLeft, ChevronDown, Users, KeyRound, ShieldCheck, Phone } from 'lucide-react';
 import { supabase } from '../lib/supabaseClient';
 import { toast } from '../components/ui/sonner';
-import { STUDENT_COLUMNS, generateAccessCode, currentAcademicYear, normalizePhone } from '../lib/notesShared';
+import {
+  STUDENT_COLUMNS, generateAccessCode, currentAcademicYear, normalizePhone,
+  Bonus, CONTROLES, applyBonuses, bonusTotal, withBonus,
+} from '../lib/notesShared';
+import BonusPanel from '../components/notes/BonusPanel';
 import StudentAccessModal, { GeneratedAccess } from '../components/notes/StudentAccessModal';
 import TeacherSharing from '../components/notes/TeacherSharing';
 import AcademicYearSelect from '../components/notes/AcademicYearSelect';
@@ -57,6 +61,7 @@ const TeacherPage: React.FC<TeacherPageProps> = ({ onBack }) => {
   const [students, setStudents] = useState<Student[]>([]);
   const [selectedStudent, setSelectedStudent] = useState<Student | null>(null);
   const [studentNotes, setStudentNotes] = useState<Note[]>([]);
+  const [bonuses, setBonuses] = useState<Bonus[]>([]);
   const [newDiscipline, setNewDiscipline] = useState('');
   const [newStudent, setNewStudent] = useState<NewStudent>(emptyNewStudent);
   const [annee, setAnnee] = useState(currentAcademicYear);
@@ -116,8 +121,20 @@ const TeacherPage: React.FC<TeacherPageProps> = ({ onBack }) => {
     setPhoneDraft(selectedStudent?.telephone ?? '');
   }, [selectedStudent?.id]);
 
+  const loadBonuses = async (studentId: number) => {
+    const { data, error } = await supabase
+      .from('bonus_notes')
+      .select('id, discipline_id, controle, points, justification, created_at')
+      .eq('student_id', studentId)
+      .eq('annee_academique', annee)
+      .order('created_at', { ascending: false });
+    if (error) toast.error('Erreur lors du chargement des points de participation');
+    setBonuses(data || []);
+  };
+
   const loadStudentNotes = async (studentId: number) => {
     setLoading(true);
+    loadBonuses(studentId);
     const { data, error } = await supabase
       .from('notes')
       .select('*')
@@ -388,7 +405,7 @@ const TeacherPage: React.FC<TeacherPageProps> = ({ onBack }) => {
   };
 
   const calculateGeneralAverage = (): string => {
-    const validNotes = studentNotes.filter(n =>
+    const validNotes = studentNotes.map(n => applyBonuses(n, bonuses)).filter(n =>
       n.note1 !== null || n.note2 !== null || n.note3 !== null ||
       n.note_pratique !== null || n.note_theorique !== null
     );
@@ -716,44 +733,40 @@ const TeacherPage: React.FC<TeacherPageProps> = ({ onBack }) => {
                         <tbody>
                           {disciplines.map((disc) => {
                             const note = studentNotes.find(n => n.discipline_id === disc.id);
+                            const effective = note ? applyBonuses(note, bonuses) : undefined;
                             const moyenne = calculateAverage(
-                              note?.note1 ?? null,
-                              note?.note2 ?? null,
-                              note?.note3 ?? null,
-                              note?.note_pratique ?? null,
-                              note?.note_theorique ?? null
+                              effective?.note1 ?? null,
+                              effective?.note2 ?? null,
+                              effective?.note3 ?? null,
+                              effective?.note_pratique ?? null,
+                              effective?.note_theorique ?? null
                             );
 
                             return (
                               <tr key={disc.id} className="border-b border-gray-100 hover:bg-gray-50">
                                 <td className="py-2 px-3 font-medium text-sm">{disc.nom}</td>
-                                <td className="py-2 px-2">
-                                  <input
-                                    type="number" min="0" max="20" step="0.25"
-                                    value={note?.note1 ?? ''}
-                                    onChange={(e) => updateNote(disc.id, 'note1', e.target.value)}
-                                    placeholder="-"
-                                    className="w-20 px-2 py-1.5 border border-gray-300 rounded-lg focus:ring-2 focus:ring-purple-500 text-center text-sm"
-                                  />
-                                </td>
-                                <td className="py-2 px-2">
-                                  <input
-                                    type="number" min="0" max="20" step="0.25"
-                                    value={note?.note2 ?? ''}
-                                    onChange={(e) => updateNote(disc.id, 'note2', e.target.value)}
-                                    placeholder="-"
-                                    className="w-20 px-2 py-1.5 border border-gray-300 rounded-lg focus:ring-2 focus:ring-purple-500 text-center text-sm"
-                                  />
-                                </td>
-                                <td className="py-2 px-2">
-                                  <input
-                                    type="number" min="0" max="20" step="0.25"
-                                    value={note?.note3 ?? ''}
-                                    onChange={(e) => updateNote(disc.id, 'note3', e.target.value)}
-                                    placeholder="-"
-                                    className="w-20 px-2 py-1.5 border border-gray-300 rounded-lg focus:ring-2 focus:ring-purple-500 text-center text-sm"
-                                  />
-                                </td>
+                                {CONTROLES.map(({ value: field }) => {
+                                  const raw = note?.[field] ?? null;
+                                  const bonus = bonusTotal(bonuses, disc.id, field);
+                                  const final = withBonus(raw, bonus);
+                                  return (
+                                    <td key={field} className="py-2 px-2 align-top">
+                                      <input
+                                        type="number" min="0" max="20" step="0.25"
+                                        value={raw ?? ''}
+                                        onChange={(e) => updateNote(disc.id, field, e.target.value)}
+                                        placeholder="-"
+                                        className="w-20 px-2 py-1.5 border border-gray-300 rounded-lg focus:ring-2 focus:ring-purple-500 text-center text-sm"
+                                      />
+                                      {bonus > 0 && (
+                                        <p className="text-xs text-amber-600 mt-1 text-center whitespace-nowrap" title="Note saisie + points de participation, plafonnée à 20">
+                                          +{bonus} {final === null ? 'en attente' : `→ ${final.toFixed(2)}`}
+                                          {final === 20 && raw !== null && raw + bonus > 20 && ' (max)'}
+                                        </p>
+                                      )}
+                                    </td>
+                                  );
+                                })}
                                 <td className="py-2 px-2 bg-blue-50/40">
                                   <input
                                     type="number" min="0" max="20" step="0.25"
@@ -803,6 +816,15 @@ const TeacherPage: React.FC<TeacherPageProps> = ({ onBack }) => {
                         </span>
                       </div>
                     </div>
+
+                    <BonusPanel
+                      studentId={selectedStudent.id}
+                      studentName={`${selectedStudent.nom} ${selectedStudent.prenom}`}
+                      annee={annee}
+                      disciplines={disciplines}
+                      bonuses={bonuses}
+                      onChanged={() => loadBonuses(selectedStudent.id)}
+                    />
                   </>
                 ) : (
                   <div className="text-center py-8 text-gray-500">

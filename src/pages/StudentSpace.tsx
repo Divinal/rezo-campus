@@ -9,7 +9,9 @@ import Footer from '../components/Footer';
 import { YearInscription } from '../lib/inscriptions';
 import {
   Evaluation, Cours, Creneau, JOURS, evaluationType, formatDateTime, formatHeure, safeUrl, currentAcademicYear,
+  Bonus, CONTROLES, applyBonuses, bonusTotal, controleLabel,
 } from '../lib/notesShared';
+import { Award } from 'lucide-react';
 
 interface SpaceStudent {
   id: number;
@@ -73,6 +75,7 @@ const StudentSpace: React.FC<Props> = ({ onBack }) => {
   const [coursList, setCoursList] = useState<Cours[]>([]);
   const [creneaux, setCreneaux] = useState<Creneau[]>([]);
   const [notes, setNotes] = useState<Note[]>([]);
+  const [bonuses, setBonuses] = useState<Bonus[]>([]);
   const [disciplines, setDisciplines] = useState<Discipline[]>([]);
   const [loading, setLoading] = useState(false);
 
@@ -102,7 +105,7 @@ const StudentSpace: React.FC<Props> = ({ onBack }) => {
     const current = parcours.find(p => p.annee_academique === year);
     // Without an inscription that year, filter on an impossible class so nothing from another class shows up.
     const classe = current?.classe ?? '';
-    const [ev, cr, edt, nt] = await Promise.all([
+    const [ev, cr, edt, nt, bn] = await Promise.all([
       supabase.from('evaluations').select('*').eq('classe', classe).eq('annee_academique', year)
         .order('date_evaluation', { ascending: true }),
       supabase.from('cours').select('*').eq('classe', classe).eq('annee_academique', year)
@@ -110,8 +113,10 @@ const StudentSpace: React.FC<Props> = ({ onBack }) => {
       supabase.from('emploi_du_temps').select('*').eq('classe', classe).eq('annee_academique', year)
         .order('jour').order('heure_debut'),
       supabase.rpc('student_notes', { p_numero: s.numero, p_code: s.code, p_annee: year }),
+      supabase.rpc('student_bonus', { p_numero: s.numero, p_code: s.code, p_annee: year }),
     ]);
-    if (ev.error || cr.error || edt.error || nt.error) toast.error('Certaines informations n\'ont pas pu être chargées');
+    if (ev.error || cr.error || edt.error || nt.error || bn.error) toast.error('Certaines informations n\'ont pas pu être chargées');
+    setBonuses(bn.data || []);
     setEvaluations(ev.data || []);
     setCoursList(cr.data || []);
     setCreneaux(edt.data || []);
@@ -147,6 +152,7 @@ const StudentSpace: React.FC<Props> = ({ onBack }) => {
     setCoursList([]);
     setCreneaux([]);
     setNotes([]);
+    setBonuses([]);
     setParcours([]);
     setAnnee(null);
   };
@@ -441,9 +447,11 @@ const StudentSpace: React.FC<Props> = ({ onBack }) => {
             ) : (
               <div>
                 <h2 className="text-lg font-bold text-gray-800 mb-3">Mes notes — {annee}</h2>
-                {notes.length === 0 ? (
+                {notes.length === 0 && bonuses.length === 0 ? (
                   <p className="text-gray-500 text-sm py-4">Aucune note enregistrée pour l'année {annee}.</p>
                 ) : (
+                  <>
+                  {notes.length > 0 && (
                   <div className="overflow-x-auto">
                     <table className="w-full text-sm">
                       <thead>
@@ -458,14 +466,25 @@ const StudentSpace: React.FC<Props> = ({ onBack }) => {
                         </tr>
                       </thead>
                       <tbody className="divide-y">
-                        {notes.map(n => {
+                        {notes.map(raw => {
+                          const n = applyBonuses(raw, bonuses);
                           const avg = average(n);
                           return (
                             <tr key={n.id} className="text-center">
                               <td className="text-left px-3 py-2.5 font-medium text-gray-800">{disciplineName(n.discipline_id) ?? '—'}</td>
-                              <td className="px-2">{fmt(n.note1)}</td>
-                              <td className="px-2">{fmt(n.note2)}</td>
-                              <td className="px-2">{fmt(n.note3)}</td>
+                              {CONTROLES.map(({ value: field }) => {
+                                const bonus = bonusTotal(bonuses, n.discipline_id, field);
+                                return (
+                                  <td key={field} className="px-2">
+                                    {fmt(n[field])}
+                                    {bonus > 0 && (
+                                      <span className="block text-xs text-amber-500" title="Points de participation inclus">
+                                        dont +{bonus}
+                                      </span>
+                                    )}
+                                  </td>
+                                );
+                              })}
                               <td className="px-2">{fmt(n.note_pratique)}</td>
                               <td className="px-2">{fmt(n.note_theorique)}</td>
                               <td className={`px-2 font-bold ${avg === null ? 'text-gray-400' : avg >= 10 ? 'text-green-600' : 'text-red-600'}`}>
@@ -477,6 +496,34 @@ const StudentSpace: React.FC<Props> = ({ onBack }) => {
                       </tbody>
                     </table>
                   </div>
+                  )}
+
+                  {bonuses.length > 0 && (
+                    <div className="mt-6">
+                      <h3 className="font-bold text-gray-800 flex items-center gap-2 mb-1">
+                        <Award size={18} className="text-amber-500" /> Mes points de participation
+                      </h3>
+                      <p className="text-xs text-gray-500 mb-3">
+                        Ils s'ajoutent à la note du contrôle dès qu'elle est saisie, sans dépasser 20.
+                      </p>
+                      <div className="space-y-2">
+                        {bonuses.map(b => (
+                          <div key={b.id} className="border border-amber-200 bg-amber-50 rounded-xl px-4 py-3">
+                            <p className="text-sm text-gray-800">
+                              <strong className="text-amber-600">+{Number(b.points)} point{Number(b.points) > 1 ? 's' : ''}</strong>{' '}
+                              obtenu{Number(b.points) > 1 ? 's' : ''} au <strong>{controleLabel(b.controle)}</strong>{' '}
+                              en <strong>{disciplineName(b.discipline_id) ?? '—'}</strong>
+                            </p>
+                            <p className="text-sm text-gray-600 mt-1 whitespace-pre-line">
+                              Motif : {b.justification}
+                            </p>
+                            <p className="text-xs text-gray-500 mt-1">{new Date(b.created_at).toLocaleDateString('fr-FR')}</p>
+                          </div>
+                        ))}
+                      </div>
+                    </div>
+                  )}
+                  </>
                 )}
               </div>
             )}
