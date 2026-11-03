@@ -11,7 +11,7 @@ import {
   Evaluation, Cours, Creneau, JOURS, evaluationType, formatDateTime, formatHeure, safeUrl, currentAcademicYear,
   Bonus, CONTROLES, applyBonuses, bonusTotal, controleLabel,
 } from '../lib/notesShared';
-import { Award } from 'lucide-react';
+import { Award, ArrowRight } from 'lucide-react';
 
 interface SpaceStudent {
   id: number;
@@ -159,6 +159,33 @@ const StudentSpace: React.FC<Props> = ({ onBack }) => {
 
   const disciplineName = (id: number | null) => disciplines.find(d => d.id === id)?.nom;
 
+  // Short label for the bonus highlight: first 4 letters of each word (Programmation Evenementielle → Prog. Even.),
+  // skipping linking words; a word of 4 letters or less stays whole.
+  const LINKING_WORDS = new Set(['de', 'des', 'du', 'la', 'le', 'les', 'et', 'en', 'à', 'au', 'aux', 'd', 'l']);
+  const abbreviate = (name: string) => {
+    const words = name.split(/[\s'’-]+/).filter(w => w && !LINKING_WORDS.has(w.toLowerCase()));
+    const parts = (words.length ? words : [name]).map(w => {
+      const capitalized = w.charAt(0).toUpperCase() + w.slice(1);
+      return capitalized.length > 4 ? `${capitalized.slice(0, 4)}.` : capitalized;
+    });
+    return parts.join(' ');
+  };
+
+  const bonusHighlights = Object.values(
+    bonuses.reduce<Record<number, { discipline_id: number; total: number; count: number }>>((acc, b) => {
+      const entry = (acc[b.discipline_id] ??= { discipline_id: b.discipline_id, total: 0, count: 0 });
+      entry.total += Number(b.points);
+      entry.count += 1;
+      return acc;
+    }, {})
+  ).sort((a, b) => b.total - a.total);
+
+  const showBonusDetails = () => {
+    setTab('notes');
+    // The notes tab renders on the next frame; scroll once its bonus section exists.
+    setTimeout(() => document.getElementById('mes-bonus')?.scrollIntoView({ behavior: 'smooth', block: 'start' }), 50);
+  };
+
   // ── Connexion ─────────────────────────────────────────────────────────────
   if (!student) {
     return (
@@ -296,6 +323,41 @@ const StudentSpace: React.FC<Props> = ({ onBack }) => {
                     <span className={`block text-xs ${annee === p.annee_academique ? 'text-white/80' : 'text-gray-500'}`}>{p.classe}</span>
                   </button>
                 ))}
+              </div>
+            </div>
+          )}
+
+          {/* Points bonus de l'année, en résumé : le détail est dans l'onglet Mes notes */}
+          {bonusHighlights.length > 0 && (
+            <div className="bg-white rounded-2xl shadow p-4 md:p-5 border border-amber-200">
+              <div className="flex items-center justify-between gap-3 mb-3">
+                <p className="font-semibold text-gray-800 flex items-center gap-2">
+                  <Award size={18} className="text-amber-500" />
+                  Mes points bonus
+                  {annee && <span className="text-xs text-gray-500 font-normal">· {annee}</span>}
+                </p>
+                <button
+                  onClick={showBonusDetails}
+                  className="text-sm font-medium text-amber-600 hover:text-amber-700 flex items-center gap-1 whitespace-nowrap"
+                >
+                  Voir plus <ArrowRight size={14} />
+                </button>
+              </div>
+              <div className="flex flex-wrap gap-2">
+                {bonusHighlights.map(h => {
+                  const name = disciplineName(h.discipline_id) ?? '—';
+                  return (
+                    <button
+                      key={h.discipline_id}
+                      onClick={showBonusDetails}
+                      title={`${name} : ${h.count} bonus`}
+                      className="inline-flex items-baseline gap-1.5 bg-amber-50 border border-amber-200 hover:border-amber-400 rounded-full px-3 py-1.5 transition"
+                    >
+                      <span className="font-semibold text-gray-800 text-sm">{abbreviate(name)}</span>
+                      <span className="font-bold text-amber-600">+{Number(h.total.toFixed(2))}</span>
+                    </button>
+                  );
+                })}
               </div>
             </div>
           )}
@@ -499,7 +561,7 @@ const StudentSpace: React.FC<Props> = ({ onBack }) => {
                   )}
 
                   {bonuses.length > 0 && (
-                    <div className="mt-6">
+                    <div id="mes-bonus" className="mt-6 scroll-mt-6">
                       <h3 className="font-bold text-gray-800 flex items-center gap-2 mb-1">
                         <Award size={18} className="text-amber-500" /> Mes points de participation
                       </h3>
