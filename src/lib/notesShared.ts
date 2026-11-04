@@ -109,7 +109,25 @@ export interface Cours {
   annee_academique: string;
 }
 
-export type EvaluationType = 'controle' | 'examen_pratique' | 'examen_theorique' | 'autre';
+export interface Exercice {
+  id: number;
+  classe: string;
+  discipline_id: number | null;
+  titre: string;
+  enonce: string | null;
+  lien_url: string | null;
+  fichier_url: string | null;
+  fichier_nom: string | null;
+  date_limite: string | null;
+  created_at: string;
+  annee_academique: string;
+}
+
+// date_limite is a calendar date: parsed as local time, and still open until the end of that day.
+export const formatDateLimite = (date: string) => new Date(`${date}T00:00:00`).toLocaleDateString('fr-FR');
+export const isDateLimitePassee = (date: string) => new Date(`${date}T23:59:59`) < new Date();
+
+export type EvaluationType ='controle' | 'examen_pratique' | 'examen_theorique' | 'autre';
 
 export const EVALUATION_TYPES: { value: EvaluationType; label: string; badge: string }[] = [
   { value: 'controle', label: 'Contrôle', badge: 'bg-amber-100 text-amber-800' },

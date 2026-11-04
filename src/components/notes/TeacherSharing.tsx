@@ -1,10 +1,10 @@
 import React, { useEffect, useState } from 'react';
-import { CalendarClock, FileText, Trash2, Plus, Link as LinkIcon, Upload, ChevronDown, Clock } from 'lucide-react';
+import { CalendarClock, FileText, Trash2, Plus, Link as LinkIcon, Upload, ChevronDown, Clock, PencilLine } from 'lucide-react';
 import { supabase } from '../../lib/supabaseClient';
 import { toast } from '../ui/sonner';
 import {
-  Evaluation, Cours, Creneau, EvaluationType, EVALUATION_TYPES, JOURS, evaluationType, formatDateTime, formatHeure,
-  safeUrl, normalizeUrl,
+  Evaluation, Cours, Creneau, Exercice, EvaluationType, EVALUATION_TYPES, JOURS, evaluationType, formatDateTime, formatHeure,
+  safeUrl, normalizeUrl, formatDateLimite, isDateLimitePassee,
 } from '../../lib/notesShared';
 
 interface Discipline { id: number; nom: string; }
@@ -18,11 +18,28 @@ interface Props {
 const emptyEvaluation = { type: 'controle' as EvaluationType, titre: '', date: '', heure: '', lieu: '', description: '', discipline_id: '' };
 const emptyCours = { titre: '', description: '', lien_url: '', discipline_id: '' };
 const emptyCreneau = { jour: '1', heure_debut: '08:00', heure_fin: '10:00', discipline_id: '', enseignant: '', salle: '' };
+const emptyExercice = { titre: '', enonce: '', lien_url: '', discipline_id: '', date_limite: '' };
+
+// Course and exercise attachments share the "cours" storage bucket.
+const uploadAttachment = async (file: File): Promise<{ fichier_url: string; fichier_nom: string } | null> => {
+  const path = `${Date.now()}-${file.name.replace(/[^a-zA-Z0-9._-]/g, '_')}`;
+  const { error } = await supabase.storage.from('cours').upload(path, file);
+  if (error) return null;
+  return { fichier_url: supabase.storage.from('cours').getPublicUrl(path).data.publicUrl, fichier_nom: file.name };
+};
+
+const removeAttachment = async (fichierUrl: string | null) => {
+  const path = fichierUrl?.split('/cours/').pop();
+  if (path) await supabase.storage.from('cours').remove([decodeURIComponent(path)]);
+};
 
 const inputClass = 'w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-indigo-500 focus:border-transparent text-sm';
 
 const TeacherSharing: React.FC<Props> = ({ classes, disciplines, annee }) => {
-  const [tab, setTab] = useState<'evaluations' | 'cours' | 'emploi'>('evaluations');
+  const [tab, setTab] = useState<'evaluations' | 'cours' | 'exercices' | 'emploi'>('evaluations');
+  const [exercices, setExercices] = useState<Exercice[]>([]);
+  const [exerciceForm, setExerciceForm] = useState(emptyExercice);
+  const [exerciceFile, setExerciceFile] = useState<File | null>(null);
   const [classe, setClasse] = useState('');
   const [evaluations, setEvaluations] = useState<Evaluation[]>([]);
   const [coursList, setCoursList] = useState<Cours[]>([]);
@@ -35,20 +52,70 @@ const TeacherSharing: React.FC<Props> = ({ classes, disciplines, annee }) => {
 
   useEffect(() => {
     if (classe) loadShared(classe);
-    else { setEvaluations([]); setCoursList([]); setCreneaux([]); }
+    else { setEvaluations([]); setCoursList([]); setCreneaux([]); setExercices([]); }
   }, [classe, annee]);
 
   const loadShared = async (c: string) => {
-    const [ev, cr, edt] = await Promise.all([
+    const [ev, cr, edt, ex] = await Promise.all([
       supabase.from('evaluations').select('*').eq('classe', c).eq('annee_academique', annee).order('date_evaluation', { ascending: true }),
       supabase.from('cours').select('*').eq('classe', c).eq('annee_academique', annee).order('created_at', { ascending: false }),
       supabase.from('emploi_du_temps').select('*').eq('classe', c).eq('annee_academique', annee)
         .order('jour').order('heure_debut'),
+      supabase.from('exercices').select('*').eq('classe', c).eq('annee_academique', annee).order('created_at', { ascending: false }),
     ]);
-    if (ev.error || cr.error || edt.error) toast.error('Erreur lors du chargement des partages');
+    if (ev.error || cr.error || edt.error || ex.error) toast.error('Erreur lors du chargement des partages');
     setEvaluations(ev.data || []);
     setCoursList(cr.data || []);
     setCreneaux(edt.data || []);
+    setExercices(ex.data || []);
+  };
+
+  const addExercice = async () => {
+    if (!exerciceForm.titre.trim()) {
+      toast.error('Le titre est obligatoire');
+      return;
+    }
+    if (!exerciceForm.enonce.trim() && !exerciceForm.lien_url.trim() && !exerciceFile) {
+      toast.error('Ajoutez un énoncé, un lien ou un fichier');
+      return;
+    }
+    setSaving(true);
+
+    const attachment = exerciceFile ? await uploadAttachment(exerciceFile) : null;
+    if (exerciceFile && !attachment) {
+      setSaving(false);
+      toast.error("Erreur lors de l'envoi du fichier");
+      return;
+    }
+
+    const { error } = await supabase.from('exercices').insert([{
+      classe,
+      annee_academique: annee,
+      titre: exerciceForm.titre.trim(),
+      enonce: exerciceForm.enonce.trim() || null,
+      lien_url: normalizeUrl(exerciceForm.lien_url),
+      fichier_url: attachment?.fichier_url ?? null,
+      fichier_nom: attachment?.fichier_nom ?? null,
+      date_limite: exerciceForm.date_limite || null,
+      discipline_id: exerciceForm.discipline_id ? parseInt(exerciceForm.discipline_id) : null,
+    }]);
+    setSaving(false);
+    if (error) {
+      toast.error("Erreur lors de l'ajout de l'exercice");
+      return;
+    }
+    toast.success('Exercice envoyé à la classe');
+    setExerciceForm(emptyExercice);
+    setExerciceFile(null);
+    loadShared(classe);
+  };
+
+  const deleteExercice = async (ex: Exercice) => {
+    if (!confirm('Supprimer cet exercice ?')) return;
+    await removeAttachment(ex.fichier_url);
+    const { error } = await supabase.from('exercices').delete().eq('id', ex.id);
+    if (error) toast.error('Erreur lors de la suppression');
+    else loadShared(classe);
   };
 
   const addCreneau = async () => {
@@ -127,18 +194,11 @@ const TeacherSharing: React.FC<Props> = ({ classes, disciplines, annee }) => {
     }
     setSaving(true);
 
-    let fichier_url: string | null = null;
-    let fichier_nom: string | null = null;
-    if (file) {
-      const path = `${Date.now()}-${file.name.replace(/[^a-zA-Z0-9._-]/g, '_')}`;
-      const { error: upErr } = await supabase.storage.from('cours').upload(path, file);
-      if (upErr) {
-        setSaving(false);
-        toast.error("Erreur lors de l'envoi du fichier");
-        return;
-      }
-      fichier_url = supabase.storage.from('cours').getPublicUrl(path).data.publicUrl;
-      fichier_nom = file.name;
+    const attachment = file ? await uploadAttachment(file) : null;
+    if (file && !attachment) {
+      setSaving(false);
+      toast.error("Erreur lors de l'envoi du fichier");
+      return;
     }
 
     const { error } = await supabase.from('cours').insert([{
@@ -147,8 +207,8 @@ const TeacherSharing: React.FC<Props> = ({ classes, disciplines, annee }) => {
       titre: coursForm.titre.trim(),
       description: coursForm.description.trim() || null,
       lien_url: normalizeUrl(coursForm.lien_url),
-      fichier_url,
-      fichier_nom,
+      fichier_url: attachment?.fichier_url ?? null,
+      fichier_nom: attachment?.fichier_nom ?? null,
       discipline_id: coursForm.discipline_id ? parseInt(coursForm.discipline_id) : null,
     }]);
     setSaving(false);
@@ -171,10 +231,7 @@ const TeacherSharing: React.FC<Props> = ({ classes, disciplines, annee }) => {
 
   const deleteCours = async (c: Cours) => {
     if (!confirm('Supprimer ce cours ?')) return;
-    if (c.fichier_url) {
-      const path = c.fichier_url.split('/cours/').pop();
-      if (path) await supabase.storage.from('cours').remove([decodeURIComponent(path)]);
-    }
+    await removeAttachment(c.fichier_url);
     const { error } = await supabase.from('cours').delete().eq('id', c.id);
     if (error) toast.error('Erreur lors de la suppression');
     else loadShared(classe);
@@ -191,8 +248,8 @@ const TeacherSharing: React.FC<Props> = ({ classes, disciplines, annee }) => {
     <div className="bg-indigo-50 p-6 rounded-lg mt-8">
       <h2 className="text-xl font-semibold mb-1 text-gray-800">Partager avec les étudiants</h2>
       <p className="text-sm text-gray-600 mb-4">
-        Les rendez-vous, les cours et l'emploi du temps apparaissent dans l'espace de chaque étudiant de la classe
-        choisie, pour l'année académique {annee}.
+        Les rendez-vous, les cours, les exercices et l'emploi du temps apparaissent dans l'espace de chaque étudiant
+        de la classe choisie, pour l'année académique {annee}.
       </p>
 
       <div className="relative max-w-sm mb-5">
@@ -208,10 +265,10 @@ const TeacherSharing: React.FC<Props> = ({ classes, disciplines, annee }) => {
       </div>
 
       {!classe ? (
-        <p className="text-center text-gray-500 py-6">Choisissez une classe pour partager des rendez-vous ou des cours</p>
+        <p className="text-center text-gray-500 py-6">Choisissez une classe pour partager des rendez-vous, des cours ou des exercices</p>
       ) : (
         <>
-          <div className="flex gap-2 mb-5">
+          <div className="flex flex-wrap gap-2 mb-5">
             <button
               onClick={() => setTab('evaluations')}
               className={`flex items-center gap-2 px-4 py-2 rounded-lg text-sm font-medium ${tab === 'evaluations' ? 'bg-indigo-600 text-white' : 'bg-white text-gray-700 hover:bg-gray-100'}`}
@@ -223,6 +280,12 @@ const TeacherSharing: React.FC<Props> = ({ classes, disciplines, annee }) => {
               className={`flex items-center gap-2 px-4 py-2 rounded-lg text-sm font-medium ${tab === 'cours' ? 'bg-indigo-600 text-white' : 'bg-white text-gray-700 hover:bg-gray-100'}`}
             >
               <FileText size={16} /> Cours ({coursList.length})
+            </button>
+            <button
+              onClick={() => setTab('exercices')}
+              className={`flex items-center gap-2 px-4 py-2 rounded-lg text-sm font-medium ${tab === 'exercices' ? 'bg-indigo-600 text-white' : 'bg-white text-gray-700 hover:bg-gray-100'}`}
+            >
+              <PencilLine size={16} /> Exercices ({exercices.length})
             </button>
             <button
               onClick={() => setTab('emploi')}
@@ -363,6 +426,88 @@ const TeacherSharing: React.FC<Props> = ({ classes, disciplines, annee }) => {
                         </div>
                       </div>
                       <button onClick={() => deleteCours(c)} className="text-red-500 hover:text-red-700 self-start">
+                        <Trash2 size={16} />
+                      </button>
+                    </div>
+                  </div>
+                ))}
+              </div>
+            </div>
+          ) : tab === 'exercices' ? (
+            <div className="grid lg:grid-cols-2 gap-6">
+              <div className="bg-white p-5 rounded-lg shadow-sm space-y-3 self-start">
+                <h3 className="font-semibold text-gray-800">Nouvel exercice</h3>
+                <input
+                  value={exerciceForm.titre}
+                  onChange={e => setExerciceForm({ ...exerciceForm, titre: e.target.value })}
+                  placeholder="Titre (ex. TD n°3 – Réseaux)"
+                  className={inputClass}
+                />
+                {disciplineSelect(exerciceForm.discipline_id, v => setExerciceForm({ ...exerciceForm, discipline_id: v }))}
+                <textarea
+                  value={exerciceForm.enonce}
+                  onChange={e => setExerciceForm({ ...exerciceForm, enonce: e.target.value })}
+                  placeholder="Énoncé ou consignes de l'exercice"
+                  rows={4}
+                  className={inputClass}
+                />
+                <label className="block text-xs text-gray-500">
+                  Date limite (optionnel)
+                  <input
+                    type="date"
+                    value={exerciceForm.date_limite}
+                    onChange={e => setExerciceForm({ ...exerciceForm, date_limite: e.target.value })}
+                    className={inputClass}
+                  />
+                </label>
+                <input
+                  value={exerciceForm.lien_url}
+                  onChange={e => setExerciceForm({ ...exerciceForm, lien_url: e.target.value })}
+                  placeholder="Lien (Google Drive, YouTube…) – optionnel"
+                  className={inputClass}
+                />
+                <label className="flex items-center gap-2 border-2 border-dashed border-gray-300 rounded-lg px-3 py-3 text-sm text-gray-600 cursor-pointer hover:border-indigo-400">
+                  <Upload size={16} />
+                  {exerciceFile ? exerciceFile.name : 'Joindre un fichier (PDF, Word, image…)'}
+                  <input type="file" className="hidden" onChange={e => setExerciceFile(e.target.files?.[0] ?? null)} />
+                </label>
+                <button
+                  onClick={addExercice}
+                  disabled={saving}
+                  className="w-full flex items-center justify-center gap-2 bg-indigo-600 hover:bg-indigo-700 text-white px-4 py-2.5 rounded-lg font-medium disabled:opacity-50"
+                >
+                  <Plus size={18} /> {saving ? 'Envoi en cours…' : "Envoyer l'exercice"}
+                </button>
+              </div>
+
+              <div className="space-y-3 max-h-[560px] overflow-y-auto">
+                {exercices.length === 0 && <p className="text-gray-500 text-sm text-center py-6">Aucun exercice pour cette classe</p>}
+                {exercices.map(ex => (
+                  <div key={ex.id} className="bg-white p-4 rounded-lg shadow-sm">
+                    <div className="flex justify-between gap-3">
+                      <div className="min-w-0">
+                        <p className="font-semibold text-gray-800">{ex.titre}</p>
+                        <p className="text-xs text-gray-500">
+                          {[
+                            disciplineName(ex.discipline_id),
+                            ex.date_limite && `À rendre le ${formatDateLimite(ex.date_limite)}${isDateLimitePassee(ex.date_limite) ? ' (dépassée)' : ''}`,
+                          ].filter(Boolean).join(' · ')}
+                        </p>
+                        {ex.enonce && <p className="text-sm text-gray-600 mt-1.5 whitespace-pre-line">{ex.enonce}</p>}
+                        <div className="flex flex-wrap gap-3 mt-1.5 text-sm">
+                          {safeUrl(ex.lien_url) && (
+                            <a href={safeUrl(ex.lien_url)} target="_blank" rel="noopener noreferrer" className="flex items-center gap-1 text-indigo-600 hover:underline">
+                              <LinkIcon size={14} /> Lien
+                            </a>
+                          )}
+                          {safeUrl(ex.fichier_url) && (
+                            <a href={safeUrl(ex.fichier_url)} target="_blank" rel="noopener noreferrer" className="flex items-center gap-1 text-indigo-600 hover:underline truncate">
+                              <FileText size={14} /> {ex.fichier_nom ?? 'Fichier'}
+                            </a>
+                          )}
+                        </div>
+                      </div>
+                      <button onClick={() => deleteExercice(ex)} className="text-red-500 hover:text-red-700 self-start">
                         <Trash2 size={16} />
                       </button>
                     </div>

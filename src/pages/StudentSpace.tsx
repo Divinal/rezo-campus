@@ -10,8 +10,9 @@ import { YearInscription } from '../lib/inscriptions';
 import {
   Evaluation, Cours, Creneau, JOURS, evaluationType, formatDateTime, formatHeure, safeUrl, currentAcademicYear,
   Bonus, CONTROLES, applyBonuses, bonusTotal, controleLabel,
+  Exercice, formatDateLimite, isDateLimitePassee,
 } from '../lib/notesShared';
-import { Award, ArrowRight } from 'lucide-react';
+import { Award, ArrowRight, PencilLine } from 'lucide-react';
 
 interface SpaceStudent {
   id: number;
@@ -70,7 +71,8 @@ const StudentSpace: React.FC<Props> = ({ onBack }) => {
   const [loginError, setLoginError] = useState('');
   const [loggingIn, setLoggingIn] = useState(false);
 
-  const [tab, setTab] = useState<'rdv' | 'emploi' | 'cours' | 'notes'>('rdv');
+  const [tab, setTab] = useState<'rdv' | 'emploi' | 'cours' | 'exercices' | 'notes'>('rdv');
+  const [exercices, setExercices] = useState<Exercice[]>([]);
   const [evaluations, setEvaluations] = useState<Evaluation[]>([]);
   const [coursList, setCoursList] = useState<Cours[]>([]);
   const [creneaux, setCreneaux] = useState<Creneau[]>([]);
@@ -105,7 +107,7 @@ const StudentSpace: React.FC<Props> = ({ onBack }) => {
     const current = parcours.find(p => p.annee_academique === year);
     // Without an inscription that year, filter on an impossible class so nothing from another class shows up.
     const classe = current?.classe ?? '';
-    const [ev, cr, edt, nt, bn] = await Promise.all([
+    const [ev, cr, edt, nt, bn, ex] = await Promise.all([
       supabase.from('evaluations').select('*').eq('classe', classe).eq('annee_academique', year)
         .order('date_evaluation', { ascending: true }),
       supabase.from('cours').select('*').eq('classe', classe).eq('annee_academique', year)
@@ -114,9 +116,12 @@ const StudentSpace: React.FC<Props> = ({ onBack }) => {
         .order('jour').order('heure_debut'),
       supabase.rpc('student_notes', { p_numero: s.numero, p_code: s.code, p_annee: year }),
       supabase.rpc('student_bonus', { p_numero: s.numero, p_code: s.code, p_annee: year }),
+      supabase.from('exercices').select('*').eq('classe', classe).eq('annee_academique', year)
+        .order('created_at', { ascending: false }),
     ]);
-    if (ev.error || cr.error || edt.error || nt.error || bn.error) toast.error('Certaines informations n\'ont pas pu être chargées');
+    if (ev.error || cr.error || edt.error || nt.error || bn.error || ex.error) toast.error('Certaines informations n\'ont pas pu être chargées');
     setBonuses(bn.data || []);
+    setExercices(ex.data || []);
     setEvaluations(ev.data || []);
     setCoursList(cr.data || []);
     setCreneaux(edt.data || []);
@@ -150,6 +155,7 @@ const StudentSpace: React.FC<Props> = ({ onBack }) => {
     setStudent(null);
     setEvaluations([]);
     setCoursList([]);
+    setExercices([]);
     setCreneaux([]);
     setNotes([]);
     setBonuses([]);
@@ -252,6 +258,7 @@ const StudentSpace: React.FC<Props> = ({ onBack }) => {
     { id: 'rdv' as const, label: 'Rendez-vous', icon: CalendarClock, count: upcoming.length },
     { id: 'emploi' as const, label: 'Emploi du temps', icon: Clock, count: creneaux.length },
     { id: 'cours' as const, label: 'Cours', icon: FileText, count: coursList.length },
+    { id: 'exercices' as const, label: 'Exercices', icon: PencilLine, count: exercices.length },
     { id: 'notes' as const, label: 'Mes notes', icon: BookOpen, count: notes.length },
   ];
 
@@ -503,6 +510,55 @@ const StudentSpace: React.FC<Props> = ({ onBack }) => {
                         </div>
                       </div>
                     ))}
+                  </div>
+                )}
+              </div>
+            ) : tab === 'exercices' ? (
+              <div>
+                <h2 className="text-lg font-bold text-gray-800 mb-3">Exercices envoyés par vos enseignants</h2>
+                {exercices.length === 0 ? (
+                  <p className="text-gray-500 text-sm py-4">Aucun exercice pour le moment.</p>
+                ) : (
+                  <div className="grid sm:grid-cols-2 gap-3">
+                    {exercices.map(ex => {
+                      const passee = ex.date_limite ? isDateLimitePassee(ex.date_limite) : false;
+                      return (
+                        <div key={ex.id} className="border border-gray-200 rounded-xl p-4">
+                          <p className="font-semibold text-gray-800">{ex.titre}</p>
+                          <p className="text-xs text-gray-500">
+                            {[disciplineName(ex.discipline_id), new Date(ex.created_at).toLocaleDateString('fr-FR')].filter(Boolean).join(' · ')}
+                          </p>
+                          {ex.date_limite && (
+                            <span className={`inline-block text-xs font-semibold px-2 py-0.5 rounded-full mt-2 ${passee ? 'bg-gray-100 text-gray-600' : 'bg-amber-100 text-amber-800'}`}>
+                              {passee ? 'Date limite dépassée' : 'À rendre le'} {formatDateLimite(ex.date_limite)}
+                            </span>
+                          )}
+                          {ex.enonce && <p className="text-sm text-gray-700 mt-2 whitespace-pre-line">{ex.enonce}</p>}
+                          <div className="flex flex-wrap gap-2 mt-3">
+                            {safeUrl(ex.fichier_url) && (
+                              <a
+                                href={safeUrl(ex.fichier_url)}
+                                target="_blank"
+                                rel="noopener noreferrer"
+                                className="flex items-center gap-1.5 text-sm bg-teal-600 hover:bg-teal-700 text-white px-3 py-1.5 rounded-lg"
+                              >
+                                <FileText size={14} /> {ex.fichier_nom ?? 'Télécharger'}
+                              </a>
+                            )}
+                            {safeUrl(ex.lien_url) && (
+                              <a
+                                href={safeUrl(ex.lien_url)}
+                                target="_blank"
+                                rel="noopener noreferrer"
+                                className="flex items-center gap-1.5 text-sm bg-gray-100 hover:bg-gray-200 text-gray-800 px-3 py-1.5 rounded-lg"
+                              >
+                                <LinkIcon size={14} /> Ouvrir le lien
+                              </a>
+                            )}
+                          </div>
+                        </div>
+                      );
+                    })}
                   </div>
                 )}
               </div>
