@@ -1,8 +1,71 @@
 import React from 'react';
 import { Link } from 'react-router-dom';
-import { Check, Minus, ArrowRight, School, Phone, Mail } from 'lucide-react';
+import {
+  Check, Minus, ArrowRight, School, Phone, Mail, BookOpen, GraduationCap, Users, ClipboardList, ListChecks,
+  Presentation, Download, ExternalLink,
+} from 'lucide-react';
 import Header from '../components/Header';
 import Footer from '../components/Footer';
+
+// The PDFs live in public/Document_Rezo_Edu; BASE_URL keeps the links valid when the site is served from a sub-path.
+const DOCS_PATH = `${import.meta.env.BASE_URL}Document_Rezo_Edu/`;
+
+const documents = [
+  {
+    file: 'Guide_Administration_Rezo_Edu.pdf',
+    title: 'Guide Administration',
+    audience: 'Direction, admin pédagogique, financier, secrétariat',
+    pages: 23,
+    icon: BookOpen,
+    description:
+      "Tout pour piloter l'établissement : niveaux et matières, inscription des élèves, enseignants et affectations, emplois du temps, notes, suivi, messages, annonces et finances (budget, frais de scolarité, reçus, paie).",
+  },
+  {
+    file: 'Guide_Enseignant_Rezo_Edu.pdf',
+    title: 'Guide Enseignant',
+    audience: 'Enseignants',
+    pages: 8,
+    icon: GraduationCap,
+    description:
+      'Saisir les notes (CC1 à CC3, examens théorique et pratique), remplir le suivi journalier de la classe, consulter son emploi du temps, ses messages et ses bulletins de paie.',
+  },
+  {
+    file: 'Guide_Eleve_Parent_Rezo_Edu.pdf',
+    title: 'Guide Élève & Parent',
+    audience: 'Élèves et parents',
+    pages: 8,
+    icon: Users,
+    description:
+      "Suivre en temps réel les notes, le comportement, l'emploi du temps et les paiements, et recevoir les messages et annonces de l'établissement.",
+  },
+  {
+    file: 'Aide-memoire_Rezo_Edu.pdf',
+    title: 'Aide-mémoire',
+    audience: 'Tous les utilisateurs',
+    pages: 2,
+    icon: ClipboardList,
+    description:
+      'Les gestes courants de chaque rôle en un coup d’œil : « je veux… », où aller et comment faire. À imprimer et à garder à portée de main.',
+  },
+  {
+    file: 'Checklist_Mise_en_place_Rezo_Edu.pdf',
+    title: 'Checklist de mise en place',
+    audience: "Chef d'établissement et référent Rezo Edu",
+    pages: 5,
+    icon: ListChecks,
+    description:
+      "Les données à réunir, l'ordre de paramétrage, le planning du mois d'essai gratuit semaine par semaine et les critères de réussite.",
+  },
+  {
+    file: 'Support_de_formation_Rezo_Edu.pdf',
+    title: 'Support de formation',
+    audience: 'Formateur et participants',
+    pages: 10,
+    icon: Presentation,
+    description:
+      "Le programme en 7 modules, le déroulé des séances, 10 exercices pratiques, un quiz d'évaluation, la feuille d'émargement et le modèle d'attestation.",
+  },
+];
 
 const packs = [
   {
@@ -277,6 +340,54 @@ const RezoEdu: React.FC = () => {
             <span className="font-semibold text-gray-300">Hors périmètre actuel :</span>{' '}
             présences/absences, bulletin scolaire imprimable, cantine, transport, bibliothèque, export Excel.
             Ces évolutions peuvent être chiffrées séparément sur demande.
+          </div>
+        </div>
+      </section>
+
+      {/* Documents */}
+      <section className="bg-gray-950 py-16 px-4 border-t border-gray-800">
+        <div className="container mx-auto max-w-5xl">
+          <div className="mb-10">
+            <h2 className="text-3xl font-bold mb-3">Documents Rezo Edu</h2>
+            <p className="text-gray-400 max-w-2xl leading-relaxed">
+              Des guides pour chaque utilisateur de la plateforme et les outils pour réussir sa mise en place.
+              Consultez-les en ligne ou téléchargez-les au format PDF.
+            </p>
+          </div>
+
+          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
+            {documents.map(({ file, title, audience, pages, icon: Icon, description }) => (
+              <div key={file} className="bg-gray-900 border border-gray-800 rounded-xl p-5 flex flex-col">
+                <div className="flex items-start gap-3 mb-3">
+                  <div className="bg-teal-600/15 border border-teal-600/30 rounded-lg p-2.5 flex-shrink-0">
+                    <Icon className="w-5 h-5 text-teal-400" />
+                  </div>
+                  <div>
+                    <h3 className="font-bold text-white leading-tight">{title}</h3>
+                    <p className="text-xs text-gray-500 mt-1">{audience} · {pages} pages</p>
+                  </div>
+                </div>
+                <p className="text-sm text-gray-400 leading-relaxed mb-5 flex-grow">{description}</p>
+                <div className="flex gap-2">
+                  <a
+                    href={`${DOCS_PATH}${file}`}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="flex-1 inline-flex items-center justify-center gap-1.5 bg-teal-600 hover:bg-teal-700 text-white text-sm font-medium px-3 py-2 rounded-lg transition-colors"
+                  >
+                    <ExternalLink className="w-4 h-4" /> Consulter
+                  </a>
+                  <a
+                    href={`${DOCS_PATH}${file}`}
+                    download
+                    className="inline-flex items-center justify-center gap-1.5 bg-gray-800 hover:bg-gray-700 border border-gray-700 text-gray-200 text-sm font-medium px-3 py-2 rounded-lg transition-colors"
+                    title={`Télécharger ${title}`}
+                  >
+                    <Download className="w-4 h-4" />
+                  </a>
+                </div>
+              </div>
+            ))}
           </div>
         </div>
       </section>
